@@ -1,0 +1,3 @@
+[submodule "flow-server-config"]
+	path = flow-server-config
+	url = https://github.com/flow-team-project/flow-server-config.git
