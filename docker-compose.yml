@@ -14,3 +14,15 @@ services:
     command: # 명령어 실행
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
+
+  server:
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+    build: .
+    container_name: server
+    expose:
+      - 8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/logs  # 로그 파일을 저장할 볼륨 추가
