@@ -1,2 +1,4 @@
 rootProject.name = 'flow'
-
+include 'api-module'
+include 'common-module'
+include 'batch-module'

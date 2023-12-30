@@ -1,9 +1,3 @@
-buildscript {
-    ext {
-        queryDslVersion = "5.0.0"
-    }
-}
-
 plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.5'
@@ -18,19 +12,59 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'mysql:mysql-connector-java'
-    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
-    implementation "com.querydsl:querydsl-core:${queryDslVersion}"
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    sourceCompatibility = '11'
+
+    bootJar.enabled = false
+    jar.enabled = true
+
+    if (name == 'api-module') {
+        bootJar.enabled = true
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    buildscript {
+        ext {
+            queryDslVersion = "5.0.0"
+        }
+    }
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        runtimeOnly 'mysql:mysql-connector-java'
+
+        implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+        implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+        implementation "com.querydsl:querydsl-core:${queryDslVersion}"
+    }
+
+    test {
+        useJUnitPlatform()
+    }
 }
 
 def querydslDir = "$buildDir/generated/querydsl"
@@ -55,15 +89,6 @@ configurations {
     querydsl.extendsFrom compileClasspath
 }
 
-
 test {
     useJUnitPlatform()
-}
-
-task copyPrivate(type: Copy) {
-    copy {
-        from './flow-server-config'
-        include "*.yml"
-        into 'src/main/resources'
-    }
 }

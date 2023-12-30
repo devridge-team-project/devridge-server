@@ -1,0 +1,25 @@
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+task copyPrivate(type: Copy) {
+    copy {
+        from './flow-server-config'
+        include "*.yml"
+        into 'src/main/resources'
+    }
+}
