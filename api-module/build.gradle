@@ -18,7 +18,7 @@ tasks.named('test') {
 
 task copyPrivate(type: Copy) {
     copy {
-        from './flow-server-config'
+        from '../flow-server-config'
         include "*.yml"
         into 'src/main/resources'
     }
