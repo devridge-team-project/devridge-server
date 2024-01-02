@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-
+    implementation project(":common-module")
 }
 
 tasks.named('test') {
