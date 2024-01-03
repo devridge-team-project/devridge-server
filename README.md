@@ -4,8 +4,8 @@
 >
 
 ```java
-git submodule update --remote
-./gradlew clean build
+git submodule update --remote --init   # 첫 프로젝트 clone 혹은 업데이트 시 실행
+./gradlew clean build   # 로컬에서 실행할 경우 생략
 ```
 
 ### MacOS

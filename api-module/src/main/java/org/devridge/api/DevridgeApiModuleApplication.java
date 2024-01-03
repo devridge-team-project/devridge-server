@@ -1,12 +1,12 @@
-package org.flow;
+package org.devridge.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FlowApiModuleApplication {
+public class DevridgeApiModuleApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(FlowApiModuleApplication.class, args);
+        SpringApplication.run(DevridgeApiModuleApplication.class, args);
     }
 }

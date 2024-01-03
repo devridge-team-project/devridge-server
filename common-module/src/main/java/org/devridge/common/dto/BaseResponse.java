@@ -1,4 +1,4 @@
-package org.flow.dto;
+package org.devridge.common.dto;
 
 import lombok.Getter;
 

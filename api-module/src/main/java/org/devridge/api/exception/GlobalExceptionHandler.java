@@ -1,6 +1,6 @@
-package org.flow.exception;
+package org.devridge.api.exception;
 
-import org.flow.dto.BaseResponse;
+import org.devridge.common.dto.BaseResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
