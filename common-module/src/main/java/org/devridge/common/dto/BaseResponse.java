@@ -1,4 +1,4 @@
-package org.devridge.dto;
+package org.devridge.common.dto;
 
 import lombok.Getter;
 

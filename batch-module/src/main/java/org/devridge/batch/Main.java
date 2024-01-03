@@ -1,4 +1,4 @@
-package org.devridge;
+package org.devridge.batch;
 
 public class Main {
     public static void main(String[] args) {
