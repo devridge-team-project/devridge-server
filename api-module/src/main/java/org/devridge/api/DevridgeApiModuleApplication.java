@@ -1,4 +1,4 @@
-package org.devridge;
+package org.devridge.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
