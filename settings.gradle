@@ -1,4 +1,4 @@
-rootProject.name = 'flow'
+rootProject.name = 'devridge'
 include 'api-module'
 include 'common-module'
 include 'batch-module'
