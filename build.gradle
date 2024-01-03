@@ -5,7 +5,7 @@ plugins {
     id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
 }
 
-group 'org.flow'
+group 'org.devridge'
 version '1.0-SNAPSHOT'
 
 repositories {
