@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-public abstract class BaseTimeEntity {
+public abstract class BaseEntity {
 
     @Column(name = "is_deleted")
     @ColumnDefault("false")
