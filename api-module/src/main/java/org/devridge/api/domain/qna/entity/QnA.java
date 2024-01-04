@@ -13,6 +13,8 @@ import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @DynamicInsert
@@ -32,6 +34,9 @@ public class QnA extends BaseEntity {
 
     @ColumnDefault("0")
     private Long views;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "qna")
+    List<QnAComment> comments = new ArrayList<>();
 
     @Builder
     public QnA(Long memberId, String title, String content) {
