@@ -21,10 +21,6 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class QnA extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     // TODO: Member Entity mapping
     private Long memberId;
 
