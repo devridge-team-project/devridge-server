@@ -4,7 +4,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 import org.devridge.common.dto.BaseTimeEntity;
+
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
@@ -34,10 +36,6 @@ public class QnA extends BaseTimeEntity {
 
     @ColumnDefault("0")
     private Long views;
-
-    @Column(name = "is_deleted")
-    @ColumnDefault("false")
-    private Boolean isDeleted;
 
     @Builder
     public QnA(Long memberId, String title, String content) {
