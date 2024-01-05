@@ -60,6 +60,11 @@ subprojects {
         implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
         implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
         implementation "com.querydsl:querydsl-core:${queryDslVersion}"
+
+        // security 의존성
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+
     }
 
     test {
