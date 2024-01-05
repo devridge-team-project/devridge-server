@@ -1,6 +1,7 @@
 package org.devridge.api.domain.qna.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,4 +29,9 @@ public class QnAScrap extends BaseTimeEntity {
     @Column(name = "is_deleted")
     @ColumnDefault("false")
     private Boolean isDeleted;
+
+    @Builder
+    public QnAScrap(Long memberId, QnA qna) {
+        this.id = new QnAScrapKey(memberId, qna);
+    }
 }

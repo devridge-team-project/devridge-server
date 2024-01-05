@@ -1,6 +1,7 @@
 package org.devridge.api.domain.qna.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,4 +33,10 @@ public class CommentLikeDislike extends BaseTimeEntity {
     @Column(name = "is_deleted")
     @ColumnDefault("false")
     private Boolean isDeleted;
+
+    @Builder
+    public CommentLikeDislike(Long memberId, QnAComment qnaComment, LikeStatus status) {
+        this.id = new CommentLikeDislikeKey(memberId, qnaComment);
+        this.status = status;
+    }
 }

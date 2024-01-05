@@ -1,6 +1,7 @@
 package org.devridge.api.domain.qna.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,4 +29,10 @@ public class QnAComment extends BaseEntity {
 
     @NotNull
     private String content;
+
+    @Builder
+    public QnAComment(QnA qna, String content) {
+        this.qna = qna;
+        this.content = content;
+    }
 }
