@@ -22,6 +22,7 @@ import java.util.List;
 @SQLDelete(sql = "UPDATE qna SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "qna")
 @Entity
 public class QnA extends BaseEntity {
 

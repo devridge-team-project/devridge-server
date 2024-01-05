@@ -10,16 +10,14 @@ import org.devridge.common.dto.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @SQLDelete(sql = "UPDATE qna_comment SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "qna_comment")
 @Entity
 public class QnAComment extends BaseEntity {
 
