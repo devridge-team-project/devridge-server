@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.devridge.common.dto.BaseEntity;
 
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,6 +17,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @SQLDelete(sql = "UPDATE qna_comment SET is_deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class QnAComment extends BaseEntity {

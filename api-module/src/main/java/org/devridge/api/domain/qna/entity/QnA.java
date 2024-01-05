@@ -10,6 +10,7 @@ import org.devridge.common.dto.BaseEntity;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ import java.util.List;
 @Getter
 @DynamicInsert
 @SQLDelete(sql = "UPDATE qna SET is_deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class QnA extends BaseEntity {
