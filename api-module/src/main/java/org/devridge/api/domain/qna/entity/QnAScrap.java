@@ -28,7 +28,7 @@ public class QnAScrap extends BaseTimeEntity {
     @EmbeddedId
     private QnAScrapKey id;
 
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
     @ColumnDefault("false")
     private Boolean isDeleted;
 

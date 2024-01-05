@@ -31,7 +31,7 @@ public class CommentLikeDislike extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private LikeStatus status;
 
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
     @ColumnDefault("false")
     private Boolean isDeleted;
 
