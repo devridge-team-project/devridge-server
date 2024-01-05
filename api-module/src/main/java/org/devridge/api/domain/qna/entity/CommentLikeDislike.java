@@ -3,15 +3,16 @@ package org.devridge.api.domain.qna.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import org.devridge.api.domain.qna.dto.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.key.CommentLikeDislikeKey;
 import org.devridge.common.dto.BaseTimeEntity;
+
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Getter
 @DynamicInsert
@@ -22,6 +23,9 @@ public class CommentLikeDislike extends BaseTimeEntity {
 
     @EmbeddedId
     private CommentLikeDislikeKey id;
+
+    @Enumerated(EnumType.STRING)
+    private LikeStatus status;
 
     @Column(name = "is_deleted")
     @ColumnDefault("false")
