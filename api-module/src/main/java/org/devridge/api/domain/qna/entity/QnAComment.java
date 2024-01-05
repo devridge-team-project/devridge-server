@@ -15,7 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@SQLDelete(sql = "UPDATE qna SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE qna_comment SET is_deleted = true WHERE id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class QnAComment extends BaseEntity {
