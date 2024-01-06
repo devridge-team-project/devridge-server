@@ -7,6 +7,9 @@ import org.devridge.api.domain.member.dto.request.CreateMemberRequest;
 import org.devridge.api.domain.member.dto.request.DeleteMemberRequest;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.domain.skill.entity.MemberSkill;
+import org.devridge.api.domain.skill.repository.MemberSkillRepository;
+import org.devridge.api.domain.skill.repository.SkillRepository;
 import org.devridge.api.exception.member.DuplEmailException;
 import org.devridge.api.exception.member.PasswordNotMatchException;
 import org.devridge.api.exception.member.SkillsNotValidException;
@@ -24,6 +27,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class MemberService {
     private final MemberRepository memberRepository;
+    private final SkillRepository skillRepository;
+    private final MemberSkillRepository memberSkillRepository;
     private final PasswordChecker passwordChecker;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -32,8 +37,29 @@ public class MemberService {
         passwordChecker.checkWeakPassword(reqDto.getPassword());
 
         Member member = createNormalMember(reqDto);
+        Member savedMember = memberRepository.save(member);
 
-        memberRepository.save(member);
+        createMemberSkill(reqDto, savedMember);
+    }
+
+    private void createMemberSkill(CreateMemberRequest reqDto, Member member) {
+        Set<String> userSkills = new HashSet<>(Arrays.asList(reqDto.getSkillSet().split(",")));
+
+        if (!areSkillsValid(userSkills)) {
+            throw new SkillsNotValidException();
+        }
+
+        /**
+         * 성능 최적화 하기!! (SQL query)
+        * */
+        for (String userSkill : userSkills) {
+            MemberSkill memberSkill = MemberSkill.builder()
+                    .member(member)
+                    .skill(skillRepository.findBySkill(userSkill).get())
+                    .build();
+            memberSkillRepository.save(memberSkill);
+        }
+
     }
 
     private void checkDuplMember(CreateMemberRequest reqDto) {
@@ -46,12 +72,6 @@ public class MemberService {
 
     private Member createNormalMember(CreateMemberRequest reqDto) {
         String encodedPassword = passwordEncoder.encode(reqDto.getPassword());
-
-        Set<String> userSkills = new HashSet<>(Arrays.asList(reqDto.getSkillSet().split(",")));
-
-        if (!areSkillsValid(userSkills)) {
-            throw new SkillsNotValidException();
-        }
 
         Member member = Member.builder()
                 .email(reqDto.getEmail())
