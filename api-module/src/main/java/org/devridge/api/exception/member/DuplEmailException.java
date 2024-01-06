@@ -6,10 +6,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class WrongLoginException extends RuntimeException{
+public class DuplEmailException extends RuntimeException {
     private String message;
-
-    public WrongLoginException(String message) {
+    public DuplEmailException(String message) {
         super(message);
         this.message = message;
     }

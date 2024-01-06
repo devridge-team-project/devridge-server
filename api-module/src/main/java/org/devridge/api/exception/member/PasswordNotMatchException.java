@@ -6,11 +6,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class WrongLoginException extends RuntimeException{
-    private String message;
+public class PasswordNotMatchException extends RuntimeException {
 
-    public WrongLoginException(String message) {
-        super(message);
-        this.message = message;
+    public PasswordNotMatchException() {
+        super();
     }
+
 }
