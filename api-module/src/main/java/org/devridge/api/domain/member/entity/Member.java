@@ -32,10 +32,6 @@ public class Member extends AbstractTimeEntity {
     @Column(name = "provider")
     private String provider;
 
-    @Column(name = "salt", nullable = false)
-    @Type(type = "uuid-char")
-    private UUID salt;
-
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
