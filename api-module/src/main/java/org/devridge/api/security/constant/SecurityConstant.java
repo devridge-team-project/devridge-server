@@ -1,6 +1,6 @@
-package org.devridge.api.security;
+package org.devridge.api.security.constant;
 
-public interface Constant {
+public interface SecurityConstant {
 
     String USER_ROLE = "ROLE_USER";
 

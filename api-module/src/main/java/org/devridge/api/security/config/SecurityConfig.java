@@ -3,7 +3,7 @@ package org.devridge.api.security.config;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
-import org.devridge.api.security.Constant;
+import org.devridge.api.security.constant.SecurityConstant;
 import org.devridge.api.security.auth.CustomMemberDetailsService;
 import org.devridge.api.security.auth.JwtAuthenticationProvider;
 import org.devridge.api.security.dto.TokenResponse;
@@ -59,8 +59,8 @@ public class SecurityConfig {
 
         http
                 .authorizeRequests()
-                .antMatchers(Constant.ALL_PERMIT_PATHS).permitAll()
-                .antMatchers(Constant.USER_ROLE_PERMIT_PATHS).hasRole(Constant.USER_ROLE)
+                .antMatchers(SecurityConstant.ALL_PERMIT_PATHS).permitAll()
+                .antMatchers(SecurityConstant.USER_ROLE_PERMIT_PATHS).hasRole(SecurityConstant.USER_ROLE)
                 .anyRequest().denyAll();
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
