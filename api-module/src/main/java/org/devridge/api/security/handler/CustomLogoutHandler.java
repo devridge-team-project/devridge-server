@@ -22,5 +22,8 @@ public class CustomLogoutHandler implements LogoutSuccessHandler {
         );
 
         ResponseUtil.createResponseMessage(response, baseResponse);
+
+        String accessToken = request.getHeader("devAccessToken");
+        response.addHeader("devAccessToken", null);
     }
 }

@@ -10,9 +10,11 @@ import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
 import org.devridge.api.security.auth.AuthProperties;
 import org.devridge.api.security.auth.CustomMemberDetails;
+import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.JwtUtil;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
+import org.devridge.api.util.ResponseUtil;
+import org.devridge.common.dto.BaseResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -41,9 +43,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         this.refreshTokenRepository = refreshTokenRepository;
     }
 
-    // 1. 액세스토큰을 담고 있는 쿠키를 확인
-    // 2. 액세스토큰이 유효하다면 -> 인증된 객체 저장하고 doFilter, 그렇지 않다면 -> 리프레스토큰 검사
-    // 3. DB에서 리프레시토큰 조회. 리프레시 토큰이 유효하다면 -> 새로운 액세스토큰 발급, 그렇지 않다면 -> 인증된 객체를 저장하지 않고 doFilter
+    // 1. RequestHeader 안의 엑세스 토큰 확인
+    // 2. 액세스토큰이 유효하다면 -> 인증된 객체 저장하고 doFilter, 그렇지 않다면 -> 리프레시 토큰 검사
+    // 3. DB 에서 리프레시토큰 조회. 리프레시 토큰이 유효하다면 -> 새로운 액세스토큰 발급, 그렇지 않다면 -> 인증된 객체를 저장하지 않고 doFilter
 
     private final List<RequestMatcher> excludedUrlPatterns = Arrays.asList(//이 필터 적용 안할 url 지정
             new AntPathRequestMatcher("/login/mailConfirm"),
@@ -55,7 +57,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, UserPrincipalNotFoundException {
 
         if (isExcludedUrl(request)) {
-            filterChain.doFilter(request, response);//이 필터 스킵. 다음꺼 실행.
+            filterChain.doFilter(request, response); //이 필터 스킵. 다음꺼 실행.
             return;
         }
 
@@ -106,8 +108,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             try {
                 refreshTokenClaims = Jwts.parserBuilder().setSigningKey(AuthProperties.getRefreshSecret()).build().parseClaimsJws(refreshToken).getBody();
             } catch (ExpiredJwtException e) {
-                // 리프레시 토큰이 만료된 경우
-                // 만료된 리프레시 토큰을 제거 후 doFitler
+                // 리프레시 토큰이 만료된 경우₩
+                // 만료된 리프레시 토큰을 제거 후 doFitler => 재인증을 받아야 함
                 refreshTokenRepository.delete(refreshTokenOpt.get());
                 filterChain.doFilter(request, response);
                 return true;
@@ -119,12 +121,21 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 return true;
             }
 
-            // 리프레시 토큰이 존재한다면 액세스토큰 발급
+            // 리프레시 토큰이 만료되지 않음 : 액세스토큰 재발급
             String newAccessToken = JwtUtil.createAccessToken(savedMember, refreshTokenId);
 
             if(refreshTokenClaims != null) {
-                ResponseCookie resCookie = JwtUtil.makeResponseCookie(newAccessToken);
-                response.addHeader(HttpHeaders.SET_COOKIE, resCookie.toString());
+
+                BaseResponse baseResponse = new BaseResponse(
+                        HttpStatus.OK.value(),
+                        "엑세스토큰 재발급",
+                        new TokenResponse(newAccessToken, null)
+                );
+
+                ResponseUtil.createResponseMessage(
+                        response, baseResponse
+                );
+
             }
         }else {
             filterChain.doFilter(request, response);

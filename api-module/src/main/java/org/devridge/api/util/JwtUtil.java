@@ -44,17 +44,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    public static ResponseCookie makeResponseCookie(String accessToken) {
-        ResponseCookie cookies = ResponseCookie.from("plac_token", accessToken)
-                .httpOnly(true)
-                .sameSite("None")
-                .secure(true)
-                .path("/")
-                .maxAge(ACCESS_TOKEN_VALIDITY_TIME)     // 15분
-                .build();
-        return cookies;
-    }
-
     private static Date createTokenExpiration(long expirationTime) {
         Date expiration = new Date(System.currentTimeMillis() + expirationTime);
         return expiration;
