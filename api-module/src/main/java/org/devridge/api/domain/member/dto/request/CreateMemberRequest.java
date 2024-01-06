@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import org.devridge.api.constant.MemberConstant;
 
 import javax.validation.constraints.NotBlank;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor

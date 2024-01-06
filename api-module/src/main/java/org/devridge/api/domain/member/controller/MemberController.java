@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.member.dto.request.CreateMemberRequest;
 import org.devridge.api.domain.member.dto.request.DeleteMemberRequest;
 import org.devridge.api.domain.member.service.MemberService;
-import org.devridge.api.util.ResponseUtil;
 import org.devridge.common.dto.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

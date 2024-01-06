@@ -10,8 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.UUID;
-
 @RequiredArgsConstructor
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
@@ -30,10 +28,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         CustomMemberDetails savedMember = (CustomMemberDetails) customUserDetailsService.loadUserByUsername(email);
 
-        UUID salt = savedMember.getMember().getSalt();
-        String saltedPassword = password + salt.toString();
-
-        if(!passwordEncoder.matches(saltedPassword, savedMember.getPassword())) {
+        if(!passwordEncoder.matches(password, savedMember.getPassword())) {
             throw new BadCredentialsException("로그인 정보가 올바르지 않습니다.");
         }
 
