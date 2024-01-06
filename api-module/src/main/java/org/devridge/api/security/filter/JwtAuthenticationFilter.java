@@ -13,6 +13,7 @@ import org.devridge.api.security.auth.CustomMemberDetails;
 import org.devridge.api.security.auth.CustomMemberDetailsService;
 import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.JwtUtil;
+import org.devridge.api.util.ResponseUtil;
 import org.devridge.common.dto.BaseResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,7 +91,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 tokenResponse
         );
 
-        createResponseMessage(response, baseResponse);
+        ResponseUtil.createResponseMessage(response, baseResponse);
     }
 
 
@@ -106,30 +107,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // 2. 예외에 따른 response 세팅
         if(failedType.equals(BadCredentialsException.class) || failedType.equals(UsernameNotFoundException.class)) {
-
             baseResponse = new BaseResponse(
                     HttpStatus.UNAUTHORIZED.value(),
                     failed.getLocalizedMessage()
             );
-            this.createResponseMessage(response, baseResponse);
-
-        } else {
+        }
+        else {
             baseResponse = new BaseResponse(
                     HttpStatus.BAD_REQUEST.value(),
                     failed.getLocalizedMessage()
             );
-            this.createResponseMessage(response, baseResponse);
         }
-    }
-
-    private void createResponseMessage(HttpServletResponse response, BaseResponse baseResponse) throws StreamWriteException, DatabindException, IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        response.setContentType(MediaType.APPLICATION_JSON.toString());
-
-        objectMapper.writeValue(response.getOutputStream(), baseResponse);
+        ResponseUtil.createResponseMessage(response, baseResponse);
     }
 
     private Long saveRefreshToken(Member member, String refreshToken) {
