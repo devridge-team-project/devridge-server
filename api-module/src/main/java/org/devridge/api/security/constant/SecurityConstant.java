@@ -2,7 +2,7 @@ package org.devridge.api.security.constant;
 
 public interface SecurityConstant {
 
-    String USER_ROLE = "ROLE_USER";
+    String USER_ROLE = "USER";
 
     String[] ALL_PERMIT_PATHS = new String[]{
             "/api/users/one",
