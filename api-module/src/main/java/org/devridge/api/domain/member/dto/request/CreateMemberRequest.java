@@ -12,10 +12,9 @@ import javax.validation.constraints.NotBlank;
 @Getter
 public class CreateMemberRequest {
 
-    @NotBlank(message = "빈 이메일을 보낼 수 없습니다.")
+    @NotBlank(message = "빈 이메일을 입력할 수 없습니다.")
     private String email;
 
-    @NotBlank(message = "빈 비밀번호를 입력할 수 없습니다.")
     private String password;
 
     private String provider = MemberConstant.PROVIDER_NORMAL;
@@ -28,6 +27,18 @@ public class CreateMemberRequest {
     private String skillSet;
 
     public String getSillSet(){
-        return skillSet != null ? skillSet.toLowerCase() : null;
+        return skillSet != null ? skillSet.toLowerCase().trim() : null;
+    }
+
+    @Override
+    public String toString() {
+        return "CreateMemberRequest{" +
+                "email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", provider='" + provider + '\'' +
+                ", nickname='" + nickname + '\'' +
+                ", profileImageUrl='" + profileImageUrl + '\'' +
+                ", skillSet='" + skillSet + '\'' +
+                '}';
     }
 }
