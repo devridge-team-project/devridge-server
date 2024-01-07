@@ -1,10 +1,6 @@
 package org.devridge.api.security.filter;
 
-import com.fasterxml.jackson.core.exc.StreamWriteException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.entity.RefreshToken;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
@@ -18,7 +14,6 @@ import org.devridge.common.dto.BaseResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -51,7 +46,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws WrongLoginException {
-        logger.debug("=== JwtAuthenticationFilter - attemptAuthentication() ====");
+        logger.info("=== JwtAuthenticationFilter - attemptAuthentication() ====");
         try {
             // form으로 넘어온 값으로 member 객체를 생성
             Member member = new ObjectMapper().readValue(request.getReader(), Member.class);
@@ -68,7 +63,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
-        logger.debug("=== JwtAuthenticationFilter - successfulAuthentication() ====");
+        logger.info("=== JwtAuthenticationFilter - successfulAuthentication() ====");
 
         // 1. 로그인 성공된 유저 조회
         Member member = ((CustomMemberDetails) authResult.getPrincipal()).getMember();

@@ -10,10 +10,13 @@ import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
 import org.devridge.api.security.auth.AuthProperties;
 import org.devridge.api.security.auth.CustomMemberDetails;
+import org.devridge.api.security.auth.CustomMemberDetailsService;
 import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;
 import org.devridge.common.dto.BaseResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,6 +39,7 @@ import java.util.Optional;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private MemberRepository memberRepository;
     private RefreshTokenRepository refreshTokenRepository;
+    private static final Logger logger = LoggerFactory.getLogger(CustomMemberDetailsService.class);
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository, RefreshTokenRepository refreshTokenRepository) {
         super(authenticationManager);
@@ -55,6 +59,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, UserPrincipalNotFoundException {
+
+        logger.info("JwtAuthorizationFilter - doFilterInternal() ");
 
         if (isExcludedUrl(request)) {
             filterChain.doFilter(request, response); //이 필터 스킵. 다음꺼 실행.
@@ -145,10 +151,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private static String checkAccessToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        String accessToken = null;
-        try {
-            accessToken = request.getHeader("devAccessToken");
-        } catch (NullPointerException e) {
+        String accessToken = request.getHeader("devAccessToken");
+        if(accessToken == null){
             filterChain.doFilter(request, response);
             return null;
         }
