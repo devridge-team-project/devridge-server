@@ -66,3 +66,4 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-green
             sudo docker run -d -p ${{ secrets.DEV_BLUE_PORT }}:${{ secrets.DEV_BASIC_PORT }} --rm --name dev-blue ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-blue
             sudo docker run -d -p ${{ secrets.DEV_GREEN_PORT }}:${{ secrets.DEV_BASIC_PORT }} --rm --name dev-green ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-green
+            sudo docker image prune -f
