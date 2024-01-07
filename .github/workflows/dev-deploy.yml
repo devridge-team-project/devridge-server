@@ -33,6 +33,9 @@ jobs:
             
       - name: Gradle execute permission for gradlew
         run: chmod +x ./gradlew
+
+      - name: Update and Init Submodule
+        run: git submodule update --remote --init
         
       - name: Build with Gradle
         run: ./gradlew clean build
