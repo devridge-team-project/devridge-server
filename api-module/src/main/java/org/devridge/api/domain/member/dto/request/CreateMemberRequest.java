@@ -26,4 +26,8 @@ public class CreateMemberRequest {
     private String profileImageUrl;
 
     private String skillSet;
+
+    public String getSillSet(){
+        return skillSet != null ? skillSet.toLowerCase() : null;
+    }
 }

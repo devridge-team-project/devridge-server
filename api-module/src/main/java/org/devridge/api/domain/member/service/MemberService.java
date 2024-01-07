@@ -35,6 +35,10 @@ public class MemberService {
     public void createMember(CreateMemberRequest reqDto){
         checkDuplMember(reqDto);
         passwordChecker.checkWeakPassword(reqDto.getPassword());
+        
+        if(!areSkillsValid(reqDto.getSkillSet())){
+            throw new SkillsNotValidException();
+        }
 
         Member member = createNormalMember(reqDto);
         Member savedMember = memberRepository.save(member);
@@ -44,10 +48,6 @@ public class MemberService {
 
     private void createMemberSkill(CreateMemberRequest reqDto, Member member) {
         Set<String> userSkills = new HashSet<>(Arrays.asList(reqDto.getSkillSet().split(",")));
-
-        if (!areSkillsValid(userSkills)) {
-            throw new SkillsNotValidException();
-        }
 
         /**
          * 성능 최적화 하기!! (SQL query)
@@ -95,7 +95,13 @@ public class MemberService {
         }
     }
 
-    public boolean areSkillsValid(Set<String> userSkills) {
-        return SkillConstants.SKILL_SET.containsAll(userSkills);
+    public boolean areSkillsValid(String userSkills) {
+        Set<String> userSkillSet = new HashSet<>();
+
+        for (String skill : userSkills.split(",")) {
+            userSkillSet.add(skill.trim());
+        }
+
+        return SkillConstants.SKILL_SET.containsAll(userSkillSet);
     }
 }

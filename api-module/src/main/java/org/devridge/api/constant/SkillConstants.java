@@ -10,13 +10,13 @@ public class SkillConstants {
 
     static {
         Set<String> tempSet = new HashSet<>();
-        tempSet.add("MySQL");
-        tempSet.add("Java");
-        tempSet.add("C++");
-        tempSet.add("AWS");
-        tempSet.add("SpringBoot");
-        tempSet.add("JavaScript");
-        tempSet.add("nodeJS");
+        tempSet.add("mysql");
+        tempSet.add("java");
+        tempSet.add("c++");
+        tempSet.add("aws");
+        tempSet.add("springboot");
+        tempSet.add("javascript");
+        tempSet.add("nodejs");
 
         /**
          * 유저의 스킬셋 추가
