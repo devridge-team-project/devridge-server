@@ -55,7 +55,7 @@ jobs:
           key: ${{ secrets.DEV_KEY }}
           envs: GITHUB_SHA
           script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-blue .
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-green .
-            sudo docker run -it -p ${{ secrets.DEV_PORT }}:${{ secrets.DEV_PORT }} --rm --name ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-blue dev-blue
-            sudo docker run -it -p ${{ secrets.DEV_PORT }}:${{ secrets.DEV_PORT }} --rm --name ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-green dev-green
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-blue
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-green
+            sudo docker run -p ${{ secrets.DEV_BLUE_PORT }}:${{ secrets.DEV_BASIC_PORT }} --rm --name ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-blue dev-blue
+            sudo docker run -p ${{ secrets.DEV_GREEN_PORT }}:${{ secrets.DEV_BASIC_PORT }} --rm --name ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-green dev-green
