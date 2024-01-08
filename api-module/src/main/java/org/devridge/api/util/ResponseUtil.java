@@ -19,6 +19,7 @@ public class ResponseUtil {
 
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         response.setContentType(MediaType.APPLICATION_JSON.toString());
+        response.setStatus(baseResponse.getCode());
 
         objectMapper.writeValue(response.getOutputStream(), baseResponse);
     }

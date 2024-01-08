@@ -120,21 +120,22 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try{
             Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByMemberId(member.getId());
 
-            refreshTokenRepository.findByMemberId(member.getId())
-                            .ifPresent(refreshTokenRepository::delete);
+            if(refreshTokenOpt.isPresent()){
+                refreshTokenRepository.delete(refreshTokenOpt.get());
+            }
 
-            RefreshToken newRefreshToken = buildRefreshToken(member.getId(), refreshToken);
-
+            RefreshToken newRefreshToken = buildRefreshToken(member, refreshToken);
             return refreshTokenRepository.save(newRefreshToken).getId();
+
         }catch(NullPointerException e) {
             throw new AuthenticationServiceException("유효하지 않은 사용자입니다.");
         }
     }
 
-    private static RefreshToken buildRefreshToken(Long memberId, String refreshToken) {
+    private static RefreshToken buildRefreshToken(Member member, String refreshToken) {
         RefreshToken newRefreshToken = RefreshToken.builder()
                 .refreshToken(refreshToken)
-                .memberId(memberId)
+                .member(member)
                 .build();
         return newRefreshToken;
     }

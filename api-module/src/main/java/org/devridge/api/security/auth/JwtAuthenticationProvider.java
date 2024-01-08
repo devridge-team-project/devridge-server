@@ -13,7 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @RequiredArgsConstructor
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
-    private final CustomMemberDetailsService customUserDetailsService;
+    private final CustomMemberDetailsService customMemberDetailsService;
     private final BCryptPasswordEncoder passwordEncoder;
 
     private static final Logger logger = LoggerFactory.getLogger(CustomMemberDetailsService.class);
@@ -26,7 +26,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         String email = token.getName();
         String password = token.getCredentials().toString();
 
-        CustomMemberDetails savedMember = (CustomMemberDetails) customUserDetailsService.loadUserByUsername(email);
+        CustomMemberDetails savedMember = (CustomMemberDetails) customMemberDetailsService.loadUserByUsername(email);
 
         if(!passwordEncoder.matches(password, savedMember.getPassword())) {
             throw new BadCredentialsException("로그인 정보가 올바르지 않습니다.");
@@ -34,6 +34,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         return new UsernamePasswordAuthenticationToken(savedMember, password, savedMember.getAuthorities());
     }
+
 
     @Override
     public boolean supports(Class<?> authentication) {
