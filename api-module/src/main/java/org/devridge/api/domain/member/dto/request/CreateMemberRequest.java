@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.devridge.api.constant.MemberConstant;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Arrays;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,10 +25,14 @@ public class CreateMemberRequest {
 
     private String profileImageUrl;
 
-    private String skillSet;
+    private String skills;
 
-    public String getSillSet(){
-        return skillSet != null ? skillSet.toLowerCase().trim() : null;
+    public String[] getSkills(){
+        String[] skillSet = Arrays.stream(skills.split(","))
+                .map(String::trim)
+                .map(String::toLowerCase)
+                .toArray(String[]::new);
+        return skillSet;
     }
 
     @Override
@@ -38,7 +43,7 @@ public class CreateMemberRequest {
                 ", provider='" + provider + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", profileImageUrl='" + profileImageUrl + '\'' +
-                ", skillSet='" + skillSet + '\'' +
+                ", skillSet='" + skills + '\'' +
                 '}';
     }
 }

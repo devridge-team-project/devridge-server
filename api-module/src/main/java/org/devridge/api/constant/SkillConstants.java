@@ -13,9 +13,12 @@ public class SkillConstants {
         tempSet.add("mysql");
         tempSet.add("java");
         tempSet.add("c++");
+        tempSet.add("python");
         tempSet.add("aws");
+        tempSet.add("spring");
         tempSet.add("springboot");
         tempSet.add("javascript");
+        tempSet.add("react");
         tempSet.add("nodejs");
 
         /**

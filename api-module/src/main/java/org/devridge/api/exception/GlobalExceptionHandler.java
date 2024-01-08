@@ -1,5 +1,6 @@
 package org.devridge.api.exception;
 
+import org.devridge.api.exception.member.DuplEmailException;
 import org.devridge.api.exception.member.PasswordNotMatchException;
 import org.devridge.api.exception.member.SkillsNotValidException;
 import org.devridge.api.exception.member.WeakPasswordException;
@@ -34,6 +35,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(WeakPasswordException.class)
     public ResponseEntity<BaseResponse> handleException(WeakPasswordException e) {
+        BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplEmailException.class)
+    public ResponseEntity<BaseResponse> handleException(DuplEmailException e) {
         BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
