@@ -25,7 +25,7 @@ public class CommunityCommentLikeDislike {
 
     @MapsId("commentId")
     @ManyToOne
-    @JoinColumn(name = "comment_id", insertable = false, updatable = false)
+    @JoinColumn(name = "community_comment_id", insertable = false, updatable = false)
     private CommunityComment communityComment;
 
     private Character status;
