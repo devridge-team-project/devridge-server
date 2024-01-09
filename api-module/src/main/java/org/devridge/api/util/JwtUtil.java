@@ -1,15 +1,13 @@
 package org.devridge.api.util;
 
-import lombok.NoArgsConstructor;
-import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.security.auth.AuthProperties;
-import org.springframework.http.ResponseCookie;
-import org.springframework.stereotype.Component;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.NoArgsConstructor;
+import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.security.auth.AuthProperties;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
@@ -23,8 +21,8 @@ public class JwtUtil {
     private static long TOKEN_VALIDITY_TIME_IN_MINUTES = TOKEN_VALIDITY_TIME_IN_SECONDS * 60;
     private static long TOKEN_VALIDITY_TIME_IN_HOURS = TOKEN_VALIDITY_TIME_IN_MINUTES * 60;
 
-    private static long ACCESS_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_TIME_IN_SECONDS * 5; // 5초(임시)
-    private static long REFRESH_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_TIME_IN_SECONDS * 9;  // 9초 (임시)
+    private static long ACCESS_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_TIME_IN_MINUTES * 15; // 15분
+    private static long REFRESH_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_TIME_IN_MINUTES * 60 * 12;  // 12시간
 
     public static String createAccessToken(Member member, Long refreshTokenId) {
         return Jwts.builder()

@@ -14,5 +14,4 @@ import org.springframework.stereotype.Component;
 public class TokenResponse {
 
     private String accessToken;
-    private String refreshToken;
 }
