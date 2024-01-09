@@ -30,4 +30,6 @@ if [ -n "$EXIST_AFTER" ]; then
   sudo nginx -s reload
   # 이전 컨테이너 종료
   sudo docker stop "dev-$STOP_CONTAINER"
+else
+  sudo ./slack_${START_CONTAINER}.sh
 fi

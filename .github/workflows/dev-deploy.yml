@@ -53,7 +53,6 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-blue
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-green
 
-      # TODO: 추후 script 파일 추가 예정
       - name: Run in EC2
         uses: appleboy/ssh-action@master
         with:
@@ -67,3 +66,14 @@ jobs:
             cd server
             ./deploy.sh
             sudo docker image prune -f
+
+      - name: Send Slack Alert
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: deploy result - ${{ job.status }}
+          SLACK_TITLE: deploy result alert
+          SLACK_USERNAME: Devridge-Bot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_URL }}
+        if: always()
