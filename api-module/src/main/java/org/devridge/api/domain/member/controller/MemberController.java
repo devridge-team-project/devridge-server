@@ -35,4 +35,17 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Auth TEST API : 추후에 꼭 지워야 함!!
+     * */
+    @GetMapping("/test")
+    public ResponseEntity<?> testAuthentication(){
+
+        BaseResponse baseResponse = new BaseResponse(
+                HttpStatus.OK.value(),
+                "test api"
+        );
+        return new ResponseEntity(baseResponse, HttpStatus.OK);
+    }
+
 }
