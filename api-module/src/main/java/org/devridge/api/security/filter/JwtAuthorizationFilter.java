@@ -12,6 +12,7 @@ import org.devridge.api.security.auth.AuthProperties;
 import org.devridge.api.security.auth.CustomMemberDetails;
 import org.devridge.api.security.auth.CustomMemberDetailsService;
 import org.devridge.api.security.dto.TokenResponse;
+import org.devridge.api.util.AccessTokenUtil;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;
 import org.devridge.common.dto.BaseResponse;
@@ -60,16 +61,19 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, UserPrincipalNotFoundException {
 
-        logger.info("JwtAuthorizationFilter - doFilterInternal() ");
+        System.out.println("JwtAuthorizationFilter - doFilterInternal()");
 
         if (isExcludedUrl(request)) {
-            filterChain.doFilter(request, response); //이 필터 스킵. 다음꺼 실행.
+            filterChain.doFilter(request, response); //이 필터 스킵, 다음꺼 실행.
             return;
         }
 
-        String accessToken = checkAccessToken(request, response, filterChain);
-        if(accessToken == null) {
-            //filterChain.doFilter(request, response);
+        String accessToken = null;
+        try{
+            accessToken = AccessTokenUtil.extractAccessTokenFromRequest(request);
+        }catch (NullPointerException e){
+            System.out.println("no access token");
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -77,7 +81,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         Claims claims = null;
 
         try {
-            claims = Jwts.parserBuilder().setSigningKey(AuthProperties.getAccessSecret()).build().parseClaimsJws(accessToken).getBody();
+            claims = AccessTokenUtil.getClaimsFromAccessToken(accessToken);
         } catch (ExpiredJwtException e) {
             claims = e.getClaims();
             isAccessTokenExpired = true;
@@ -89,74 +93,77 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        // 토큰에 저장된 유저정보가 존재하지 않는 경우 예외처리
-        Optional<Member> savedMember = memberRepository.findByEmailAndProvider(claims.get("email").toString(), claims.get("provider").toString());
-        savedMember.orElseThrow(() -> new UserPrincipalNotFoundException("엑세스 토큰에 저장된 유저 정보가 존재하지 않습니다."));
+        Optional<Member> memberOpt = findMemberFromAccessTokenClaims(response, claims);
+        if (!memberOpt.isPresent()) return;
 
-        // 액세스토큰이 만료된 경우
         if(isAccessTokenExpired) {
-            if (issueNewAccessToken(request, response, filterChain, claims, savedMember.get())) return;
+            System.out.println("엑세스토큰이 만료되었습니다.");
+            Long refreshTokenId = ((Integer)claims.get("refreshTokenId")).longValue();
+            Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findById(refreshTokenId);
+
+            if(!refreshTokenOpt.isPresent()){
+                filterChain.doFilter(request, response);
+                return;
+            }
+            // 리프레시 토큰이 살아있는 경우
+            RefreshToken refreshToken = refreshTokenOpt.get();
+            if (issueNewAccessToken(request, response, filterChain, refreshToken, memberOpt.get())) {
+                return;
+            }
         }
 
-        this.saveAuthenticationToSecurityContextHolder(savedMember.get());
+        this.saveAuthenticationToSecurityContextHolder(memberOpt.get());
         filterChain.doFilter(request, response);
     }
 
-    private boolean issueNewAccessToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, Claims claims, Member savedMember) throws IOException, ServletException {
-        Long refreshTokenId = (Long)claims.get("refreshTokenId");
-        Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findById(refreshTokenId);
+    private Optional<Member> findMemberFromAccessTokenClaims(HttpServletResponse response, Claims claims) throws IOException {
+        Optional<Member> savedMember = memberRepository.findByEmailAndProvider(claims.get("memberEmail").toString(), claims.get("provider").toString());
+        if(!savedMember.isPresent()) {
+            BaseResponse baseResponse = new BaseResponse(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    "엑세스 토큰이 유효하지 않습니다."
+            );
+            ResponseUtil.createResponseMessage(response, baseResponse);
+            return null;
+        }
+        return savedMember;
+    }
 
-        // 액세스토큰과 매칭된 리프레시토큰을 DB에서 조회한다
-        if(refreshTokenOpt.isPresent()) {
-            Claims refreshTokenClaims = null;
-            String refreshToken = refreshTokenOpt.get().getRefreshToken();
+    private boolean issueNewAccessToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, RefreshToken refreshToken, Member savedMember) throws IOException, ServletException {
+        Claims refreshTokenClaims = null;
 
-            try {
-                refreshTokenClaims = Jwts.parserBuilder().setSigningKey(AuthProperties.getRefreshSecret()).build().parseClaimsJws(refreshToken).getBody();
-            } catch (ExpiredJwtException e) {
-                // 리프레시 토큰이 만료된 경우₩
-                // 만료된 리프레시 토큰을 제거 후 doFitler => 재인증을 받아야 함
-                refreshTokenRepository.delete(refreshTokenOpt.get());
-                filterChain.doFilter(request, response);
-                return true;
-            } catch (MalformedJwtException e) {
-                filterChain.doFilter(request, response);
-                return true;
-            } catch (Exception e) {     // TODO :: 구체 예외 처리
-                filterChain.doFilter(request, response);
-                return true;
-            }
+        try {
+            refreshTokenClaims = Jwts.parserBuilder().setSigningKey(AuthProperties.getRefreshSecret()).build().parseClaimsJws(refreshToken.getRefreshToken()).getBody();
+        } catch (ExpiredJwtException e) {
+            refreshTokenRepository.delete(refreshToken);
 
-            // 리프레시 토큰이 만료되지 않음 : 액세스토큰 재발급
-            String newAccessToken = JwtUtil.createAccessToken(savedMember, refreshTokenId);
-
-            if(refreshTokenClaims != null) {
-
-                BaseResponse baseResponse = new BaseResponse(
-                        HttpStatus.OK.value(),
-                        "엑세스토큰 재발급",
-                        new TokenResponse(newAccessToken, null)
-                );
-
-                ResponseUtil.createResponseMessage(
-                        response, baseResponse
-                );
-
-            }
-        }else {
+            BaseResponse baseResponse = new BaseResponse(
+                    HttpStatus.UNAUTHORIZED.value(),
+                    "재인증이 필요합니다."
+            );
+            ResponseUtil.createResponseMessage(response, baseResponse);
+            return true;
+        } catch (MalformedJwtException e) {
+            filterChain.doFilter(request, response);
+            return true;
+        } catch (Exception e) {     // TODO :: 구체 예외 처리
             filterChain.doFilter(request, response);
             return true;
         }
-        return false;
-    }
 
-    private static String checkAccessToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        String accessToken = request.getHeader("devAccessToken");
-        if(accessToken == null){
-            filterChain.doFilter(request, response);
-            return null;
+        // 리프레시 토큰이 존재한다면 액세스토큰 재발급
+        String newAccessToken = JwtUtil.createAccessToken(savedMember, refreshToken.getId());
+
+        if(refreshTokenClaims != null) {
+            BaseResponse baseResponse = new BaseResponse(
+                    HttpStatus.OK.value(),
+                    "엑세스토큰 재발급",
+                    new TokenResponse(newAccessToken)
+            );
+
+            ResponseUtil.createResponseMessage(response, baseResponse);
         }
-        return accessToken;
+        return false;
     }
 
     private void saveAuthenticationToSecurityContextHolder(Member member) {
@@ -168,7 +175,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private boolean isExcludedUrl(HttpServletRequest request) {
-        String requestUri = request.getRequestURI();
         return excludedUrlPatterns.stream().anyMatch(pattern -> pattern.matches(request));
     }
 }

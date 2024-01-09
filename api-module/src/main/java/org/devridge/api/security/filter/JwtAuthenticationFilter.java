@@ -6,13 +6,10 @@ import org.devridge.api.domain.member.entity.RefreshToken;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
 import org.devridge.api.exception.member.WrongLoginException;
 import org.devridge.api.security.auth.CustomMemberDetails;
-import org.devridge.api.security.auth.CustomMemberDetailsService;
 import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;
 import org.devridge.common.dto.BaseResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,7 +29,6 @@ import java.util.Optional;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private RefreshTokenRepository refreshTokenRepository;
     private TokenResponse tokenResponse;
-    private static final Logger logger = LoggerFactory.getLogger(CustomMemberDetailsService.class);
 
     /*
         form 로그인이 아닌, 커스텀 로그인에서 api 요청시 인증 필터를 진행할 url
@@ -46,7 +42,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws WrongLoginException {
-        logger.info("=== JwtAuthenticationFilter - attemptAuthentication() ====");
+        System.out.println("=== JwtAuthenticationFilter - attemptAuthentication() ====");
         try {
             // form으로 넘어온 값으로 member 객체를 생성
             Member member = new ObjectMapper().readValue(request.getReader(), Member.class);
@@ -63,7 +59,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
-        logger.info("=== JwtAuthenticationFilter - successfulAuthentication() ====");
+        System.out.println("=== JwtAuthenticationFilter - successfulAuthentication() ====");
 
         // 1. 로그인 성공된 유저 조회
         Member member = ((CustomMemberDetails) authResult.getPrincipal()).getMember();
@@ -77,7 +73,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         TokenResponse tokenResponse = this.tokenResponse.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
                 .build();
 
         BaseResponse baseResponse = new BaseResponse(

@@ -1,8 +1,6 @@
 package org.devridge.api.security.auth;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,11 +14,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     private final CustomMemberDetailsService customMemberDetailsService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomMemberDetailsService.class);
-
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        logger.debug("=== JwtAuthenticationProvider - authenticate() ====");
+        System.out.println("=== JwtAuthenticationProvider - authenticate() ====");
         UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
 
         String email = token.getName();
