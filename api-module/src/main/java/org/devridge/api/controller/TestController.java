@@ -10,6 +10,6 @@ public class TestController {
 
     @GetMapping
     public String hello() {
-        return "환영합니다!!!!!";
+        throw new RuntimeException("메롱");
     }
 }
