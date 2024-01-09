@@ -55,7 +55,7 @@ public class SecurityConfig {
         http
                 .logout()
                 .logoutUrl("/api/logout")
-                .logoutSuccessHandler(new CustomLogoutHandler());
+                .logoutSuccessHandler(new CustomLogoutHandler(refreshTokenRepository));
 
         http
                 .authorizeRequests()
@@ -77,6 +77,11 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public CustomLogoutHandler customLogoutHandler(){
+        return new CustomLogoutHandler(refreshTokenRepository);
     }
 
     @Bean
