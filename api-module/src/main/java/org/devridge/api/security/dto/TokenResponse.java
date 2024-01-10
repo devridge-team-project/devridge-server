@@ -6,11 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+@Component
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Component
 public class TokenResponse {
 
     private String accessToken;

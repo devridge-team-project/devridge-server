@@ -34,7 +34,7 @@ public class CustomLogoutHandler implements LogoutSuccessHandler {
         Long refreshTokenId = RefreshTokenUtil.getRefreshTokenIdFromClaims(claims);
 
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findById(refreshTokenId);
-        if(refreshToken.isPresent()){
+        if (refreshToken.isPresent()) {
             refreshTokenRepository.delete(refreshToken.get());
         }
 
@@ -42,6 +42,7 @@ public class CustomLogoutHandler implements LogoutSuccessHandler {
                 HttpStatus.OK.value(),
                 "logout success"
         );
+
         ResponseUtil.createResponseMessage(response, baseResponse);
     }
 

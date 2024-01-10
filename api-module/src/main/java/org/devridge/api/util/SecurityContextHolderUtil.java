@@ -3,9 +3,7 @@ package org.devridge.api.util;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.security.auth.CustomMemberDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
-@Component
 public class SecurityContextHolderUtil {
 
     public static Long getMemberId(){

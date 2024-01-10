@@ -30,9 +30,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private RefreshTokenRepository refreshTokenRepository;
     private TokenResponse tokenResponse;
 
-    /*
-        form 로그인이 아닌, 커스텀 로그인에서 api 요청시 인증 필터를 진행할 url
-     */
     public JwtAuthenticationFilter(RefreshTokenRepository refreshTokenRepository, TokenResponse tokenResponse) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.tokenResponse = tokenResponse;
@@ -46,7 +43,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try {
             // form으로 넘어온 값으로 member 객체를 생성
             Member member = new ObjectMapper().readValue(request.getReader(), Member.class);
-            UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(member.getEmail(), member.getPassword());
+
+            UsernamePasswordAuthenticationToken userToken =
+                    new UsernamePasswordAuthenticationToken(member.getEmail(), member.getPassword());
+
             this.setDetails(request, userToken);
 
             // AuthenticationManager 에 인증을 위임한다.
@@ -96,7 +96,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         BaseResponse baseResponse = null;
 
         // 2. 예외에 따른 response 세팅
-        if(failedType.equals(BadCredentialsException.class) || failedType.equals(UsernameNotFoundException.class)) {
+        if (failedType.equals(BadCredentialsException.class) || failedType.equals(UsernameNotFoundException.class)) {
             baseResponse = new BaseResponse(
                     HttpStatus.UNAUTHORIZED.value(),
                     failed.getLocalizedMessage()
@@ -108,6 +108,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     failed.getLocalizedMessage()
             );
         }
+
         ResponseUtil.createResponseMessage(response, baseResponse);
     }
 
@@ -115,14 +116,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         try{
             Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByMemberId(member.getId());
 
-            if(refreshTokenOpt.isPresent()){
+            if (refreshTokenOpt.isPresent()){
                 refreshTokenRepository.delete(refreshTokenOpt.get());
             }
-
             RefreshToken newRefreshToken = buildRefreshToken(member, refreshToken);
+
             return refreshTokenRepository.save(newRefreshToken).getId();
 
-        }catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             throw new AuthenticationServiceException("유효하지 않은 사용자입니다.");
         }
     }
@@ -132,6 +133,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .refreshToken(refreshToken)
                 .member(member)
                 .build();
+
         return newRefreshToken;
     }
 

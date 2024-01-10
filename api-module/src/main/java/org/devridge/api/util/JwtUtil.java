@@ -7,14 +7,12 @@ import io.jsonwebtoken.security.Keys;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.security.auth.AuthProperties;
-import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
 @NoArgsConstructor
 public class JwtUtil {
     private static long TOKEN_VALIDITY_TIME_IN_SECONDS = 1000;

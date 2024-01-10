@@ -69,9 +69,10 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         String accessToken = null;
-        try{
+
+        try {
             accessToken = AccessTokenUtil.extractAccessTokenFromRequest(request);
-        }catch (NullPointerException e){
+        } catch (NullPointerException e){
             System.out.println("no access token");
             filterChain.doFilter(request, response);
             return;
@@ -96,8 +97,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         Optional<Member> memberOpt = findMemberFromAccessTokenClaims(response, claims);
         if (!memberOpt.isPresent()) return;
 
-        if(isAccessTokenExpired) {
+        if (isAccessTokenExpired) {
             System.out.println("엑세스토큰이 만료되었습니다.");
+
             Long refreshTokenId = ((Integer)claims.get("refreshTokenId")).longValue();
             Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findById(refreshTokenId);
 
@@ -117,8 +119,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private Optional<Member> findMemberFromAccessTokenClaims(HttpServletResponse response, Claims claims) throws IOException {
-        Optional<Member> savedMember = memberRepository.findByEmailAndProvider(claims.get("memberEmail").toString(), claims.get("provider").toString());
-        if(!savedMember.isPresent()) {
+        Optional<Member> savedMember = memberRepository.findByEmailAndProvider(
+                claims.get("memberEmail").toString(),
+                claims.get("provider").toString()
+        );
+
+        if (!savedMember.isPresent()) {
             BaseResponse baseResponse = new BaseResponse(
                     HttpStatus.UNAUTHORIZED.value(),
                     "엑세스 토큰이 유효하지 않습니다."
@@ -126,14 +132,18 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             ResponseUtil.createResponseMessage(response, baseResponse);
             return null;
         }
+
         return savedMember;
     }
 
     private boolean issueNewAccessToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, RefreshToken refreshToken, Member savedMember) throws IOException, ServletException {
         Claims refreshTokenClaims = null;
+        boolean hasErrorOccured = true;
 
         try {
-            refreshTokenClaims = Jwts.parserBuilder().setSigningKey(AuthProperties.getRefreshSecret()).build().parseClaimsJws(refreshToken.getRefreshToken()).getBody();
+            refreshTokenClaims =
+                    Jwts.parserBuilder().setSigningKey(AuthProperties.getRefreshSecret()).build().parseClaimsJws(refreshToken.getRefreshToken()).getBody();
+            hasErrorOccured = false;
         } catch (ExpiredJwtException e) {
             refreshTokenRepository.delete(refreshToken);
 
@@ -145,16 +155,18 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return true;
         } catch (MalformedJwtException e) {
             filterChain.doFilter(request, response);
-            return true;
         } catch (Exception e) {     // TODO :: 구체 예외 처리
             filterChain.doFilter(request, response);
+        }
+
+        if (hasErrorOccured) {
             return true;
         }
 
         // 리프레시 토큰이 존재한다면 액세스토큰 재발급
         String newAccessToken = JwtUtil.createAccessToken(savedMember, refreshToken.getId());
 
-        if(refreshTokenClaims != null) {
+        if (refreshTokenClaims != null) {
             BaseResponse baseResponse = new BaseResponse(
                     HttpStatus.OK.value(),
                     "엑세스토큰 재발급",
@@ -170,7 +182,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         CustomMemberDetails memberDetails = new CustomMemberDetails(member);
 
         // 인가 처리가 정상적으로 완료된다면 Authentication 객체 생성
-        Authentication authentication = new UsernamePasswordAuthenticationToken(memberDetails, null, memberDetails.getAuthorities());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                memberDetails, null, memberDetails.getAuthorities()
+        );
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 

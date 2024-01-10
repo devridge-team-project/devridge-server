@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class DuplEmailException extends RuntimeException {
     private String message;
+
     public DuplEmailException(String message) {
         super(message);
         this.message = message;
