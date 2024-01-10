@@ -1,22 +1,14 @@
 package org.devridge.api.security.constant;
 
-public interface SecurityConstant {
+import org.springframework.beans.factory.annotation.Value;
 
-    String USER_ROLE = "USER";
+public class SecurityConstant {
 
-    String[] ALL_PERMIT_PATHS = new String[]{
-            "/api/users",
-            "/api/login",
-            "/api/users/emails/availability",
-            "/api/login/**",
-            "/api/social-login",
-            "/api/social-login/**",
-            "/api/emails/send-verification-email",
-            "/api/emails/verify-code",
-    };
+    public static final String USER_ROLE = "USER";
 
-    String[] USER_ROLE_PERMIT_PATHS = new String[]{
-            "/api/**",
-    };
+    @Value("${devridge.security.all-permit-paths}")
+    public String[] ALL_PERMIT_PATHS;
 
+    @Value("${devridge.security.user-role-permit-paths}")
+    public String[] USER_ROLE_PERMIT_PATHS;
 }

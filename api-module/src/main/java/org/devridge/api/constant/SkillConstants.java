@@ -29,6 +29,6 @@ public class SkillConstants {
     }
 
     private SkillConstants() {
-        // 이 클래스는 인스턴스화되지 않아야 함
     }
+
 }

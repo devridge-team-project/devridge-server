@@ -62,14 +62,19 @@ public class SecurityConfig {
 
         http
                 .authorizeRequests()
-                .antMatchers(SecurityConstant.ALL_PERMIT_PATHS).permitAll()
-                .antMatchers(SecurityConstant.USER_ROLE_PERMIT_PATHS).hasRole(SecurityConstant.USER_ROLE)
+                .antMatchers(securityConstant().ALL_PERMIT_PATHS).permitAll()
+                .antMatchers(securityConstant().USER_ROLE_PERMIT_PATHS).hasRole(SecurityConstant.USER_ROLE)
                 .anyRequest().denyAll();
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterAfter(jwtAuthorizationFilter, JwtAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public SecurityConstant securityConstant() {
+        return new SecurityConstant();
     }
 
     @Bean
