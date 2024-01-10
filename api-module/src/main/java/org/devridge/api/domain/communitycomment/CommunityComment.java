@@ -20,18 +20,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.devridge.api.domain.community.Community;
 import org.devridge.api.domain.communitycommentlikedislike.CommunityCommentLikeDislike;
+import org.devridge.api.githubsociallogintemp.domain.Member;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Setter // 나중에 지우기
-@NoArgsConstructor( access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class CommunityComment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -45,6 +47,13 @@ public class CommunityComment {
     @ManyToOne
     @JoinColumn(name = "community_id", insertable = false, updatable = false)
     private Community community;
+
+    @Column(name = "member_id")
+    private Long memberId;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id", insertable = false, updatable = false)
+    private Member member;
 
     private String content;
 
