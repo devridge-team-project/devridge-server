@@ -1,9 +1,6 @@
 package org.devridge.api.exception;
 
-import org.devridge.api.exception.member.DuplEmailException;
-import org.devridge.api.exception.member.PasswordNotMatchException;
-import org.devridge.api.exception.member.SkillsNotValidException;
-import org.devridge.api.exception.member.WeakPasswordException;
+import org.devridge.api.exception.member.*;
 import org.devridge.common.dto.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,4 +41,11 @@ public class GlobalExceptionHandler {
         BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(MemberNotFoundException.class)
+    public ResponseEntity<BaseResponse> handleException(MemberNotFoundException e) {
+        BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 }

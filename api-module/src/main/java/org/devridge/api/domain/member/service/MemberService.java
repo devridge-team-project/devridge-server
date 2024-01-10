@@ -12,6 +12,7 @@ import org.devridge.api.domain.skill.entity.Skill;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.domain.skill.repository.SkillRepository;
 import org.devridge.api.exception.member.DuplEmailException;
+import org.devridge.api.exception.member.MemberNotFoundException;
 import org.devridge.api.exception.member.PasswordNotMatchException;
 import org.devridge.api.exception.member.SkillsNotValidException;
 import org.devridge.api.security.constant.SecurityConstant;
@@ -90,14 +91,18 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
+    @Transactional
     public void deleteMember(DeleteMemberRequest reqDto) {
         Member member = SecurityContextHolderUtil.getMember();
 
-        if (!passwordEncoder.matches(reqDto.getPassword(), member.getPassword())) {
+        Member findMember = memberRepository.findById(member.getId())
+                .orElseThrow(() -> new MemberNotFoundException("member not found"));
+
+        if (!passwordEncoder.matches(reqDto.getPassword(), findMember.getPassword())) {
             throw new PasswordNotMatchException();
         }
 
-        member.softDelete();
+        findMember.softDelete();
     }
 
     public boolean areSkillsValid(String[] skills) {
