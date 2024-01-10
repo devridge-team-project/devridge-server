@@ -1,9 +1,7 @@
 package org.devridge.api.domain.member.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.devridge.api.domain.AbstractTimeEntity;
 
 import javax.persistence.*;
@@ -11,9 +9,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "refresh_token")
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class RefreshToken extends AbstractTimeEntity {
 
     @Id
@@ -23,7 +18,16 @@ public class RefreshToken extends AbstractTimeEntity {
 
     private String refreshToken;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    public RefreshToken(String refreshToken, Member member) {
+        this.refreshToken = refreshToken;
+        this.member = member;
+    }
+
+    protected RefreshToken() {
+    }
 }

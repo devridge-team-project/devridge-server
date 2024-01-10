@@ -20,7 +20,7 @@ public class MemberSkill extends AbstractTimeEntity {
     @EmbeddedId
     private MemberSkillId id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("memberId") // MemberSkillId 내의 memberId와 매핑
     @JoinColumn(name = "member_id")
     private Member member;
