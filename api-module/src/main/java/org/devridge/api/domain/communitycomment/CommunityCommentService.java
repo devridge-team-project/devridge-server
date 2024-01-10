@@ -1,5 +1,6 @@
 package org.devridge.api.domain.communitycomment;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,5 +34,14 @@ public class CommunityCommentService {
             .memberId(memberId)
             .build();
         return communityCommentRepository.save(communityComment);
+    }
+
+    public List<CommunityComment> getAllComment(Long communityId) {
+        if (communityId == null) {
+            throw new IllegalArgumentException("커뮤니티 ID는 null일 수 없습니다.");
+        }
+        List<CommunityComment> communityComments =
+            communityCommentRepository.findByCommunityId(communityId);
+        return communityComments;
     }
 }
