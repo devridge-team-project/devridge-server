@@ -17,9 +17,10 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
-    @PostMapping("/one")
-    public ResponseEntity<?> signUp(@Valid @RequestBody CreateMemberRequest reqDto) {
-        memberService.createMember(reqDto);
+
+    @PostMapping("")
+    public ResponseEntity<?> signUp(@Valid @RequestBody CreateMemberRequest memberRequest) {
+        memberService.createMember(memberRequest);
 
         BaseResponse response = new BaseResponse(
                 HttpStatus.OK.value(),
@@ -28,9 +29,9 @@ public class MemberController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/one")
-    public ResponseEntity<?> deleteMember(@RequestBody DeleteMemberRequest reqDto){
-        memberService.deleteMember(reqDto);
+    @DeleteMapping("")
+    public ResponseEntity<?> deleteMember(@RequestBody DeleteMemberRequest memberRequest){
+        memberService.deleteMember(memberRequest);
 
         return ResponseEntity.ok().build();
     }
