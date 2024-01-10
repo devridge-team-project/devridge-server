@@ -26,11 +26,12 @@ public class MemberController {
                 HttpStatus.OK.value(),
                 "회원가입 성공"
         );
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("")
-    public ResponseEntity<?> deleteMember(@RequestBody DeleteMemberRequest memberRequest){
+    public ResponseEntity<?> deleteMember(@RequestBody DeleteMemberRequest memberRequest) {
         memberService.deleteMember(memberRequest);
 
         return ResponseEntity.ok().build();
@@ -40,13 +41,12 @@ public class MemberController {
      * Auth TEST API : 추후에 꼭 지워야 함!!
      * */
     @GetMapping("/test")
-    public ResponseEntity<?> testAuthentication(){
-
+    public ResponseEntity<?> testAuthentication() {
         BaseResponse baseResponse = new BaseResponse(
                 HttpStatus.OK.value(),
                 "test api"
         );
+
         return new ResponseEntity(baseResponse, HttpStatus.OK);
     }
-
 }

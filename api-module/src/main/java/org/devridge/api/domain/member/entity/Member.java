@@ -59,5 +59,4 @@ public class Member extends AbstractTimeEntity {
     public void softDelete(){
         isDeleted = true;
     }
-
 }
