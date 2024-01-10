@@ -1,7 +1,9 @@
 package org.devridge.api.domain.member.entity;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.devridge.api.domain.AbstractTimeEntity;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -10,6 +12,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "member")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends AbstractTimeEntity {
 
     @Id
@@ -51,9 +54,6 @@ public class Member extends AbstractTimeEntity {
         this.introduction = introduction;
         this.profileImageUrl = profileImageUrl;
         this.isDeleted = isDeleted;
-    }
-
-    protected Member() {
     }
 
     public void softDelete(){

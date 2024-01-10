@@ -49,7 +49,7 @@ public class MemberService {
         createMemberSkill(skills, member);
     }
 
-    public void createMemberSkill(String[] skills, Member member) {
+    private void createMemberSkill(String[] skills, Member member) {
         /**
          * 성능 최적화 하기!! (SQL query)
         * */

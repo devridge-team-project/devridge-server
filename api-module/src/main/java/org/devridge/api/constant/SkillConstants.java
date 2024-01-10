@@ -1,9 +1,13 @@
 package org.devridge.api.constant;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SkillConstants {
 
     public static final Set<String> SKILL_SET;
@@ -26,9 +30,6 @@ public class SkillConstants {
          * */
 
         SKILL_SET = Collections.unmodifiableSet(tempSet);
-    }
-
-    private SkillConstants() {
     }
 
 }

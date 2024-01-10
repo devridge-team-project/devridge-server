@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SkillsNotValidException.class)
     public ResponseEntity<BaseResponse> handleException(SkillsNotValidException e) {
-        BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST.value(), "사버에 존재하지 않는 직군이 포함되어 있습니다. 다시 확인 바랍니다.");
+        BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST.value(), "서버에 존재하지 않는 직군이 포함되어 있습니다. 다시 확인 바랍니다.");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
