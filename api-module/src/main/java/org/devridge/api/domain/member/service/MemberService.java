@@ -35,8 +35,8 @@ public class MemberService {
 
     @Transactional
     public void createMember(CreateMemberRequest memberRequest){
-        System.out.println("=== createMember() ===");
         checkDuplMember(memberRequest);
+
         passwordChecker.checkWeakPassword(memberRequest.getPassword());
 
         String[] skills = getSkills(memberRequest.getSkills());
@@ -50,8 +50,6 @@ public class MemberService {
     }
 
     public void createMemberSkill(String[] skills, Member member) {
-        System.out.println("== createMemberSkill() ==");
-
         /**
          * 성능 최적화 하기!! (SQL query)
         * */
@@ -77,7 +75,6 @@ public class MemberService {
     }
 
     private Member createNormalMember(CreateMemberRequest reqDto) {
-        System.out.println("=== createNormalMember() === ");
         String encodedPassword = passwordEncoder.encode(reqDto.getPassword());
 
         Member member = Member.builder()

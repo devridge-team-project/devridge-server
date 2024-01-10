@@ -27,7 +27,6 @@ public class CustomLogoutHandler implements LogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        System.out.println("=== CustomLogOutHandler - onLogoutSuccess() ===");
         String accessToken = AccessTokenUtil.extractAccessTokenFromRequest(request);
 
         Claims claims = AccessTokenUtil.getClaimsFromAccessToken(accessToken);

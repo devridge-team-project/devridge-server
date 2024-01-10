@@ -12,6 +12,5 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TokenResponse {
-
     private String accessToken;
 }

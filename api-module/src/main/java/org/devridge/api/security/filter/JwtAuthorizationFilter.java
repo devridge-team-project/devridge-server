@@ -61,8 +61,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, UserPrincipalNotFoundException {
 
-        System.out.println("JwtAuthorizationFilter - doFilterInternal()");
-
         if (isExcludedUrl(request)) {
             filterChain.doFilter(request, response); //이 필터 스킵, 다음꺼 실행.
             return;
@@ -103,7 +101,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             Long refreshTokenId = ((Integer)claims.get("refreshTokenId")).longValue();
             Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findById(refreshTokenId);
 
-            if(!refreshTokenOpt.isPresent()){
+            if (!refreshTokenOpt.isPresent()) {
                 filterChain.doFilter(request, response);
                 return;
             }
