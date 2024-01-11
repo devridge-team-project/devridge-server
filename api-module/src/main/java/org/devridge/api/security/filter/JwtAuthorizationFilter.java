@@ -71,7 +71,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         try {
             accessToken = AccessTokenUtil.extractAccessTokenFromRequest(request);
         } catch (NullPointerException e){
-            System.out.println("no access token");
             filterChain.doFilter(request, response);
             return;
         }
@@ -96,8 +95,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         if (!memberOpt.isPresent()) return;
 
         if (isAccessTokenExpired) {
-            System.out.println("엑세스토큰이 만료되었습니다.");
-
             Long refreshTokenId = ((Integer)claims.get("refreshTokenId")).longValue();
             Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findById(refreshTokenId);
 
