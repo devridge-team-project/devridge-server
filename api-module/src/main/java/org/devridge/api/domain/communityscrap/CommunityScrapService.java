@@ -3,6 +3,7 @@ package org.devridge.api.domain.communityscrap;
 import org.devridge.api.domain.community.Community;
 import org.devridge.api.githubsociallogintemp.domain.Member;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,5 +25,13 @@ public class CommunityScrapService {
             .community(community)
             .build();
         communityScrapRepository.save(communityScrap);
+    }
+
+    public void deleteScrap(Long memberId, Long communityId) {
+        try {
+            communityScrapRepository.deleteById(new CommunityScrapId(memberId, communityId));
+        } catch (EmptyResultDataAccessException e) {
+            throw new EmptyResultDataAccessException("스크랩이 존재하지 않습니다.", 1);
+        }
     }
 }
