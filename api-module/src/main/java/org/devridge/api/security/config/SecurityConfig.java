@@ -35,7 +35,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         AuthenticationConfiguration authConfig = http.getSharedObject(AuthenticationConfiguration.class);
         AuthenticationManager authenticationManager = authenticationManager(authConfig);
 
@@ -43,28 +42,28 @@ public class SecurityConfig {
         JwtAuthorizationFilter jwtAuthorizationFilter = jwtAuthorizationFilter(authenticationManager);
 
         http
-                .cors();
+            .cors();
 
         http
-                .csrf().disable()
-                .formLogin().disable()
-                .httpBasic().disable()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);    // jwt 사용으로 세션관리 해제
+            .csrf().disable()
+            .formLogin().disable()
+            .httpBasic().disable()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);    // jwt 사용으로 세션관리 해제
 
         http
-                .headers().frameOptions().sameOrigin();
+            .headers().frameOptions().sameOrigin();
 
         http
-                .logout()
-                .logoutUrl("/api/logout")
-                .logoutSuccessHandler(new CustomLogoutHandler(refreshTokenRepository));
+            .logout()
+            .logoutUrl("/api/logout")
+            .logoutSuccessHandler(new CustomLogoutHandler(refreshTokenRepository));
 
         http
-                .authorizeRequests()
-                .antMatchers(securityConstant().ALL_PERMIT_PATHS).permitAll()
-                .antMatchers(securityConstant().USER_ROLE_PERMIT_PATHS).hasRole(SecurityConstant.USER_ROLE)
-                .anyRequest().denyAll();
+            .authorizeRequests()
+            .antMatchers(securityConstant().ALL_PERMIT_PATHS).permitAll()
+            .antMatchers(securityConstant().USER_ROLE_PERMIT_PATHS).hasRole(SecurityConstant.USER_ROLE)
+            .anyRequest().denyAll();
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterAfter(jwtAuthorizationFilter, JwtAuthenticationFilter.class);

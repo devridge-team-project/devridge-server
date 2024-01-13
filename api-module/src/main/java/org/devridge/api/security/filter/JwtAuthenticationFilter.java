@@ -69,13 +69,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String accessToken = JwtUtil.createAccessToken(member, refreshTokenId);
 
         TokenResponse tokenResponse = this.tokenResponse.builder()
-                .accessToken(accessToken)
-                .build();
+            .accessToken(accessToken)
+            .build();
 
         BaseResponse baseResponse = new BaseResponse(
-                HttpStatus.OK.value(),
-                "login success",
-                tokenResponse
+            HttpStatus.OK.value(),
+            "login success",
+            tokenResponse
         );
 
         ResponseUtil.createResponseMessage(response, baseResponse);

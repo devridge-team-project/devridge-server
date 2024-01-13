@@ -23,8 +23,8 @@ public class MemberController {
         memberService.createMember(memberRequest);
 
         BaseResponse response = new BaseResponse(
-                HttpStatus.OK.value(),
-                "회원가입 성공"
+            HttpStatus.OK.value(),
+            "회원가입 성공"
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -35,18 +35,5 @@ public class MemberController {
         memberService.deleteMember(memberRequest);
 
         return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Auth TEST API : 추후에 꼭 지워야 함!!
-     * */
-    @GetMapping("/test")
-    public ResponseEntity<?> testAuthentication() {
-        BaseResponse baseResponse = new BaseResponse(
-                HttpStatus.OK.value(),
-                "test api"
-        );
-
-        return new ResponseEntity(baseResponse, HttpStatus.OK);
     }
 }

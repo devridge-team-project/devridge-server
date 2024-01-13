@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 public class CreateMemberRequest {
 
+    // TODO: 이메일 검증 로직 필요
     @NotBlank(message = "빈 이메일을 입력할 수 없습니다.")
     private String email;
 

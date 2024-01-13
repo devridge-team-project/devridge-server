@@ -24,6 +24,7 @@ public class Skill extends AbstractTimeEntity {
 
     private String skill;
 
+    @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
     private boolean isDeleted;
 
     @OneToMany(mappedBy = "skill")

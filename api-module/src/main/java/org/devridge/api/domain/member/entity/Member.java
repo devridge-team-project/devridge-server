@@ -32,6 +32,7 @@ public class Member extends AbstractTimeEntity {
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
+    // TODO: [필수] 이부분 고정타입일 것 같은데 enum 검증하도록 바꿔주시면 더 좋습니다.
     @Column(name = "roles", nullable = false)
     private String roles;
 

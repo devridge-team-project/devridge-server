@@ -7,7 +7,7 @@ import org.devridge.api.domain.member.dto.request.DeleteMemberRequest;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.skill.entity.MemberSkill;
-import org.devridge.api.domain.skill.entity.MemberSkillId;
+import org.devridge.api.domain.skill.entity.key.MemberSkillId;
 import org.devridge.api.domain.skill.entity.Skill;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.domain.skill.repository.SkillRepository;

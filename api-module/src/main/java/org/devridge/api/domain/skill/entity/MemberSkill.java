@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.AbstractTimeEntity;
 import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.domain.skill.entity.key.MemberSkillId;
 
 import javax.persistence.*;
 
@@ -30,6 +31,6 @@ public class MemberSkill extends AbstractTimeEntity {
     @JoinColumn(name = "skill_id")
     private Skill skill;
 
+    @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
     private boolean isDeleted;
-
 }

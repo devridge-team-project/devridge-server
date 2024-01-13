@@ -1,4 +1,4 @@
-package org.devridge.api.domain.skill.entity;
+package org.devridge.api.domain.skill.entity.key;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
