@@ -1,5 +1,6 @@
 package org.devridge.api.domain.qna.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class QnAComment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_id")
+    @JsonBackReference
     private QnA qna;
 
     @NotNull

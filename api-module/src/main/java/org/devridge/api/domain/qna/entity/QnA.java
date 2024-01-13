@@ -1,5 +1,6 @@
 package org.devridge.api.domain.qna.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,9 +36,13 @@ public class QnA extends BaseEntity {
     @NotNull
     private String content;
 
-    @ColumnDefault("0")
-    private Long views;
+//    @ColumnDefault("0")
+//    private Integer likes;
 
+    @ColumnDefault("0")
+    private Integer views;
+
+    @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "qna")
     List<QnAComment> comments = new ArrayList<>();
 
