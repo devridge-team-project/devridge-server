@@ -16,4 +16,11 @@ public interface QnARepository extends JpaRepository<QnA, Long> {
                 "ORDER BY Q.views DESC"
     )
     List<QnA> findAllQnASortByViews();
+
+    @Query(
+        value = "SELECT Q " +
+                "FROM QnA Q " +
+                "ORDER BY Q.createdAt DESC"
+    )
+    List<QnA> findAllQnASortByCreatedAt();
 }
