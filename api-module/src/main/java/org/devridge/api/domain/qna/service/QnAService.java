@@ -22,7 +22,7 @@ public class QnAService {
     @Transactional(readOnly = true)
     public List<GetAllQnAResponse> getAllQnA() {
         // TODO: 추후 24시 기준으로 업데이트
-        List<QnA> findResult = qnaRepository.findAll();
+        List<QnA> findResult = qnaRepository.findAllQnASortByViews();
         return qnaMapper.toGetAllQnAResponse(findResult);
     }
 }

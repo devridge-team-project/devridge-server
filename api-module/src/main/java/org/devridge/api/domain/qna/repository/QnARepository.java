@@ -10,10 +10,10 @@ import java.util.List;
 @Repository
 public interface QnARepository extends JpaRepository<QnA, Long> {
 
-//    @Query(
-//        value = "SELECT id, title, likes, views " +
-//                "FROM QnA " +
-//                "ORDER BY views"
-//    )
-//    List<QnA> findAllQnASortByViews();
+    @Query(
+        value = "SELECT Q " +
+                "FROM QnA Q " +
+                "ORDER BY Q.views DESC"
+    )
+    List<QnA> findAllQnASortByViews();
 }

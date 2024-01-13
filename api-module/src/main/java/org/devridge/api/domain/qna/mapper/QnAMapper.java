@@ -14,7 +14,9 @@ public class QnAMapper {
     public List<GetAllQnAResponse> toGetAllQnAResponse(List<QnA> results) {
         List<GetAllQnAResponse> convertResult = new ArrayList<>();
 
-        for (QnA qna : results) {
+        for (int i = 0; i < 5; i++) {
+            QnA qna = results.get(i);
+
             convertResult.add(
                 GetAllQnAResponse.builder()
                     .id(qna.getId())
