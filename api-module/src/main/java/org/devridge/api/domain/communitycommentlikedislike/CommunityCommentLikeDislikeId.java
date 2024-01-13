@@ -2,9 +2,16 @@ package org.devridge.api.domain.communitycommentlikedislike;
 
 import java.io.Serializable;
 import javax.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 @Embeddable
 public class CommunityCommentLikeDislikeId implements Serializable {
+
     private Long memberId;
     private Long commentId;
 }
