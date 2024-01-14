@@ -1,10 +1,11 @@
 package org.devridge.api.domain.community;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.devridge.common.dto.BaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +29,12 @@ public class CommunityController {
     @PostMapping("/community/write/{memberId}")
     public ResponseEntity<?> writingCommunity(@RequestBody CreateCommunityRequest dto,
         @PathVariable Long memberId) {
-        Community community = communityService.createCommunity(dto, memberId);
-        return ResponseEntity.ok(HttpStatus.OK);
+        communityService.createCommunity(dto, memberId);
+        BaseResponse response = new BaseResponse(
+            HttpStatus.OK.value(),
+            "커뮤니티 게시글 작성 성공"
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/community/read/{id}")
@@ -55,11 +60,13 @@ public class CommunityController {
     }
 
     @PutMapping("/community/modify/{id}")
-    public ResponseEntity<?> modifyCommunity(@PathVariable Long id, @RequestBody CommunityDto dto) {
-        Community community = communityService.updateCommunity(id, dto);
-        log.info("title={}, content={}", dto.getTitle(), dto.getContent());
-        CommunityDto dto1 = new CommunityDto(community);
-        return ResponseEntity.ok(dto1);
+    public ResponseEntity<?> modifyCommunity(@PathVariable Long id, @RequestBody CreateCommunityRequest dto) {
+        communityService.updateCommunity(id, dto);
+        BaseResponse response = new BaseResponse(
+            HttpStatus.OK.value(),
+            "게시글이 수정되었습니다."
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/community/del/{id}")
@@ -87,7 +94,12 @@ public class CommunityController {
                     .build()
             )
             .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+        BaseResponse response = new BaseResponse(
+            HttpStatus.OK.value(),
+            "커뮤니티 글 전체 목록을 불러옵니다.",
+            dtos
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
 
