@@ -48,7 +48,9 @@ public class CommunityService {
 
     public List<Community> viewAllCommunity() {
         List<Community> communities = communityRepository.findAll();
+        if (communities.isEmpty()) {
+            throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
+        }
         return communities;
     }
-
 }

@@ -72,14 +72,20 @@ public class CommunityController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/community/read/all")
-    public ResponseEntity<?> viewAll() {
+    @GetMapping("/community/read/all") // 커뮤니티 글 전체 목록 보여주기
+    public ResponseEntity<?> viewAllCommunity() {
         List<Community> communityList = communityService.viewAllCommunity();
-        List<CommunityDto> dtos = communityList.stream()
-            .map(community -> {
-                CommunityDto dto = new CommunityDto(community);
-                return dto;
-            })
+        List<ReadCommunityResponse> dtos = communityList.stream()
+            .map(community ->
+                ReadCommunityResponse.builder()
+                    .nickName(community.getMember().getNickname())
+                    .title(community.getTitle())
+                    .content(community.getContent())
+                    .views(community.getViews())
+                    .createdAt(community.getCreatedAt())
+                    .updatedAt(community.getUpdatedAt())
+                    .build()
+            )
             .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
