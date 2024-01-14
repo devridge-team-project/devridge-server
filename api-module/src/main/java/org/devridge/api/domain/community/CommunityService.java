@@ -38,11 +38,12 @@ public class CommunityService {
             });
     }
 
-    public Community deleteCommunity(Long id) {
-        Optional<Community> optionalCommunity = communityRepository.findById(id);
-        Community community = optionalCommunity.orElseThrow(() -> new EntityNotFoundException("Community not found"));
-        community.setIsDeleted(true);
-        return communityRepository.save(community);
+    public void deleteCommunity(Long id) {
+        try {
+            communityRepository.deleteById(id);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
+        }
     }
 
     public List<Community> viewAllCommunity() {

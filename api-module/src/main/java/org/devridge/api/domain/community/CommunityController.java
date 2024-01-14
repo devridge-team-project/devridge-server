@@ -64,9 +64,12 @@ public class CommunityController {
 
     @DeleteMapping("/community/del/{id}")
     public ResponseEntity<?> deleteCommunity(@PathVariable Long id) {
-        Community community = communityService.deleteCommunity(id);
-        CommunityDto dto = new CommunityDto(community);
-        return ResponseEntity.ok(dto);
+        communityService.deleteCommunity(id);
+        BaseResponse response = new BaseResponse(
+            HttpStatus.OK.value(),
+            "게시글이 삭제되었습니다."
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/community/read/all")
