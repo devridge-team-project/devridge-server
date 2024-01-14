@@ -34,13 +34,24 @@ public class CommunityController {
 
     @GetMapping("/community/read/{id}")
     public ResponseEntity<?> viewCommunity(@PathVariable Long id) {
-        Optional<Community> community = communityService.getCommunityById(id);
-        if (community.isPresent()) {
-            CommunityDto dto = new CommunityDto(community.get());
-            return ResponseEntity.ok(dto);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Community community = communityService.getCommunityById(id);
+        String nickName = community.getMember().getNickname();
+        ReadCommunityResponse dto = ReadCommunityResponse.builder()
+            .nickName(nickName)
+            .title(community.getTitle())
+            .content(community.getContent())
+            .views(community.getViews())
+            .createdAt(community.getCreatedAt())
+            .updatedAt(community.getUpdatedAt())
+            .build();
+        // dto로 커뮤니티 글 작성자, 제목, 내용, 생성시간,수정시간 보내야함
+        BaseResponse response = new BaseResponse<>(
+            HttpStatus.OK.value(),
+            "작성한 커뮤니티 게시글 불러오기 성공",
+            dto
+            // dto로 커뮤니티 글 작성자, 제목, 내용, 생성시간,수정시간 보내야함
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/community/modify/{id}")

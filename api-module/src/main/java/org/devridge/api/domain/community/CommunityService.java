@@ -22,8 +22,8 @@ public class CommunityService {
         return communityRepository.save(community);
     }
 
-    public Optional<Community> getCommunityById(Long id) {
-        return communityRepository.findById(id);
+    public Community getCommunityById(Long id) {
+        return communityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 엔터티를 찾을 수 없습니다."));
     }
 
     public Community updateCommunity(Long id, CommunityDto dto) {
