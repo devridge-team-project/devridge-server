@@ -42,7 +42,7 @@ public class CommunityCommentController {
         for (CommunityComment comment : communityComments) {
             Member member = comment.getMember(); // 댓글 작성자 정보 가져오기   //todo: 없는 맴버 안 가져오는 예외 처리
             CommunityCommentResponse communityCommentResponse = new CommunityCommentResponse(
-                member.getNickname(), comment.getUpdatedAt());
+                member.getNickname(), comment.getUpdatedAt(), comment.getContent());
             dtos.add(communityCommentResponse);
         }
         BaseResponse response = new BaseResponse(

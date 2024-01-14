@@ -11,12 +11,15 @@ public class CommunityCommentResponse {
     public CommunityCommentResponse() {
     }
 
-    public CommunityCommentResponse(String nickName, LocalDateTime updatedAt) {
+    public CommunityCommentResponse(String nickName, LocalDateTime updatedAt, String content) {
         this.nickName = nickName;
         this.updatedAt = updatedAt;
+        this.content = content;
     }
 
-    public String nickName;
+    private String nickName;
 
-    public LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
+
+    private String content;
 }
