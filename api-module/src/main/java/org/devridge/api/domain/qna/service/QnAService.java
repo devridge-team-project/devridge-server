@@ -29,7 +29,7 @@ public class QnAService {
 
     @Transactional(readOnly = true)
     public List<GetAllQnAResponse> getAllQnASortByLatest() {
-        List<QnA> findResult = qnaRepository.findAllQnASortByCreatedAt();
-        return qnaMapper.toGetAllQnAResponse(findResult);
+        // TODO: 무한 스크롤 변경 예정
+        return qnaQuerydslRepository.findAllQnASortByLatest();
     }
 }

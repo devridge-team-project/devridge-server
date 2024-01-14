@@ -38,4 +38,23 @@ public class QnAQuerydslRepository {
             .limit(5)
             .fetch();
     }
+
+    /**
+     * TODO: 추후 무한 스크롤 변경 예정
+     */
+    public List<GetAllQnAResponse> findAllQnASortByLatest() {
+        return jpaQueryFactory
+            .select(
+                Projections.constructor(
+                    GetAllQnAResponse.class,
+                    qQnA.id,
+                    qQnA.title,
+                    qQnA.views,
+                    qQnA.comments.size()
+                )
+            )
+            .from(qQnA)
+            .orderBy(qQnA.createdAt.desc())
+            .fetch();
+    }
 }
