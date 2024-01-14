@@ -3,6 +3,7 @@ package org.devridge.api.domain.communityscrap;
 import org.devridge.api.domain.community.Community;
 import org.devridge.api.githubsociallogintemp.domain.Member;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +18,19 @@ public class CommunityScrapService {
     }
 
     public void createScrap(Long memberId, Long communityId) {
-        Member member = Member.builder().id(memberId).build(); // todo: 없는 memberId에 대한 예외처리
-        Community community = Community.builder().id(communityId).build();
-        CommunityScrap communityScrap = CommunityScrap.builder()
-            .id(new CommunityScrapId(memberId, communityId))
-            .member(member)
-            .community(community)
-            .build();
-        communityScrapRepository.save(communityScrap);
+        try {
+            Member member = Member.builder().id(memberId).build();
+            Community community = Community.builder().id(communityId).build();
+            CommunityScrap communityScrap = CommunityScrap.builder()
+                .id(new CommunityScrapId(memberId, communityId))
+                .member(member)
+                .community(community)
+                .build();
+            communityScrapRepository.save(communityScrap);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("이미 존재하는 데이터입니다.");
+        }
+
     }
 
     public void deleteScrap(Long memberId, Long communityId) {
