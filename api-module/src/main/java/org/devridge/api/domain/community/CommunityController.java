@@ -26,11 +26,10 @@ public class CommunityController {
     }
 
     @PostMapping("/community/write/{memberId}")
-    public ResponseEntity<?> writingCommunity(@RequestBody CommunityDto dto,
+    public ResponseEntity<?> writingCommunity(@RequestBody CreateCommunityRequest dto,
         @PathVariable Long memberId) {
         Community community = communityService.createCommunity(dto, memberId);
-        CommunityDto communityDto = new CommunityDto(community);
-        return ResponseEntity.ok(communityDto);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping("/community/read/{id}")
