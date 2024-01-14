@@ -2,8 +2,9 @@ package org.devridge.api.domain.community;
 
 import java.time.LocalDateTime;
 import lombok.Builder;
+import lombok.Getter;
 
-
+@Getter
 public class ReadCommunityResponse {
 
     // 작성자 닉네임, 글제목, 내용, 뷰, 생성시간, 수정시간
