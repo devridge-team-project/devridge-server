@@ -15,32 +15,17 @@ public class CommunityCommentService {
         this.communityCommentRepository = communityCommentRepository;
     }
 
-    public CommunityComment createComment(Long communityId, Long memberId, String content) {
-        if (communityId == null) {
-            throw new IllegalArgumentException("communityId가 null입니다.");
-        }
-
-        if (memberId == null) { // todo: memberId 있는건지 조회해봐야함 memberRepository 조회?
-            throw new IllegalArgumentException("memberId가 null입니다.");
-        }
-
-        if (content == null || content.isEmpty()) {
-            throw new IllegalArgumentException("content가 null이거나 비어있습니다.");
-        }
-
+    public void createComment(Long communityId, Long memberId, String content) {
         CommunityComment communityComment = CommunityComment
             .builder()
             .communityId(communityId)
             .content(content)
             .memberId(memberId)
             .build();
-        return communityCommentRepository.save(communityComment);
+        communityCommentRepository.save(communityComment);
     }
 
     public List<CommunityComment> getAllComment(Long communityId) {
-        if (communityId == null) {
-            throw new IllegalArgumentException("커뮤니티 ID는 null일 수 없습니다.");
-        }
         List<CommunityComment> communityComments =
             communityCommentRepository.findByCommunityId(communityId);
         return communityComments;
