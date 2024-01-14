@@ -26,12 +26,16 @@ public class CommunityService {
         return communityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 엔터티를 찾을 수 없습니다."));
     }
 
-    public Community updateCommunity(Long id, CommunityDto dto) {
+    public void updateCommunity(Long id, CreateCommunityRequest dto) {
         Optional<Community> optionalCommunity = communityRepository.findById(id);
-        Community community = optionalCommunity.orElseThrow(() -> new EntityNotFoundException("Community not found"));
-        community.setTitle(dto.getTitle());
-        community.setContent(dto.getContent());
-        return communityRepository.save(community);
+        optionalCommunity.ifPresentOrElse(
+            community -> {
+                community.updateCommunity(dto.getTitle(), dto.getContent());
+                communityRepository.save(community);
+            },
+            () -> {
+                throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
+            });
     }
 
     public Community deleteCommunity(Long id) {

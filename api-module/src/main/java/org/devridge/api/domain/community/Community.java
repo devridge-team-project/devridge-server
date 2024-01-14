@@ -19,7 +19,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.devridge.api.domain.communitycomment.CommunityComment;
 import org.devridge.api.domain.communityscrap.CommunityScrap;
 import org.devridge.api.githubsociallogintemp.domain.Member;
@@ -28,7 +27,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
-@Setter // 나중에 지우기
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -69,4 +67,8 @@ public class Community {
     @JoinColumn(name = "member_id", insertable = false, updatable = false)
     private Member member;
 
+    public void updateCommunity(String title, String content) {
+        this.title = title;
+        this.content = content;
+    } // todo: updatee 커밋하기
 }
