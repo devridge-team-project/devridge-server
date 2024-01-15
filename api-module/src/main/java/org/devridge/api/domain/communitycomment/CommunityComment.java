@@ -21,6 +21,8 @@ import lombok.NoArgsConstructor;
 import org.devridge.api.domain.community.Community;
 import org.devridge.api.domain.communitycommentlikedislike.CommunityCommentLikeDislike;
 import org.devridge.api.githubsociallogintemp.domain.Member;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -30,6 +32,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Builder
 @Entity
+@SQLDelete(sql = "UPDATE community_comment SET is_deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
 @EntityListeners(AuditingEntityListener.class)
 public class CommunityComment {
 
@@ -56,7 +60,7 @@ public class CommunityComment {
 
     private String content;
 
-    private Boolean isDeleted;
+    private boolean isDeleted;
 
     @CreatedDate
     @Column(updatable = false)
