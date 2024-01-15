@@ -1,6 +1,7 @@
 package org.devridge.api.domain.qna.mapper;
 
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
+import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.entity.QnA;
 
 import org.springframework.stereotype.Component;
@@ -27,5 +28,16 @@ public class QnAMapper {
         }
 
         return convertResult;
+    }
+
+    public GetQnADetailResponse toGetQnADetailResponse(QnA result) {
+        return GetQnADetailResponse.builder()
+            .memberId(result.getMemberId())
+            .title(result.getTitle())
+            .content(result.getContent())
+            .views(result.getViews())
+            .commentCount(result.getComments().size())
+            .comments(result.getComments())
+            .build();
     }
 }
