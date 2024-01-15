@@ -47,8 +47,8 @@ public class QnA extends BaseEntity {
     List<QnAComment> comments = new ArrayList<>();
 
     @Builder
-    public QnA(Long memberId, String title, String content) {
-        this.memberId = memberId;
+    public QnA(String title, String content) {
+        this.memberId = 1L;
         this.title = title;
         this.content = content;
     }

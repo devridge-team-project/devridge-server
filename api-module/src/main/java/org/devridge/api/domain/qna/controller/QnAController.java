@@ -2,16 +2,15 @@ package org.devridge.api.domain.qna.controller;
 
 import lombok.RequiredArgsConstructor;
 
+import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.service.QnAService;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RequestMapping("/api/qna")
@@ -37,5 +36,11 @@ public class QnAController {
     public ResponseEntity<GetQnADetailResponse> getQnADetail(@PathVariable Long qnaId) {
         GetQnADetailResponse result = qnaService.getQnADetail(qnaId);
         return ResponseEntity.ok().body(result);
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> createQnA(@RequestBody CreateQnARequest qnaRequest) {
+        Long qnaId = qnaService.createQnA(qnaRequest);
+        return ResponseEntity.created(URI.create("/api/qna/" + qnaId)).build();
     }
 }

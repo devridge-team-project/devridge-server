@@ -2,6 +2,7 @@ package org.devridge.api.domain.qna.service;
 
 import lombok.RequiredArgsConstructor;
 
+import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.entity.QnA;
@@ -38,5 +39,10 @@ public class QnAService {
     public GetQnADetailResponse getQnADetail(Long qnaId) {
         QnA result = qnaRepository.findById(qnaId).orElseThrow(() -> new DataNotFoundException());
         return qnaMapper.toGetQnADetailResponse(result);
+    }
+
+    public Long createQnA(CreateQnARequest qnaRequest) {
+        QnA qna = qnaMapper.toQnA(qnaRequest);
+        return qnaRepository.save(qna).getId();
     }
 }
