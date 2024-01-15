@@ -16,10 +16,13 @@ public class CommunityService {
         this.communityRepository = communityRepository;
     }
 
-    public Community createCommunity(CommunityDto dto, Long MemberId) {
-        Community community = Community.builder().title(dto.getTitle()).content(dto.getContent()).memberId(MemberId)
+    public void createCommunity(CreateCommunityRequest dto, Long memberId) {
+        Community community = Community.builder()
+            .title(dto.getTitle())
+            .content(dto.getContent())
+            .memberId(memberId)
             .build();
-        return communityRepository.save(community);
+        communityRepository.save(community);
     }
 
     public Community getCommunityById(Long id) {
