@@ -19,7 +19,7 @@ public class CommunityCommentLikeDislikeService {
         this.communityCommentLikeDislikeRepository = communityCommentLikeDislikeRepository;
     }
 
-    public void createLikeDisLike(Long memberId, Long commentId, Character status) {
+    public void createLikeDisLike(Long memberId, Long commentId, LikeStatus status) {
         Member member = Member.builder().id(memberId).build();
         CommunityComment communityComment = CommunityComment.builder().id(commentId).build();
         CommunityCommentLikeDislike communityCommentLikeDislike = CommunityCommentLikeDislike.builder()
@@ -36,7 +36,7 @@ public class CommunityCommentLikeDislikeService {
     }
 
     public void changeCommunityCommentLikeDislike(Long memberId, Long commentId,
-        Character status) {
+        LikeStatus status) {
         Optional<CommunityCommentLikeDislike> communityCommentLikeDislike = communityCommentLikeDislikeRepository.findById(
             new CommunityCommentLikeDislikeId(memberId, commentId));
         communityCommentLikeDislike.ifPresentOrElse(

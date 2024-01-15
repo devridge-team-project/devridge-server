@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -42,7 +44,8 @@ public class CommunityCommentLikeDislike {
     @JoinColumn(name = "community_comment_id", insertable = false, updatable = false)
     private CommunityComment communityComment;
 
-    private Character status;
+    @Enumerated(EnumType.STRING)
+    private LikeStatus status;
 
     @CreatedDate
     private LocalDateTime createdAt;

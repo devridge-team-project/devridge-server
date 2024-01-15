@@ -23,19 +23,17 @@ public class CommunityCommentLikeDislikeController {
 
     @PostMapping("/like/{memberId}/{commentId}/{status}")
     public ResponseEntity<?> likeDislikeCreate(@PathVariable Long memberId, @PathVariable Long commentId,
-        @PathVariable Character status) {
-        status = Character.toUpperCase(status);
+        @PathVariable LikeStatus status) {
+        String message;
+        if (status.equals(LikeStatus.G)) {
+            message = "좋아요를 눌렀습니다.";
+        } else {
+            message = "싫어요를 눌렀습니다.";
+        }
         try {
             communityCommentLikeDislikeService.changeCommunityCommentLikeDislike(memberId, commentId, status);
         } catch (EntityNotFoundException e) {
             communityCommentLikeDislikeService.createLikeDisLike(memberId, commentId, status);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 엔터티를 찾을 수 없습니다.");
-        }
-        String message;
-        if (status == 'G') {
-            message = "좋아요를 눌렀습니다.";
-        } else {
-            message = "싫어요를 눌렀습니다.";
         }
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
