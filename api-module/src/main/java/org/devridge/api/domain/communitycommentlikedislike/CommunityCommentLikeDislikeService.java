@@ -41,7 +41,7 @@ public class CommunityCommentLikeDislikeService {
             new CommunityCommentLikeDislikeId(memberId, commentId));
         communityCommentLikeDislike.ifPresentOrElse(
             likeDislike -> {
-                likeDislike.setStatus(status);
+                likeDislike.changeStatus(status);
                 communityCommentLikeDislikeRepository.save(likeDislike);
             },
             () -> {
