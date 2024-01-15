@@ -32,7 +32,7 @@ public class CommunityController {
         communityService.createCommunity(dto, memberId);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
-            "커뮤니티 게시글 작성 성공"
+            "게시글 작성 성공"
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -52,7 +52,7 @@ public class CommunityController {
         // dto로 커뮤니티 글 작성자, 제목, 내용, 생성시간,수정시간 보내야함
         BaseResponse response = new BaseResponse<>(
             HttpStatus.OK.value(),
-            "작성한 커뮤니티 게시글 불러오기 성공",
+            "게시글 조회 성공",
             dto
             // dto로 커뮤니티 글 작성자, 제목, 내용, 생성시간,수정시간 보내야함
         );
@@ -64,7 +64,7 @@ public class CommunityController {
         communityService.updateCommunity(id, dto);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
-            "게시글이 수정되었습니다."
+            "게시글 수정 성공"
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -74,7 +74,7 @@ public class CommunityController {
         communityService.deleteCommunity(id);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
-            "게시글이 삭제되었습니다."
+            "게시글 삭제 성공"
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -96,7 +96,7 @@ public class CommunityController {
             .collect(Collectors.toList());
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
-            "커뮤니티 글 전체 목록을 불러옵니다.",
+            "게시글 전체 목록 조회 성공",
             dtos
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
