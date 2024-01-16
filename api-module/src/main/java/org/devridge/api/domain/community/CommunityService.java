@@ -3,6 +3,7 @@ package org.devridge.api.domain.community;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,9 @@ public class CommunityService {
         communityRepository.save(community);
     }
 
+    @Transactional
     public Community getCommunityById(Long id) {
+        updateView(id);
         return communityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 엔터티를 찾을 수 없습니다."));
     }
 
@@ -55,5 +58,9 @@ public class CommunityService {
             throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
         }
         return communities;
+    }
+
+    public void updateView(Long id) {
+        communityRepository.updateView(id);
     }
 }
