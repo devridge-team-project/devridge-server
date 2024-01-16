@@ -53,4 +53,10 @@ public class QnAController {
         qnaService.updateQnA(qnaId, qnaRequest);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{qnaId}")
+    public ResponseEntity<Void> deleteQnA(@PathVariable Long qnaId) {
+        qnaService.deleteQnA(qnaId);
+        return ResponseEntity.ok().build();
+    }
 }

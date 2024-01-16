@@ -35,7 +35,7 @@ public class QnAService {
 
     @Transactional(readOnly = true)
     public GetQnADetailResponse getQnADetail(Long qnaId) {
-        QnA result = qnaRepository.findById(qnaId).orElseThrow(() -> new DataNotFoundException());
+        QnA result = this.checkQnAValidate(qnaId);
         return qnaMapper.toGetQnADetailResponse(result);
     }
 
@@ -46,6 +46,16 @@ public class QnAService {
 
     @Transactional
     public void updateQnA(Long qnaId, UpdateQnARequest qnaRequest) {
+        checkQnAValidate(qnaId);
         qnaRepository.updateQnA(qnaId, qnaRequest.getTitle(), qnaRequest.getContent());
+    }
+
+    public void deleteQnA(Long qnaId) {
+        checkQnAValidate(qnaId);
+        qnaRepository.deleteById(qnaId);
+    }
+
+    private QnA checkQnAValidate(Long qnaId) {
+        return qnaRepository.findById(qnaId).orElseThrow(() -> new DataNotFoundException());
     }
 }
