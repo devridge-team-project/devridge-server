@@ -12,6 +12,7 @@ import org.devridge.api.domain.qna.validator.ValidateSortOption;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class QnAController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createQnA(@RequestBody CreateQnARequest qnaRequest) {
+    public ResponseEntity<Void> createQnA(@Valid @RequestBody CreateQnARequest qnaRequest) {
         Long qnaId = qnaService.createQnA(qnaRequest);
         return ResponseEntity.created(URI.create("/api/qna/" + qnaId)).build();
     }
