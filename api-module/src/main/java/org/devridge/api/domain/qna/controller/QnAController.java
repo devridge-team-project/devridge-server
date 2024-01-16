@@ -3,6 +3,7 @@ package org.devridge.api.domain.qna.controller;
 import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
+import org.devridge.api.domain.qna.dto.request.UpdateQnARequest;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.dto.type.SortOption;
@@ -42,5 +43,14 @@ public class QnAController {
     public ResponseEntity<Void> createQnA(@Valid @RequestBody CreateQnARequest qnaRequest) {
         Long qnaId = qnaService.createQnA(qnaRequest);
         return ResponseEntity.created(URI.create("/api/qna/" + qnaId)).build();
+    }
+
+    @PutMapping("/{qnaId}")
+    public ResponseEntity<Void> updateQnA(
+        @PathVariable Long qnaId,
+        @Valid @RequestBody UpdateQnARequest qnaRequest
+    ) {
+        qnaService.updateQnA(qnaId, qnaRequest);
+        return ResponseEntity.ok().build();
     }
 }

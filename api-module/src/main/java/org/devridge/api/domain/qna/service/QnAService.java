@@ -3,6 +3,7 @@ package org.devridge.api.domain.qna.service;
 import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
+import org.devridge.api.domain.qna.dto.request.UpdateQnARequest;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.entity.QnA;
@@ -32,6 +33,7 @@ public class QnAService {
         return qnaQuerydslRepository.findAllQnASortByLatest();
     }
 
+    @Transactional(readOnly = true)
     public GetQnADetailResponse getQnADetail(Long qnaId) {
         QnA result = qnaRepository.findById(qnaId).orElseThrow(() -> new DataNotFoundException());
         return qnaMapper.toGetQnADetailResponse(result);
@@ -40,5 +42,10 @@ public class QnAService {
     public Long createQnA(CreateQnARequest qnaRequest) {
         QnA qna = qnaMapper.toQnA(qnaRequest);
         return qnaRepository.save(qna).getId();
+    }
+
+    @Transactional
+    public void updateQnA(Long qnaId, UpdateQnARequest qnaRequest) {
+        qnaRepository.updateQnA(qnaId, qnaRequest.getTitle(), qnaRequest.getContent());
     }
 }
