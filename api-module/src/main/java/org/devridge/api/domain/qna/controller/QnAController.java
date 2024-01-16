@@ -5,8 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
+import org.devridge.api.domain.qna.dto.type.SortOption;
 import org.devridge.api.domain.qna.service.QnAService;
 
+import org.devridge.api.domain.qna.validator.ValidateSortOption;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,15 +22,12 @@ public class QnAController {
 
     private final QnAService qnaService;
 
-    @GetMapping("/views")
-    public ResponseEntity<List<GetAllQnAResponse>> getAllQnASortByViews() {
-        List<GetAllQnAResponse> result = qnaService.getAllQnASortByViews();
-        return ResponseEntity.ok().body(result);
-    }
-
-    @GetMapping("/latest")
-    public ResponseEntity<List<GetAllQnAResponse>> getAllQnASortByLatest() {
-        List<GetAllQnAResponse> result = qnaService.getAllQnASortByLatest();
+    @GetMapping
+    public ResponseEntity<List<GetAllQnAResponse>> getAllQnASortByViews(
+        @RequestParam(value = "sortOption", required = true)
+        @ValidateSortOption(enumClass = SortOption.class) SortOption sortOption
+    ) {
+        List<GetAllQnAResponse> result = qnaService.getAllQnASortByViews(sortOption.toString());
         return ResponseEntity.ok().body(result);
     }
 

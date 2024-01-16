@@ -25,13 +25,9 @@ public class QnAService {
     private final QnAQuerydslRepository qnaQuerydslRepository;
 
     @Transactional(readOnly = true)
-    public List<GetAllQnAResponse> getAllQnASortByViews() {
+    public List<GetAllQnAResponse> getAllQnASortByViews(String sortOption) {
         // TODO: 추후 24시 기준으로 업데이트
-        return qnaQuerydslRepository.findAllQnASortByViews();
-    }
-
-    @Transactional(readOnly = true)
-    public List<GetAllQnAResponse> getAllQnASortByLatest() {
+        if (sortOption.equals("views")) return qnaQuerydslRepository.findAllQnASortByViews();
         // TODO: 무한 스크롤 변경 예정
         return qnaQuerydslRepository.findAllQnASortByLatest();
     }
