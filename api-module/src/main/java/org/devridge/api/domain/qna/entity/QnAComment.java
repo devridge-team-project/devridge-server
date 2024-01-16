@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import org.devridge.common.dto.BaseEntity;
 
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -19,8 +21,11 @@ import javax.validation.constraints.NotNull;
 @Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "qna_comment")
+@DynamicInsert
 @Entity
 public class QnAComment extends BaseEntity {
+
+    private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_id")
@@ -29,6 +34,9 @@ public class QnAComment extends BaseEntity {
 
     @NotNull
     private String content;
+
+    @ColumnDefault("0")
+    private Integer likes;
 
     @Builder
     public QnAComment(QnA qna, String content) {
