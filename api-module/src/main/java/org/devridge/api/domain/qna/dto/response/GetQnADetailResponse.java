@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 public class GetQnADetailResponse {
 
-    private Member member;
+    private FindWriterInformation member;
     private String title;
     private String content;
     private Integer views;
