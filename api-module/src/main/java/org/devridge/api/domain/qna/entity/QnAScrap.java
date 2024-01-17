@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.entity.key.QnAScrapKey;
 import org.devridge.common.dto.BaseTimeEntity;
 
@@ -35,7 +36,7 @@ public class QnAScrap extends BaseTimeEntity {
     private Boolean isDeleted;
 
     @Builder
-    public QnAScrap(Long memberId, QnA qna) {
-        this.id = new QnAScrapKey(memberId, qna);
+    public QnAScrap(Member member, QnA qna) {
+        this.id = new QnAScrapKey(member, qna);
     }
 }

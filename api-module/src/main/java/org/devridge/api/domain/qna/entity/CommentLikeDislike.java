@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.dto.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.key.CommentLikeDislikeKey;
 import org.devridge.common.dto.BaseTimeEntity;
@@ -36,8 +37,8 @@ public class CommentLikeDislike extends BaseTimeEntity {
     private Boolean isDeleted;
 
     @Builder
-    public CommentLikeDislike(Long memberId, QnAComment qnaComment, LikeStatus status) {
-        this.id = new CommentLikeDislikeKey(memberId, qnaComment);
+    public CommentLikeDislike(Member member, QnAComment qnaComment, LikeStatus status) {
+        this.id = new CommentLikeDislikeKey(member, qnaComment);
         this.status = status;
     }
 }
