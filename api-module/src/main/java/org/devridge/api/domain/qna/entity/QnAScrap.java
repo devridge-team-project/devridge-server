@@ -5,15 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import org.devridge.api.domain.qna.entity.key.QnAScrapKey;
+import org.devridge.api.domain.qna.entity.id.QnAScrapId;
 import org.devridge.common.dto.BaseTimeEntity;
 
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -28,10 +26,10 @@ import javax.persistence.Table;
 public class QnAScrap extends BaseTimeEntity {
 
     @EmbeddedId
-    private QnAScrapKey id;
+    private QnAScrapId id;
 
     @Builder
     public QnAScrap(Long memberId, QnA qna) {
-        this.id = new QnAScrapKey(memberId, qna);
+        this.id = new QnAScrapId(memberId, qna);
     }
 }
