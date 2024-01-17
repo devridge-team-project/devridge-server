@@ -30,10 +30,6 @@ public class QnAScrap extends BaseTimeEntity {
     @EmbeddedId
     private QnAScrapKey id;
 
-    @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
-    @ColumnDefault("false")
-    private Boolean isDeleted;
-
     @Builder
     public QnAScrap(Long memberId, QnA qna) {
         this.id = new QnAScrapKey(memberId, qna);
