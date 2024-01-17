@@ -36,8 +36,11 @@ public class QnA extends BaseEntity {
     @NotNull
     private String content;
 
-//    @ColumnDefault("0")
-//    private Integer likes;
+    @ColumnDefault("0")
+    private Integer likes;
+
+    @ColumnDefault("0")
+    private Integer dislikes;
 
     @ColumnDefault("0")
     private Integer views;

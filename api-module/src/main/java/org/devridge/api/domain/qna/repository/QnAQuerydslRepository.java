@@ -29,6 +29,7 @@ public class QnAQuerydslRepository {
                     GetAllQnAResponse.class,
                     qQnA.id,
                     qQnA.title,
+                    qQnA.likes,
                     qQnA.views,
                     qQnA.comments.size()
                 )
@@ -49,6 +50,7 @@ public class QnAQuerydslRepository {
                     GetAllQnAResponse.class,
                     qQnA.id,
                     qQnA.title,
+                    qQnA.likes,
                     qQnA.views,
                     qQnA.comments.size()
                 )

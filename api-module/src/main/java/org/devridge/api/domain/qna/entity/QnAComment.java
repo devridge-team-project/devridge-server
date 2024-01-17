@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class QnAComment extends BaseEntity {
 
-//    private Long memberId;
+    private Long memberId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_id")
@@ -35,8 +35,11 @@ public class QnAComment extends BaseEntity {
     @NotNull
     private String content;
 
-//    @ColumnDefault("0")
-//    private Integer likes;
+    @ColumnDefault("0")
+    private Integer likes;
+
+    @ColumnDefault("0")
+    private Integer dislikes;
 
     @Builder
     public QnAComment(QnA qna, String content) {
