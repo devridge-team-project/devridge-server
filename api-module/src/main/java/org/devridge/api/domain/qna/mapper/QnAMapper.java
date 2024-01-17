@@ -15,7 +15,7 @@ public class QnAMapper {
 
     public GetQnADetailResponse toGetQnADetailResponse(QnA result) {
         return GetQnADetailResponse.builder()
-            .memberId(result.getMemberId())
+            .member(result.getMember())
             .title(result.getTitle())
             .content(result.getContent())
             .likes(result.getLikes())

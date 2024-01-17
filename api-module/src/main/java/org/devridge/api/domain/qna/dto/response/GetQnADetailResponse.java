@@ -3,6 +3,7 @@ package org.devridge.api.domain.qna.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 
+import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.entity.QnAComment;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.util.List;
 @Builder
 public class GetQnADetailResponse {
 
-    private Long memberId;
+    private Member member;
     private String title;
     private String content;
     private Integer views;

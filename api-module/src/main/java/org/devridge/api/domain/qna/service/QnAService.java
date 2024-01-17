@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
+
 @RequiredArgsConstructor
 @Service
 public class QnAService {
