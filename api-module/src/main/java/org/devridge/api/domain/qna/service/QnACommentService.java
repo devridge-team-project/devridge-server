@@ -1,17 +1,17 @@
 package org.devridge.api.domain.qna.service;
 
 import lombok.RequiredArgsConstructor;
+
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.qna.dto.request.CreateQnACommentRequest;
 import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnAComment;
 import org.devridge.api.domain.qna.mapper.QnACommentMapper;
-import org.devridge.api.domain.qna.mapper.QnAMapper;
 import org.devridge.api.domain.qna.repository.QnACommentRepository;
-import org.devridge.api.domain.qna.repository.QnAQuerydslRepository;
 import org.devridge.api.domain.qna.repository.QnARepository;
 import org.devridge.common.exception.DataNotFoundException;
+
 import org.springframework.stereotype.Service;
 
 import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;

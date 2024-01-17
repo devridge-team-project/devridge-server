@@ -3,7 +3,6 @@ package org.devridge.api.domain.qna.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 
-import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.entity.QnAComment;
 
 import java.time.LocalDateTime;

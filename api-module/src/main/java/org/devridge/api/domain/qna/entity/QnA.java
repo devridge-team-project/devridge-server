@@ -1,6 +1,7 @@
 package org.devridge.api.domain.qna.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

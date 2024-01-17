@@ -10,12 +10,13 @@ import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.dto.type.SortOption;
 import org.devridge.api.domain.qna.service.QnACommentService;
 import org.devridge.api.domain.qna.service.QnAService;
-
 import org.devridge.api.domain.qna.validator.ValidateSortOption;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.net.URI;
 import java.util.List;
 
