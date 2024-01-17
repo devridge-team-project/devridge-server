@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @SpringBootApplication
-@EnableJpaAuditing
 public class DevridgeApiModuleApplication {
 
     public static void main(String[] args) {
