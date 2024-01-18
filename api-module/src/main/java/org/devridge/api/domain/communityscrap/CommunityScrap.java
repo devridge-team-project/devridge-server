@@ -26,7 +26,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Builder
 @Entity
-@SQLDelete(sql = "UPDATE community_scrap SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE community_scrap SET is_deleted = true WHERE community_id = ? AND member_id = ?")
 @Where(clause = "is_deleted = false")
 @EntityListeners(AuditingEntityListener.class)
 public class CommunityScrap {
