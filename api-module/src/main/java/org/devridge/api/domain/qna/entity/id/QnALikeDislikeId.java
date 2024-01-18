@@ -1,4 +1,4 @@
-package org.devridge.api.domain.qna.entity.key;
+package org.devridge.api.domain.qna.entity.id;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
-public class QnAScrapKey implements Serializable {
+public class QnALikeDislikeId implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

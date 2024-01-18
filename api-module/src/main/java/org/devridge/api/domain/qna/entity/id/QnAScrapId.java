@@ -1,4 +1,4 @@
-package org.devridge.api.domain.qna.entity.key;
+package org.devridge.api.domain.qna.entity.id;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.domain.qna.entity.QnAComment;
+import org.devridge.api.domain.qna.entity.QnA;
 
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
@@ -19,13 +19,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
-public class CommentLikeDislikeKey implements Serializable {
+public class QnAScrapId implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "qna_comment_id")
-    private QnAComment qnaComment;
+    @JoinColumn(name = "qna_id")
+    private QnA qna;
 }

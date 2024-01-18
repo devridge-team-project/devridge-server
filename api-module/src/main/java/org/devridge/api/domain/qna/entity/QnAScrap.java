@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.domain.qna.entity.key.QnAScrapKey;
+import org.devridge.api.domain.qna.entity.id.QnAScrapId;
 import org.devridge.common.dto.BaseTimeEntity;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -29,7 +29,7 @@ import javax.persistence.Table;
 public class QnAScrap extends BaseTimeEntity {
 
     @EmbeddedId
-    private QnAScrapKey id;
+    private QnAScrapId id;
 
     @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
     @ColumnDefault("false")
@@ -37,6 +37,6 @@ public class QnAScrap extends BaseTimeEntity {
 
     @Builder
     public QnAScrap(Member member, QnA qna) {
-        this.id = new QnAScrapKey(member, qna);
+        this.id = new QnAScrapId(member, qna);
     }
 }

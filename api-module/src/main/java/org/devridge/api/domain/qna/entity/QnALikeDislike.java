@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.dto.type.LikeStatus;
-import org.devridge.api.domain.qna.entity.key.QnALikeDislikeKey;
+import org.devridge.api.domain.qna.entity.id.QnALikeDislikeId;
 import org.devridge.common.dto.BaseTimeEntity;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -25,7 +25,7 @@ import javax.persistence.*;
 public class QnALikeDislike extends BaseTimeEntity {
 
     @EmbeddedId
-    private QnALikeDislikeKey id;
+    private QnALikeDislikeId id;
 
     @Enumerated(EnumType.STRING)
     private LikeStatus status;
@@ -36,6 +36,6 @@ public class QnALikeDislike extends BaseTimeEntity {
 
     @Builder
     public QnALikeDislike(Member member, QnA qna) {
-        this.id = new QnALikeDislikeKey(member, qna);
+        this.id = new QnALikeDislikeId(member, qna);
     }
 }
