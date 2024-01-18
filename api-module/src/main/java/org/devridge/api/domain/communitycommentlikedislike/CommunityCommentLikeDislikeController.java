@@ -1,6 +1,7 @@
 package org.devridge.api.domain.communitycommentlikedislike;
 
 import javax.persistence.EntityNotFoundException;
+import org.devridge.api.domain.communitycomment.CommunityCommentService;
 import org.devridge.common.dto.BaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommunityCommentLikeDislikeController {
 
     private CommunityCommentLikeDislikeService communityCommentLikeDislikeService;
+    private CommunityCommentService communityCommentService;
 
     @Autowired
     public CommunityCommentLikeDislikeController(
-        CommunityCommentLikeDislikeService communityCommentLikeDislikeService) {
+        CommunityCommentLikeDislikeService communityCommentLikeDislikeService,
+        CommunityCommentService communityCommentService) {
         this.communityCommentLikeDislikeService = communityCommentLikeDislikeService;
+        this.communityCommentService = communityCommentService;
     }
 
 
@@ -32,8 +36,10 @@ public class CommunityCommentLikeDislikeController {
         }
         try {
             communityCommentLikeDislikeService.changeCommunityCommentLikeDislike(memberId, commentId, status);
+            communityCommentService.updateLikeDislike(commentId);
         } catch (EntityNotFoundException e) {
             communityCommentLikeDislikeService.createLikeDisLike(memberId, commentId, status);
+            communityCommentService.updateLikeDislike(commentId);
         }
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),

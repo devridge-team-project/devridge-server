@@ -2,6 +2,7 @@ package org.devridge.api.domain.communitycomment;
 
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
+import org.devridge.api.domain.communitycommentlikedislike.CommunityCommentLikeDislike;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -41,5 +42,12 @@ public class CommunityCommentService {
         } catch (EmptyResultDataAccessException e) {
             throw new EntityNotFoundException("삭제할 댓글을 찾을 수 없습니다.");
         }
+    }
+
+    public void updateLikeDislike(Long commentId) {
+        CommunityComment communityComment = communityCommentRepository.findById(commentId).orElseThrow();
+        List<CommunityCommentLikeDislike> list = communityComment.getCommunityCommentLikeDislike();
+        communityComment.countLikeDislike(list);
+        communityCommentRepository.save(communityComment);
     }
 }

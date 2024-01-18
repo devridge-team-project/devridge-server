@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.community.Community;
 import org.devridge.api.domain.communitycommentlikedislike.CommunityCommentLikeDislike;
+import org.devridge.api.domain.communitycommentlikedislike.LikeStatus;
 import org.devridge.api.githubsociallogintemp.domain.Member;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -68,4 +69,19 @@ public class CommunityComment {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    private long likeCount;
+
+    public void countLikeDislike(List<CommunityCommentLikeDislike> list) {
+        long sum = 0;
+        for (CommunityCommentLikeDislike like : list) {
+            if (like.getStatus() == LikeStatus.B) {
+                --sum;
+            }
+            if (like.getStatus() == LikeStatus.G) {
+                ++sum;
+            }
+        }
+        this.likeCount = sum;
+    }
 }
