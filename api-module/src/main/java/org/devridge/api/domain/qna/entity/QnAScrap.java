@@ -9,12 +9,10 @@ import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.entity.id.QnAScrapId;
 import org.devridge.common.dto.BaseTimeEntity;
 
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -24,16 +22,11 @@ import javax.persistence.Table;
 @Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "qna_scrap")
-@DynamicInsert
 @Entity
 public class QnAScrap extends BaseTimeEntity {
 
     @EmbeddedId
     private QnAScrapId id;
-
-    @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
-    @ColumnDefault("false")
-    private Boolean isDeleted;
 
     @Builder
     public QnAScrap(Member member, QnA qna) {
