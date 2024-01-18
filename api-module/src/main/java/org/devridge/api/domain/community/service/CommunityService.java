@@ -1,9 +1,12 @@
-package org.devridge.api.domain.community;
+package org.devridge.api.domain.community.service;
 
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
+import org.devridge.api.domain.community.entity.Community;
+import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

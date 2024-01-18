@@ -1,7 +1,9 @@
-package org.devridge.api.domain.communitycommentlikedislike;
+package org.devridge.api.domain.community.controller;
 
 import javax.persistence.EntityNotFoundException;
-import org.devridge.api.domain.communitycomment.CommunityCommentService;
+import org.devridge.api.domain.community.service.CommunityCommentService;
+import org.devridge.api.domain.community.service.CommunityCommentLikeDislikeService;
+import org.devridge.api.domain.community.entity.LikeStatus;
 import org.devridge.common.dto.BaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

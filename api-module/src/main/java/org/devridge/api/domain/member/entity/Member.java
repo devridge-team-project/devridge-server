@@ -14,10 +14,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.AbstractTimeEntity;
-import org.devridge.api.domain.community.Community;
-import org.devridge.api.domain.communitycomment.CommunityComment;
-import org.devridge.api.domain.communitycommentlikedislike.CommunityCommentLikeDislike;
-import org.devridge.api.domain.communityscrap.CommunityScrap;
+import org.devridge.api.domain.community.entity.Community;
+import org.devridge.api.domain.community.entity.CommunityComment;
+import org.devridge.api.domain.community.entity.CommunityCommentLikeDislike;
+import org.devridge.api.domain.community.entity.CommunityScrap;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity

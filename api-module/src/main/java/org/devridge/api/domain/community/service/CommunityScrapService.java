@@ -1,6 +1,9 @@
-package org.devridge.api.domain.communityscrap;
+package org.devridge.api.domain.community.service;
 
-import org.devridge.api.domain.community.Community;
+import org.devridge.api.domain.community.entity.Community;
+import org.devridge.api.domain.community.entity.CommunityScrap;
+import org.devridge.api.domain.community.repository.CommunityScrapRepository;
+import org.devridge.api.domain.community.entity.id.CommunityScrapId;
 import org.devridge.api.domain.member.entity.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

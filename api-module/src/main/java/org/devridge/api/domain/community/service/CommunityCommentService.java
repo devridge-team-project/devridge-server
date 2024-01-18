@@ -1,8 +1,10 @@
-package org.devridge.api.domain.communitycomment;
+package org.devridge.api.domain.community.service;
 
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
-import org.devridge.api.domain.communitycommentlikedislike.CommunityCommentLikeDislike;
+import org.devridge.api.domain.community.entity.CommunityComment;
+import org.devridge.api.domain.community.entity.CommunityCommentLikeDislike;
+import org.devridge.api.domain.community.repository.CommunityCommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;

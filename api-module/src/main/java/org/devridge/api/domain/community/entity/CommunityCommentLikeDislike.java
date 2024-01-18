@@ -1,9 +1,11 @@
-package org.devridge.api.domain.communityscrap;
+package org.devridge.api.domain.community.entity;
 
 import java.time.LocalDateTime;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,7 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.devridge.api.domain.community.Community;
+import org.devridge.api.domain.community.entity.id.CommunityCommentLikeDislikeId;
 import org.devridge.api.domain.member.entity.Member;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -26,30 +28,36 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Builder
 @Entity
-@SQLDelete(sql = "UPDATE community_scrap SET is_deleted = true WHERE community_id = ? AND member_id = ?")
+@SQLDelete(sql = "UPDATE community_comment_like_dislike SET is_deleted = true WHERE community_comment_id = ? AND member_id = ?")
 @Where(clause = "is_deleted = false")
 @EntityListeners(AuditingEntityListener.class)
-public class CommunityScrap {
+public class CommunityCommentLikeDislike {
 
     @EmbeddedId
-    private CommunityScrapId id;
+    private CommunityCommentLikeDislikeId id;
 
     @MapsId("memberId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", insertable = false, updatable = false)
     private Member member;
 
-    @MapsId("communityId")
+    @MapsId("commentId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "community_id", insertable = false, updatable = false)
-    private Community community;
+    @JoinColumn(name = "community_comment_id", insertable = false, updatable = false)
+    private CommunityComment communityComment;
 
-
-    private boolean isDeleted;
+    @Enumerated(EnumType.STRING)
+    private LikeStatus status;
 
     @CreatedDate
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    private boolean isDeleted;
+
+    public void changeStatus(LikeStatus status) {
+        this.status = status;
+    }
 }

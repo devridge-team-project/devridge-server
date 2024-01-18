@@ -1,7 +1,11 @@
-package org.devridge.api.domain.communitycomment;
+package org.devridge.api.domain.community.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.devridge.api.domain.community.entity.CommunityComment;
+import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
+import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
+import org.devridge.api.domain.community.service.CommunityCommentService;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.dto.BaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;

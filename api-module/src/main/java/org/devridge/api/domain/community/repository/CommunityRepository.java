@@ -1,5 +1,6 @@
-package org.devridge.api.domain.community;
+package org.devridge.api.domain.community.repository;
 
+import org.devridge.api.domain.community.entity.Community;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

@@ -1,4 +1,4 @@
-package org.devridge.api.domain.community;
+package org.devridge.api.domain.community.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,14 +13,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.devridge.api.domain.communitycomment.CommunityComment;
-import org.devridge.api.domain.communityscrap.CommunityScrap;
 import org.devridge.api.domain.member.entity.Member;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -33,26 +30,35 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @Builder
 @Entity
-@SQLDelete(sql = "UPDATE community SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE community_comment SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "community")
-public class Community {
+public class CommunityComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany(mappedBy = "communityComment")
+    private List<CommunityCommentLikeDislike> communityCommentLikeDislike = new ArrayList<>();
+
+    @Column(name = "community_id")
+    private Long communityId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "community_id", insertable = false, updatable = false)
+    private Community community;
+
     @Column(name = "member_id")
     private Long memberId;
 
-    private String title;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", insertable = false, updatable = false)
+    private Member member;
 
     private String content;
 
     private boolean isDeleted;
-
-    private Long views;
 
     @CreatedDate
     @Column(updatable = false)
@@ -61,18 +67,18 @@ public class Community {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "community")
-    private List<CommunityComment> communityComment = new ArrayList<>();
+    private long likeCount;
 
-    @OneToMany(mappedBy = "community")
-    private List<CommunityScrap> communityScrap = new ArrayList<>();
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", insertable = false, updatable = false)
-    private Member member;
-
-    public void updateCommunity(String title, String content) {
-        this.title = title;
-        this.content = content;
+    public void countLikeDislike(List<CommunityCommentLikeDislike> list) {
+        long sum = 0;
+        for (CommunityCommentLikeDislike like : list) {
+            if (like.getStatus() == LikeStatus.B) {
+                --sum;
+            }
+            if (like.getStatus() == LikeStatus.G) {
+                ++sum;
+            }
+        }
+        this.likeCount = sum;
     }
 }

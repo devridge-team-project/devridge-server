@@ -1,4 +1,4 @@
-package org.devridge.api.domain.community;
+package org.devridge.api.domain.community.dto.request;
 
 import lombok.Getter;
 

@@ -1,8 +1,11 @@
-package org.devridge.api.domain.community;
+package org.devridge.api.domain.community.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
+import org.devridge.api.domain.community.service.CommunityService;
+import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
+import org.devridge.api.domain.community.dto.response.ReadCommunityResponse;
+import org.devridge.api.domain.community.entity.Community;
 import org.devridge.common.dto.BaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

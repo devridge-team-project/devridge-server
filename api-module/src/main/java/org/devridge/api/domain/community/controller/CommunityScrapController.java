@@ -1,5 +1,6 @@
-package org.devridge.api.domain.communityscrap;
+package org.devridge.api.domain.community.controller;
 
+import org.devridge.api.domain.community.service.CommunityScrapService;
 import org.devridge.common.dto.BaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

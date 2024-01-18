@@ -1,4 +1,4 @@
-package org.devridge.api.domain.communitycommentlikedislike;
+package org.devridge.api.domain.community.entity.id;
 
 import java.io.Serializable;
 import javax.persistence.Embeddable;

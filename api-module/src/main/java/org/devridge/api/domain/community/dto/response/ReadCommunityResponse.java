@@ -1,4 +1,4 @@
-package org.devridge.api.domain.community;
+package org.devridge.api.domain.community.dto.response;
 
 import java.time.LocalDateTime;
 import lombok.Builder;

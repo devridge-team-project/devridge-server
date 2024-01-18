@@ -1,8 +1,12 @@
-package org.devridge.api.domain.communitycommentlikedislike;
+package org.devridge.api.domain.community.service;
 
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
-import org.devridge.api.domain.communitycomment.CommunityComment;
+import org.devridge.api.domain.community.entity.CommunityComment;
+import org.devridge.api.domain.community.entity.CommunityCommentLikeDislike;
+import org.devridge.api.domain.community.repository.CommunityCommentLikeDislikeRepository;
+import org.devridge.api.domain.community.entity.id.CommunityCommentLikeDislikeId;
+import org.devridge.api.domain.community.entity.LikeStatus;
 import org.devridge.api.domain.member.entity.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
