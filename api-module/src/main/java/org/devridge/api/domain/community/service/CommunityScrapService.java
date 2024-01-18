@@ -5,6 +5,7 @@ import org.devridge.api.domain.community.entity.CommunityScrap;
 import org.devridge.api.domain.community.repository.CommunityScrapRepository;
 import org.devridge.api.domain.community.entity.id.CommunityScrapId;
 import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -20,12 +21,12 @@ public class CommunityScrapService {
         this.communityScrapRepository = communityScrapRepository;
     }
 
-    public void createScrap(Long memberId, Long communityId) {
+    public void createScrap(Long communityId) {
         try {
-            Member member = Member.builder().id(memberId).build();
+            Member member = SecurityContextHolderUtil.getMember();
             Community community = Community.builder().id(communityId).build();
             CommunityScrap communityScrap = CommunityScrap.builder()
-                .id(new CommunityScrapId(memberId, communityId))
+                .id(new CommunityScrapId(member.getId(), communityId))
                 .member(member)
                 .community(community)
                 .build();
@@ -36,9 +37,10 @@ public class CommunityScrapService {
 
     }
 
-    public void deleteScrap(Long memberId, Long communityId) {
+    public void deleteScrap(Long communityId) {
         try {
-            communityScrapRepository.deleteById(new CommunityScrapId(memberId, communityId));
+            communityScrapRepository.deleteById(
+                new CommunityScrapId(SecurityContextHolderUtil.getMemberId(), communityId));
         } catch (EmptyResultDataAccessException e) {
             throw new EmptyResultDataAccessException("스크랩이 존재하지 않습니다.", 1);
         }

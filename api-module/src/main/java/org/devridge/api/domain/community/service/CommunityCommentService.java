@@ -5,6 +5,7 @@ import javax.persistence.EntityNotFoundException;
 import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.entity.CommunityCommentLikeDislike;
 import org.devridge.api.domain.community.repository.CommunityCommentRepository;
+import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,12 @@ public class CommunityCommentService {
         this.communityCommentRepository = communityCommentRepository;
     }
 
-    public void createComment(Long communityId, Long memberId, String content) {
+    public void createComment(Long communityId, String content) {
         CommunityComment communityComment = CommunityComment
             .builder()
             .communityId(communityId)
             .content(content)
-            .memberId(memberId)
+            .memberId(SecurityContextHolderUtil.getMemberId())
             .build();
         communityCommentRepository.save(communityComment);
     }

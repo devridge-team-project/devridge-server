@@ -31,9 +31,8 @@ public class CommunityController {
     }
 
     @PostMapping("/write")
-    public ResponseEntity<?> writingCommunity(@RequestBody CreateCommunityRequest dto,
-        @PathVariable Long memberId) {
-        communityService.createCommunity(dto, memberId);
+    public ResponseEntity<?> writingCommunity(@RequestBody CreateCommunityRequest dto) {
+        communityService.createCommunity(dto);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "게시글 작성 성공"

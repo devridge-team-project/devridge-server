@@ -8,6 +8,7 @@ import org.devridge.api.domain.community.repository.CommunityCommentLikeDislikeR
 import org.devridge.api.domain.community.entity.id.CommunityCommentLikeDislikeId;
 import org.devridge.api.domain.community.entity.LikeStatus;
 import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -23,11 +24,11 @@ public class CommunityCommentLikeDislikeService {
         this.communityCommentLikeDislikeRepository = communityCommentLikeDislikeRepository;
     }
 
-    public void createLikeDisLike(Long memberId, Long commentId, LikeStatus status) {
-        Member member = Member.builder().id(memberId).build();
+    public void createLikeDisLike(Long commentId, LikeStatus status) {
+        Member member = SecurityContextHolderUtil.getMember();
         CommunityComment communityComment = CommunityComment.builder().id(commentId).build();
         CommunityCommentLikeDislike communityCommentLikeDislike = CommunityCommentLikeDislike.builder()
-            .id(new CommunityCommentLikeDislikeId(memberId, commentId))
+            .id(new CommunityCommentLikeDislikeId(member.getId(), commentId))
             .status(status)
             .member(member)
             .communityComment(communityComment)
@@ -39,10 +40,9 @@ public class CommunityCommentLikeDislikeService {
         }
     }
 
-    public void changeCommunityCommentLikeDislike(Long memberId, Long commentId,
-        LikeStatus status) {
+    public void changeCommunityCommentLikeDislike(Long commentId, LikeStatus status) {
         Optional<CommunityCommentLikeDislike> communityCommentLikeDislike = communityCommentLikeDislikeRepository.findById(
-            new CommunityCommentLikeDislikeId(memberId, commentId));
+            new CommunityCommentLikeDislikeId(SecurityContextHolderUtil.getMemberId(), commentId));
         communityCommentLikeDislike.ifPresentOrElse(
             likeDislike -> {
                 likeDislike.changeStatus(status);

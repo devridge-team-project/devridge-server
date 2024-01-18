@@ -30,7 +30,7 @@ public class CommunityCommentLikeDislikeController {
 
 
     @PostMapping("/{commentId}/{status}")
-    public ResponseEntity<?> likeDislikeCreate(@PathVariable Long memberId, @PathVariable Long commentId,
+    public ResponseEntity<?> likeDislikeCreate(@PathVariable Long commentId,
         @PathVariable LikeStatus status) {
         String message;
         if (status.equals(LikeStatus.G)) {
@@ -39,10 +39,10 @@ public class CommunityCommentLikeDislikeController {
             message = "싫어요를 눌렀습니다.";
         }
         try {
-            communityCommentLikeDislikeService.changeCommunityCommentLikeDislike(memberId, commentId, status);
+            communityCommentLikeDislikeService.changeCommunityCommentLikeDislike(commentId, status);
             communityCommentService.updateLikeDislike(commentId);
         } catch (EntityNotFoundException e) {
-            communityCommentLikeDislikeService.createLikeDisLike(memberId, commentId, status);
+            communityCommentLikeDislikeService.createLikeDisLike(commentId, status);
             communityCommentService.updateLikeDislike(commentId);
         }
         BaseResponse response = new BaseResponse(

@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.repository.CommunityRepository;
+import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +21,11 @@ public class CommunityService {
         this.communityRepository = communityRepository;
     }
 
-    public void createCommunity(CreateCommunityRequest dto, Long memberId) {
+    public void createCommunity(CreateCommunityRequest dto) {
         Community community = Community.builder()
             .title(dto.getTitle())
             .content(dto.getContent())
-            .memberId(memberId)
+            .memberId(SecurityContextHolderUtil.getMemberId())
             .build();
         communityRepository.save(community);
     }

@@ -23,9 +23,8 @@ public class CommunityScrapController {
     }
 
     @PostMapping("/{communityId}")
-    public ResponseEntity<?> scrapCreate(@PathVariable Long memberId,
-        @PathVariable Long communityId) {
-        communityScrapService.createScrap(memberId, communityId);
+    public ResponseEntity<?> scrapCreate(@PathVariable Long communityId) {
+        communityScrapService.createScrap(communityId);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "스크랩 성공"
@@ -34,9 +33,8 @@ public class CommunityScrapController {
     }
 
     @DeleteMapping("/{communityId}")
-    public ResponseEntity<?> scrapdelete(@PathVariable Long memberId,
-        @PathVariable Long communityId) {
-        communityScrapService.deleteScrap(memberId, communityId);
+    public ResponseEntity<?> scrapdelete(@PathVariable Long communityId) {
+        communityScrapService.deleteScrap(communityId);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "스크랩 삭제 성공"

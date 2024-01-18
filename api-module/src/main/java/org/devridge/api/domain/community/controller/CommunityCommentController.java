@@ -32,8 +32,8 @@ public class CommunityCommentController {
 
     @PostMapping("/write/{communityId}") //todo: memberId 검증방법
     public ResponseEntity<?> writeComment(@RequestBody CommunityCommentRequest dto,
-        @PathVariable Long communityId, @PathVariable Long memberId) {
-        communityCommentService.createComment(communityId, memberId, dto.getContent());
+        @PathVariable Long communityId) {
+        communityCommentService.createComment(communityId, dto.getContent());
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "댓글 작성 성공"
