@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class GetAllCommentByQnAId {
 
+    private Long id;
     private FindWriterInformation member;
     private String content;
     private Integer likes;

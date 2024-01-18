@@ -46,6 +46,7 @@ public class QnAMapper {
         for (QnAComment comment : comments) {
             result.add(
                 GetAllCommentByQnAId.builder()
+                    .id(comment.getId())
                     .member(this.toMember(comment.getMember()))
                     .content(comment.getContent())
                     .likes(comment.getLikes())
