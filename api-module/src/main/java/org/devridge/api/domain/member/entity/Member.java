@@ -1,13 +1,24 @@
 package org.devridge.api.domain.member.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.AbstractTimeEntity;
+import org.devridge.api.domain.community.Community;
+import org.devridge.api.domain.communitycomment.CommunityComment;
+import org.devridge.api.domain.communitycommentlikedislike.CommunityCommentLikeDislike;
+import org.devridge.api.domain.communityscrap.CommunityScrap;
 import org.hibernate.annotations.ColumnDefault;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "member")
@@ -44,8 +55,23 @@ public class Member extends AbstractTimeEntity {
     @Column(columnDefinition = "TINYINT(1)")
     private boolean isDeleted;
 
+    @OneToMany(mappedBy = "member")
+    private List<Community> community = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<CommunityComment> communityComment = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<CommunityScrap> communityScrap = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<CommunityCommentLikeDislike> communityCommentLikeDislike = new ArrayList<>();
+
     @Builder
-    public Member(String email, String password, String provider, String nickname, String roles, String introduction, String profileImageUrl, boolean isDeleted) {
+    public Member(Long id, String email, String password, String provider, String nickname, String roles,
+        String introduction,
+        String profileImageUrl, boolean isDeleted) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.provider = provider;
@@ -56,7 +82,7 @@ public class Member extends AbstractTimeEntity {
         this.isDeleted = isDeleted;
     }
 
-    public void softDelete(){
+    public void softDelete() {
         isDeleted = true;
     }
 }

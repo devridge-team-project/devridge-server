@@ -3,7 +3,7 @@ package org.devridge.api.domain.communitycommentlikedislike;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import org.devridge.api.domain.communitycomment.CommunityComment;
-import org.devridge.api.githubsociallogintemp.domain.Member;
+import org.devridge.api.domain.member.entity.Member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;

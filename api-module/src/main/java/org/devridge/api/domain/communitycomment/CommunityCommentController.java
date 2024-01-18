@@ -2,7 +2,7 @@ package org.devridge.api.domain.communitycomment;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.devridge.api.githubsociallogintemp.domain.Member;
+import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.dto.BaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

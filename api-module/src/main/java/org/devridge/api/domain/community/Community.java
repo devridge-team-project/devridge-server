@@ -21,7 +21,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.communitycomment.CommunityComment;
 import org.devridge.api.domain.communityscrap.CommunityScrap;
-import org.devridge.api.githubsociallogintemp.domain.Member;
+import org.devridge.api.domain.member.entity.Member;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
