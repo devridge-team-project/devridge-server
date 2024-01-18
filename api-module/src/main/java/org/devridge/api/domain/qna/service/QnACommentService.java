@@ -46,6 +46,14 @@ public class QnACommentService {
         qnaCommentRepository.updateQnAComment(commentId, commentRequest.getContent());
     }
 
+    @Transactional
+    public void deleteQnAComment(Long qnaId, Long commentId) {
+        checkQnAValidate(qnaId);
+        checkQnACommentValidate(commentId);
+
+        qnaCommentRepository.deleteById(commentId);
+    }
+
     private QnA checkQnAValidate(Long qnaId) {
         return qnaRepository.findById(qnaId).orElseThrow(() -> new DataNotFoundException());
     }

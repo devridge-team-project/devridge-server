@@ -83,4 +83,13 @@ public class QnAController {
         qnaCommentService.updateQnAComment(qnaId, commentId, commentRequest);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{qnaId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteQnAComment(
+        @PathVariable Long qnaId,
+        @PathVariable Long commentId
+    ) {
+        qnaCommentService.deleteQnAComment(qnaId, commentId);
+        return ResponseEntity.ok().build();
+    }
 }
