@@ -10,12 +10,16 @@ import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.mapper.QnAMapper;
 import org.devridge.api.domain.qna.repository.QnAQuerydslRepository;
 import org.devridge.api.domain.qna.repository.QnARepository;
+import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.exception.DataNotFoundException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
 
 @RequiredArgsConstructor
 @Service
@@ -24,6 +28,7 @@ public class QnAService {
     private final QnARepository qnaRepository;
     private final QnAMapper qnaMapper;
     private final QnAQuerydslRepository qnaQuerydslRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
     public List<GetAllQnAResponse> getAllQnASortByViews(String sortOption) {
@@ -43,7 +48,11 @@ public class QnAService {
     }
 
     public Long createQnA(CreateQnARequest qnaRequest) {
-        QnA qna = qnaMapper.toQnA(qnaRequest);
+        Long writerId = getMemberId();
+        Member member = memberRepository.findById(writerId).orElseThrow(() -> new DataNotFoundException());
+
+        QnA qna = qnaMapper.toQnA(qnaRequest, member);
+
         return qnaRepository.save(qna).getId();
     }
 

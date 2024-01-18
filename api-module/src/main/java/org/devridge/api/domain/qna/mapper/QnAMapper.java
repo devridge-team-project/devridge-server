@@ -32,8 +32,9 @@ public class QnAMapper {
             .build();
     }
 
-    public QnA toQnA(CreateQnARequest qnaRequest) {
+    public QnA toQnA(CreateQnARequest qnaRequest, Member member) {
         return QnA.builder()
+            .member(member)
             .title(qnaRequest.getTitle())
             .content(qnaRequest.getContent())
             .build();
