@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequestMapping("/api/community/comment")
 @RestController
 public class CommunityCommentController {
 
@@ -28,7 +30,7 @@ public class CommunityCommentController {
         this.communityCommentService = communityCommentService;
     }
 
-    @PostMapping("/write/comment/community/{communityId}/{memberId}") //todo: memberId 검증방법
+    @PostMapping("/write/{communityId}") //todo: memberId 검증방법
     public ResponseEntity<?> writeComment(@RequestBody CommunityCommentRequest dto,
         @PathVariable Long communityId, @PathVariable Long memberId) {
         communityCommentService.createComment(communityId, memberId, dto.getContent());
@@ -39,7 +41,7 @@ public class CommunityCommentController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/read/comment/community/{communityId}")
+    @GetMapping("/read/{communityId}")
     public ResponseEntity<?> viewComment(@PathVariable Long communityId) {
         List<CommunityComment> communityComments = communityCommentService.getAllComment(communityId);
         List<CommunityCommentResponse> dtos = new ArrayList<>();
@@ -57,7 +59,7 @@ public class CommunityCommentController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/comment/community/{commentId}")
+    @DeleteMapping("/delete/{commentId}")
     public ResponseEntity<?> CommentDelete(@PathVariable Long commentId) {
         communityCommentService.deleteComment(commentId);
         BaseResponse response = new BaseResponse(

@@ -16,10 +16,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequestMapping("/api/community")
 @RestController
-@Slf4j
 public class CommunityController {
 
     private CommunityService communityService;
@@ -29,7 +30,7 @@ public class CommunityController {
         this.communityService = communityService;
     }
 
-    @PostMapping("/community/write/{memberId}")
+    @PostMapping("/write")
     public ResponseEntity<?> writingCommunity(@RequestBody CreateCommunityRequest dto,
         @PathVariable Long memberId) {
         communityService.createCommunity(dto, memberId);
@@ -40,7 +41,7 @@ public class CommunityController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/community/read/{id}")
+    @GetMapping("/read/{id}")
     public ResponseEntity<?> viewCommunity(@PathVariable Long id) {
         Community community = communityService.getCommunityById(id);
         String nickName = community.getMember().getNickname();
@@ -62,7 +63,7 @@ public class CommunityController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/community/modify/{id}")
+    @PutMapping("/modify/{id}")
     public ResponseEntity<?> modifyCommunity(@PathVariable Long id, @RequestBody CreateCommunityRequest dto) {
         communityService.updateCommunity(id, dto);
         BaseResponse response = new BaseResponse(
@@ -72,7 +73,7 @@ public class CommunityController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/community/del/{id}")
+    @DeleteMapping("/del/{id}")
     public ResponseEntity<?> deleteCommunity(@PathVariable Long id) {
         communityService.deleteCommunity(id);
         BaseResponse response = new BaseResponse(
@@ -82,7 +83,7 @@ public class CommunityController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/community/read/all") // 커뮤니티 글 전체 목록 보여주기
+    @GetMapping("/read/all") // 커뮤니티 글 전체 목록 보여주기
     public ResponseEntity<?> viewAllCommunity() {
         List<Community> communityList = communityService.viewAllCommunity();
         List<ReadCommunityResponse> dtos = communityList.stream()

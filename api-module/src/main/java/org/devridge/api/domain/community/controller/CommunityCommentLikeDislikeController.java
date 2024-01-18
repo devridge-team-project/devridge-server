@@ -10,8 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequestMapping("/api/community/comment/like-dislike")
 @RestController
 public class CommunityCommentLikeDislikeController {
 
@@ -27,7 +29,7 @@ public class CommunityCommentLikeDislikeController {
     }
 
 
-    @PostMapping("/like/{memberId}/{commentId}/{status}")
+    @PostMapping("/{commentId}/{status}")
     public ResponseEntity<?> likeDislikeCreate(@PathVariable Long memberId, @PathVariable Long commentId,
         @PathVariable LikeStatus status) {
         String message;

@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequestMapping("/api/community/scrap")
 @RestController
 public class CommunityScrapController {
 
@@ -20,7 +22,7 @@ public class CommunityScrapController {
         this.communityScrapService = communityScrapService;
     }
 
-    @PostMapping("/community/scrap/{communityId}/{memberId}")
+    @PostMapping("/{communityId}")
     public ResponseEntity<?> scrapCreate(@PathVariable Long memberId,
         @PathVariable Long communityId) {
         communityScrapService.createScrap(memberId, communityId);
@@ -31,7 +33,7 @@ public class CommunityScrapController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/community/scrap/{communityId}/{memberId}")
+    @DeleteMapping("/{communityId}")
     public ResponseEntity<?> scrapdelete(@PathVariable Long memberId,
         @PathVariable Long communityId) {
         communityScrapService.deleteScrap(memberId, communityId);
