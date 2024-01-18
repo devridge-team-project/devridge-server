@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.qna.dto.request.CreateQnACommentRequest;
 import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
+import org.devridge.api.domain.qna.dto.request.UpdateQnACommentRequest;
 import org.devridge.api.domain.qna.dto.request.UpdateQnARequest;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
@@ -26,7 +27,7 @@ import java.util.List;
 public class QnAController {
 
     private final QnAService qnaService;
-    private final QnACommentService qnACommentService;
+    private final QnACommentService qnaCommentService;
 
     @GetMapping
     public ResponseEntity<List<GetAllQnAResponse>> getAllQnASortByViews(
@@ -69,7 +70,17 @@ public class QnAController {
         @PathVariable Long qnaId,
         @RequestBody CreateQnACommentRequest commentRequest
     ) {
-        Long commentId = qnACommentService.createQnAComment(qnaId, commentRequest);
+        Long commentId = qnaCommentService.createQnAComment(qnaId, commentRequest);
         return ResponseEntity.created(URI.create("/api/qna/" + qnaId + "/comments/" + commentId)).build();
+    }
+
+    @PutMapping("/{qnaId}/comments/{commentId}")
+    public ResponseEntity<Void> updateQnAComment(
+        @PathVariable Long qnaId,
+        @PathVariable Long commentId,
+        @RequestBody UpdateQnACommentRequest commentRequest
+    ) {
+        qnaCommentService.updateQnAComment(qnaId, commentId, commentRequest);
+        return ResponseEntity.ok().build();
     }
 }

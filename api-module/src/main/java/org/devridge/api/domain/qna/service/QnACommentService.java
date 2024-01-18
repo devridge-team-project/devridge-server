@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.qna.dto.request.CreateQnACommentRequest;
+import org.devridge.api.domain.qna.dto.request.UpdateQnACommentRequest;
 import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnAComment;
 import org.devridge.api.domain.qna.mapper.QnACommentMapper;
@@ -13,6 +14,7 @@ import org.devridge.api.domain.qna.repository.QnARepository;
 import org.devridge.common.exception.DataNotFoundException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
 
@@ -21,7 +23,7 @@ import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
 public class QnACommentService {
 
     private final QnARepository qnaRepository;
-    private final QnACommentRepository qnACommentRepository;
+    private final QnACommentRepository qnaCommentRepository;
     private final MemberRepository memberRepository;
     private final QnACommentMapper qnaCommentMapper;
 
@@ -33,7 +35,15 @@ public class QnACommentService {
 
         QnAComment comment = qnaCommentMapper.toQnAComment(member, qna, commentRequest);
 
-        return qnACommentRepository.save(comment).getId();
+        return qnaCommentRepository.save(comment).getId();
+    }
+
+    @Transactional
+    public void updateQnAComment(Long qnaId, Long commentId, UpdateQnACommentRequest commentRequest) {
+        checkQnAValidate(qnaId);
+        checkQnACommentValidate(commentId);
+
+        qnaCommentRepository.updateQnAComment(commentId, commentRequest.getContent());
     }
 
     private QnA checkQnAValidate(Long qnaId) {
@@ -42,5 +52,9 @@ public class QnACommentService {
 
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
+    }
+
+    private void checkQnACommentValidate(Long commentId) {
+        qnaCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
     }
 }
