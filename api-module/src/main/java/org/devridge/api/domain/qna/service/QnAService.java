@@ -59,7 +59,7 @@ public class QnAService {
     @Transactional
     public void updateQnA(Long qnaId, UpdateQnARequest qnaRequest) {
         checkQnAValidate(qnaId);
-        qnaRepository.updateQnA(qnaId, qnaRequest.getTitle(), qnaRequest.getContent());
+        qnaRepository.updateQnA(qnaRequest.getTitle(), qnaRequest.getContent(), qnaId);
     }
 
     public void deleteQnA(Long qnaId) {

@@ -43,7 +43,7 @@ public class QnACommentService {
         checkQnAValidate(qnaId);
         checkQnACommentValidate(commentId);
 
-        qnaCommentRepository.updateQnAComment(commentId, commentRequest.getContent());
+        qnaCommentRepository.updateQnAComment(commentRequest.getContent(), commentId);
     }
 
     @Transactional
