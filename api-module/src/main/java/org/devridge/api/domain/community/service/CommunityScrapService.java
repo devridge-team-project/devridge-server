@@ -1,14 +1,15 @@
 package org.devridge.api.domain.community.service;
 
+import javax.persistence.EntityNotFoundException;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityScrap;
-import org.devridge.api.domain.community.repository.CommunityScrapRepository;
 import org.devridge.api.domain.community.entity.id.CommunityScrapId;
+import org.devridge.api.domain.community.repository.CommunityScrapRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,11 +39,18 @@ public class CommunityScrapService {
     }
 
     public void deleteScrap(Long communityId) {
-        try {
-            communityScrapRepository.deleteById(
-                new CommunityScrapId(SecurityContextHolderUtil.getMemberId(), communityId));
-        } catch (EmptyResultDataAccessException e) {
-            throw new EmptyResultDataAccessException("스크랩이 존재하지 않습니다.", 1);
-        }
+        Long memberId = SecurityContextHolderUtil.getMemberId();
+        CommunityScrapId communityScrapId = new CommunityScrapId(memberId, communityId);
+        communityScrapRepository.findById(communityScrapId).ifPresentOrElse(
+            community -> {
+                if (!community.getMember().getId().equals(memberId)) {
+                    throw new AccessDeniedException("거부된 접근입니다.");
+                }
+                communityScrapRepository.deleteById(communityScrapId);
+            },
+            () -> {
+                throw new EntityNotFoundException("스크랩이 존재하지 않습니다.");
+            }
+        );
     }
 }

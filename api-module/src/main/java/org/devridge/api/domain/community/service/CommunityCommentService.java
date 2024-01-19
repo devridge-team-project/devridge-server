@@ -8,7 +8,6 @@ import org.devridge.api.domain.community.entity.CommunityCommentLikeDislike;
 import org.devridge.api.domain.community.repository.CommunityCommentRepository;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -58,11 +57,17 @@ public class CommunityCommentService {
     }
 
     public void deleteComment(Long commentId) {
-        try {
-            communityCommentRepository.deleteById(commentId);
-        } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException("삭제할 댓글을 찾을 수 없습니다.");
-        }
+        communityCommentRepository.findById(commentId).ifPresentOrElse(
+            community -> {
+                if (!community.getMemberId().equals(SecurityContextHolderUtil.getMemberId())) {
+                    throw new AccessDeniedException("거부된 접근입니다.");
+                }
+                communityCommentRepository.deleteById(commentId);
+            },
+            () -> {
+                throw new EntityNotFoundException("삭제할 댓글을 찾을 수 없습니다.");
+            }
+        );
     }
 
     public void updateLikeDislike(Long commentId) {

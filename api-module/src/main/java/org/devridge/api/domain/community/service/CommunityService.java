@@ -9,6 +9,7 @@ import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -40,6 +41,9 @@ public class CommunityService {
         Optional<Community> optionalCommunity = communityRepository.findById(id);
         optionalCommunity.ifPresentOrElse(
             community -> {
+                if (!SecurityContextHolderUtil.getMemberId().equals(community.getMemberId())) {
+                    throw new AccessDeniedException("거부된 접근입니다.");
+                }
                 community.updateCommunity(dto.getTitle(), dto.getContent());
                 communityRepository.save(community);
             },
@@ -49,11 +53,12 @@ public class CommunityService {
     }
 
     public void deleteCommunity(Long id) {
-        try {
-            communityRepository.deleteById(id);
-        } catch (EntityNotFoundException e) {
-            throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
+        Community community = communityRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다."));
+        if (!SecurityContextHolderUtil.getMemberId().equals(community.getMemberId())) {
+            throw new AccessDeniedException("거부된 접근입니다.");
         }
+        communityRepository.deleteById(id);
     }
 
     public List<Community> viewAllCommunity() {
