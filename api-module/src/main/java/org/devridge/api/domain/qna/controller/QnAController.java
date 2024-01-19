@@ -2,18 +2,22 @@ package org.devridge.api.domain.qna.controller;
 
 import lombok.RequiredArgsConstructor;
 
+import org.devridge.api.domain.qna.dto.request.CreateQnACommentRequest;
 import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
+import org.devridge.api.domain.qna.dto.request.UpdateQnACommentRequest;
 import org.devridge.api.domain.qna.dto.request.UpdateQnARequest;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.dto.type.SortOption;
+import org.devridge.api.domain.qna.service.QnACommentService;
 import org.devridge.api.domain.qna.service.QnAService;
-
 import org.devridge.api.domain.qna.validator.ValidateSortOption;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.net.URI;
 import java.util.List;
 
@@ -23,6 +27,7 @@ import java.util.List;
 public class QnAController {
 
     private final QnAService qnaService;
+    private final QnACommentService qnaCommentService;
 
     @GetMapping
     public ResponseEntity<List<GetAllQnAResponse>> getAllQnASortByViews(
@@ -57,6 +62,34 @@ public class QnAController {
     @DeleteMapping("/{qnaId}")
     public ResponseEntity<Void> deleteQnA(@PathVariable Long qnaId) {
         qnaService.deleteQnA(qnaId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{qnaId}/comments")
+    public ResponseEntity<Void> createQnAComment(
+        @PathVariable Long qnaId,
+        @RequestBody CreateQnACommentRequest commentRequest
+    ) {
+        Long commentId = qnaCommentService.createQnAComment(qnaId, commentRequest);
+        return ResponseEntity.created(URI.create("/api/qna/" + qnaId + "/comments/" + commentId)).build();
+    }
+
+    @PutMapping("/{qnaId}/comments/{commentId}")
+    public ResponseEntity<Void> updateQnAComment(
+        @PathVariable Long qnaId,
+        @PathVariable Long commentId,
+        @RequestBody UpdateQnACommentRequest commentRequest
+    ) {
+        qnaCommentService.updateQnAComment(qnaId, commentId, commentRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{qnaId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteQnAComment(
+        @PathVariable Long qnaId,
+        @PathVariable Long commentId
+    ) {
+        qnaCommentService.deleteQnAComment(qnaId, commentId);
         return ResponseEntity.ok().build();
     }
 }
