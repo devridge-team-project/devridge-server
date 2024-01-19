@@ -18,6 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.AbstractTimeEntity;
 import org.devridge.api.domain.member.entity.Member;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -26,6 +27,7 @@ import org.hibernate.annotations.Where;
 @AllArgsConstructor
 @Builder
 @Entity
+@DynamicInsert
 @SQLDelete(sql = "UPDATE community_comment SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
 public class CommunityComment extends AbstractTimeEntity {
@@ -53,9 +55,9 @@ public class CommunityComment extends AbstractTimeEntity {
 
     private String content;
 
-    private boolean isDeleted;
+    private Boolean isDeleted;
 
-    private long likeCount;
+    private Long likeCount;
 
     public void countLikeDislike(List<CommunityCommentLikeDislike> list) {
         long sum = 0;
