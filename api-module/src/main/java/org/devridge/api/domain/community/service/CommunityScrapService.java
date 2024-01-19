@@ -9,7 +9,6 @@ import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,16 +40,8 @@ public class CommunityScrapService {
     public void deleteScrap(Long communityId) {
         Long memberId = SecurityContextHolderUtil.getMemberId();
         CommunityScrapId communityScrapId = new CommunityScrapId(memberId, communityId);
-        communityScrapRepository.findById(communityScrapId).ifPresentOrElse(
-            community -> {
-                if (!community.getMember().getId().equals(memberId)) {
-                    throw new AccessDeniedException("거부된 접근입니다.");
-                }
-                communityScrapRepository.deleteById(communityScrapId);
-            },
-            () -> {
-                throw new EntityNotFoundException("스크랩이 존재하지 않습니다.");
-            }
-        );
+        communityScrapRepository.findById(communityScrapId)
+            .orElseThrow(() -> new EntityNotFoundException("스크랩이 존재하지 않습니다."));
+        communityScrapRepository.deleteById(communityScrapId);
     }
 }
