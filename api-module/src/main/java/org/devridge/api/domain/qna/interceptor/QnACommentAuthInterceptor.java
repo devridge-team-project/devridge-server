@@ -1,6 +1,7 @@
 package org.devridge.api.domain.qna.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.qna.repository.QnACommentRepository;

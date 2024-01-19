@@ -1,11 +1,12 @@
 package org.devridge.api.domain.qna.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.qna.repository.QnARepository;
-
 import org.devridge.common.exception.DataNotFoundException;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+
 import java.util.Map;
 import java.util.Objects;
 
