@@ -71,4 +71,8 @@ public class CommunityComment extends AbstractTimeEntity {
         }
         this.likeCount = sum;
     }
+
+    public void updateComment(String content) {
+        this.content = content;
+    }
 }

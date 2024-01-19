@@ -1,6 +1,7 @@
 package org.devridge.api.domain.community.service;
 
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.entity.CommunityCommentLikeDislike;
@@ -8,6 +9,7 @@ import org.devridge.api.domain.community.repository.CommunityCommentRepository;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,6 +39,22 @@ public class CommunityCommentService {
             throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
         }
         return communityComments;
+    }
+
+    public void updateComment(Long communityId, String content) {
+        Optional<CommunityComment> optionalCommunity = communityCommentRepository.findById(communityId);
+        optionalCommunity.ifPresentOrElse(
+            community -> {
+                if (!community.getMemberId().equals(SecurityContextHolderUtil.getMemberId())) {
+                    throw new AccessDeniedException("거부된 접근입니다.");
+                }
+                community.updateComment(content);
+                communityCommentRepository.save(community);
+
+            },
+            () -> {
+                throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
+            });
     }
 
     public void deleteComment(Long commentId) {
