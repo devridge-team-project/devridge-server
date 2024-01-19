@@ -1,5 +1,6 @@
 package org.devridge.api.domain.qna.interceptor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.qna.repository.QnARepository;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
 
@@ -22,6 +24,7 @@ import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
 public class QnAAuthInterceptor implements HandlerInterceptor {
 
     private final QnARepository qnaRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
@@ -36,8 +39,14 @@ public class QnAAuthInterceptor implements HandlerInterceptor {
                     .getMember()
                     .getId();
 
-            if (memberId != writerId) {
-                response.getOutputStream().println("NO");
+            if (!Objects.equals(memberId, writerId)) {
+                String result = objectMapper.writeValueAsString(new InterceptorErrorMessage("해당 게시글에 대한 권한이 없습니다."));
+
+                response.setContentType("application/json");
+                response.setCharacterEncoding("utf-8");
+                response.setStatus(403);
+                response.getWriter().write(result);
+
                 return false;
             }
         }
