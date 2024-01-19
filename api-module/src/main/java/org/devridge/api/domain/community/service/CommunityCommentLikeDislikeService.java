@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommunityCommentLikeDislikeService {
 
-    private CommunityCommentLikeDislikeRepository communityCommentLikeDislikeRepository;
+    private final CommunityCommentLikeDislikeRepository communityCommentLikeDislikeRepository;
 
     @Autowired
     public CommunityCommentLikeDislikeService(

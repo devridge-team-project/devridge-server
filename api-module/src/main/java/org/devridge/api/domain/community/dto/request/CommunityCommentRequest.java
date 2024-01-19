@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class CommunityCommentRequest {
-    
+
     @NotNull
-    String content;
+    private String content;
 }

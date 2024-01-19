@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommunityScrapService {
 
-    private CommunityScrapRepository communityScrapRepository;
+    private final CommunityScrapRepository communityScrapRepository;
 
     @Autowired
     public CommunityScrapService(CommunityScrapRepository communityScrapRepository) {

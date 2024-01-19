@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CommunityScrapController {
 
-    private CommunityScrapService communityScrapService;
+    private final CommunityScrapService communityScrapService;
 
     @Autowired
     public CommunityScrapController(CommunityScrapService communityScrapService) {

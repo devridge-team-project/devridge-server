@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CommunityCommentLikeDislikeController {
 
-    private CommunityCommentLikeDislikeService communityCommentLikeDislikeService;
-    private CommunityCommentService communityCommentService;
+    private final CommunityCommentLikeDislikeService communityCommentLikeDislikeService;
+    private final CommunityCommentService communityCommentService;
 
     @Autowired
     public CommunityCommentLikeDislikeController(

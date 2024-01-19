@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CommunityController {
 
-    private CommunityService communityService;
+    private final CommunityService communityService;
 
     @Autowired
     public CommunityController(CommunityService communityService) {

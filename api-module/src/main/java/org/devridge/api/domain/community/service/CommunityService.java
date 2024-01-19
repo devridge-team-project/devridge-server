@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommunityService {
 
-    private CommunityRepository communityRepository;
+    private final CommunityRepository communityRepository;
 
     @Autowired
     public CommunityService(CommunityRepository communityRepository) {
