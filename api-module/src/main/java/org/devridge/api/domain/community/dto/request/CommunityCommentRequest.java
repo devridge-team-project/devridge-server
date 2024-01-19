@@ -1,18 +1,11 @@
 package org.devridge.api.domain.community.dto.request;
 
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class CommunityCommentRequest {
-
-    public CommunityCommentRequest() {
-    }
-
-    public CommunityCommentRequest(String content) {
-        this.content = content;
-    }
-
+    
+    @NotNull
     String content;
 }

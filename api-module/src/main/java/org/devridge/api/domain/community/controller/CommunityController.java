@@ -2,6 +2,7 @@ package org.devridge.api.domain.community.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.validation.Valid;
 import org.devridge.api.domain.community.service.CommunityService;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.ReadCommunityResponse;
@@ -31,7 +32,7 @@ public class CommunityController {
     }
 
     @PostMapping("/write")
-    public ResponseEntity<?> writingCommunity(@RequestBody CreateCommunityRequest dto) {
+    public ResponseEntity<?> writingCommunity(@Valid @RequestBody CreateCommunityRequest dto) {
         communityService.createCommunity(dto);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
@@ -63,7 +64,7 @@ public class CommunityController {
     }
 
     @PutMapping("/modify/{id}")
-    public ResponseEntity<?> modifyCommunity(@PathVariable Long id, @RequestBody CreateCommunityRequest dto) {
+    public ResponseEntity<?> modifyCommunity(@PathVariable Long id, @Valid @RequestBody CreateCommunityRequest dto) {
         communityService.updateCommunity(id, dto);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),

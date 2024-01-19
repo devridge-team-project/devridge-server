@@ -2,9 +2,10 @@ package org.devridge.api.domain.community.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.devridge.api.domain.community.entity.CommunityComment;
+import javax.validation.Valid;
 import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
+import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.service.CommunityCommentService;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.dto.BaseResponse;
@@ -32,7 +33,7 @@ public class CommunityCommentController {
     }
 
     @PostMapping("/write/{communityId}") //todo: memberId 검증방법
-    public ResponseEntity<?> writeComment(@RequestBody CommunityCommentRequest dto,
+    public ResponseEntity<?> writeComment(@Valid @RequestBody CommunityCommentRequest dto,
         @PathVariable Long communityId) {
         communityCommentService.createComment(communityId, dto.getContent());
         BaseResponse response = new BaseResponse(
