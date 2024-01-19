@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class InterceptorErrorMessage {
 
-    String error;
+    private String error;
 
     public InterceptorErrorMessage(String error) {
         this.error = error;

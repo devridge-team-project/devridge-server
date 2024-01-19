@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebServiceConfig implements WebMvcConfigurer {
 
     private final QnAAuthInterceptor qnaAuthInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(qnaAuthInterceptor)
