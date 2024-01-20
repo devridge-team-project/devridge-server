@@ -3,12 +3,12 @@ package org.devridge.api.domain.community.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
-import org.devridge.api.domain.community.service.CommunityService;
+import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.ReadCommunityResponse;
 import org.devridge.api.domain.community.entity.Community;
+import org.devridge.api.domain.community.service.CommunityService;
 import org.devridge.common.dto.BaseResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,16 +20,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequiredArgsConstructor
 @RequestMapping("/api/community")
 @RestController
 public class CommunityController {
 
     private final CommunityService communityService;
-
-    @Autowired
-    public CommunityController(CommunityService communityService) {
-        this.communityService = communityService;
-    }
 
     @PostMapping("/write")
     public ResponseEntity<?> writingCommunity(@Valid @RequestBody CreateCommunityRequest dto) {

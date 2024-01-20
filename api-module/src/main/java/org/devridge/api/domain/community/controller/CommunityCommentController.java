@@ -3,13 +3,13 @@ package org.devridge.api.domain.community.controller;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
 import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.service.CommunityCommentService;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.dto.BaseResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,16 +21,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequiredArgsConstructor
 @RequestMapping("/api/community/comment")
 @RestController
 public class CommunityCommentController {
 
     private final CommunityCommentService communityCommentService;
-
-    @Autowired
-    public CommunityCommentController(CommunityCommentService communityCommentService) {
-        this.communityCommentService = communityCommentService;
-    }
 
     @PostMapping("/write/{communityId}") //todo: memberId 검증방법
     public ResponseEntity<?> writeComment(@Valid @RequestBody CommunityCommentRequest dto,
