@@ -11,9 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.devridge.api.domain.AbstractTimeEntity;
 import org.devridge.api.domain.community.entity.id.CommunityScrapId;
 import org.devridge.api.domain.member.entity.Member;
+import org.devridge.common.dto.BaseTimeEntity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -26,7 +26,7 @@ import org.hibernate.annotations.Where;
 @DynamicInsert
 @SQLDelete(sql = "UPDATE community_scrap SET is_deleted = true WHERE community_id = ? AND member_id = ?")
 @Where(clause = "is_deleted = false")
-public class CommunityScrap extends AbstractTimeEntity {
+public class CommunityScrap extends BaseTimeEntity {
 
     @EmbeddedId
     private CommunityScrapId id;
@@ -40,6 +40,4 @@ public class CommunityScrap extends AbstractTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id", insertable = false, updatable = false)
     private Community community;
-
-    private Boolean isDeleted;
 }

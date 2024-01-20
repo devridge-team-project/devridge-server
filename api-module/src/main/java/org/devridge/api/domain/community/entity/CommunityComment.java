@@ -5,9 +5,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -16,8 +13,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.devridge.api.domain.AbstractTimeEntity;
 import org.devridge.api.domain.member.entity.Member;
+import org.devridge.common.dto.BaseEntity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -30,11 +27,7 @@ import org.hibernate.annotations.Where;
 @DynamicInsert
 @SQLDelete(sql = "UPDATE community_comment SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
-public class CommunityComment extends AbstractTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CommunityComment extends BaseEntity {
 
     @OneToMany(mappedBy = "communityComment")
     private List<CommunityCommentLikeDislike> communityCommentLikeDislike = new ArrayList<>();
@@ -54,8 +47,6 @@ public class CommunityComment extends AbstractTimeEntity {
     private Member member;
 
     private String content;
-
-    private Boolean isDeleted;
 
     private Long likeCount;
 
