@@ -14,11 +14,15 @@ public class CustomCorsConfig implements WebMvcConfigurer {
     @Value("${devridge.cors.allowedMethods}")
     private String[] allowedMethods;
 
+    @Value("${devridge.cors.allowedHeaders}")
+    private String[] allowedHeaders;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(allowedOrigins)
                 .allowedMethods(allowedMethods)
+                .allowedHeaders(allowedHeaders)
                 .allowCredentials(true)
                 .maxAge(1800);
     }
