@@ -4,35 +4,35 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.devridge.api.domain.AbstractTimeEntity;
+import org.devridge.api.domain.member.constant.Role;
+import org.devridge.common.dto.BaseEntity;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "member")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends AbstractTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "email", nullable = false)
+public class Member extends BaseEntity {
+    @NotNull
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @NotNull
     private String password;
 
-    @Column(name = "provider")
+    @NotNull
     @ColumnDefault("normal")
     private String provider;
 
-    @Column(name = "nickname", nullable = false)
+    @NotNull
     private String nickname;
 
-    // TODO: [필수] 이부분 고정타입일 것 같은데 enum 검증하도록 바꿔주시면 더 좋습니다.
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private Role role;
+
     @Column(name = "roles", nullable = false)
     private String roles;
 
