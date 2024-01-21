@@ -10,6 +10,7 @@ import org.devridge.api.domain.qna.dto.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.id.QnALikeDislikeId;
 import org.devridge.common.dto.BaseTimeEntity;
 
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -20,6 +21,7 @@ import javax.persistence.*;
 @Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "qna_like_dislike")
+@DynamicInsert
 @Entity
 public class QnALikeDislike extends BaseTimeEntity {
 
@@ -29,8 +31,8 @@ public class QnALikeDislike extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private LikeStatus status;
 
-    @Builder
-    public QnALikeDislike(Member member, QnA qna) {
-        this.id = new QnALikeDislikeId(member, qna);
+    public QnALikeDislike(QnALikeDislikeId id, LikeStatus status) {
+        this.id = id;
+        this.status = status;
     }
 }
