@@ -6,7 +6,6 @@ import org.devridge.api.domain.member.repository.RefreshTokenRepository;
 import org.devridge.api.security.auth.CustomMemberDetailsService;
 import org.devridge.api.security.auth.JwtAuthenticationProvider;
 import org.devridge.api.security.constant.SecurityConstant;
-import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.security.filter.JwtAuthenticationFilter;
 import org.devridge.api.security.filter.JwtAuthorizationFilter;
 import org.devridge.api.security.handler.CustomLogoutHandler;
@@ -97,7 +96,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager) {
-        JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(refreshTokenRepository, new TokenResponse());
+        JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(refreshTokenRepository);
         authenticationFilter.setAuthenticationManager(authenticationManager);
 
         SecurityContextRepository contextRepository = new HttpSessionSecurityContextRepository();

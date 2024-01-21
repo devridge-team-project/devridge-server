@@ -9,14 +9,11 @@ import org.devridge.api.security.auth.CustomMemberDetails;
 import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;
-import org.devridge.common.dto.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -28,11 +25,9 @@ import java.util.Optional;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private RefreshTokenRepository refreshTokenRepository;
-    private TokenResponse tokenResponse;
 
-    public JwtAuthenticationFilter(RefreshTokenRepository refreshTokenRepository, TokenResponse tokenResponse) {
+    public JwtAuthenticationFilter(RefreshTokenRepository refreshTokenRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
-        this.tokenResponse = tokenResponse;
         setFilterProcessesUrl("/api/login");
     }
 
@@ -68,43 +63,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 3. AccessToken 발급
         String accessToken = JwtUtil.createAccessToken(member, refreshTokenId);
 
-        TokenResponse tokenResponse = this.tokenResponse.builder()
+        TokenResponse tokenResponse = TokenResponse.builder()
             .accessToken(accessToken)
             .build();
 
-        BaseResponse baseResponse = new BaseResponse(
-            HttpStatus.OK.value(),
-            "login success",
-            tokenResponse
-        );
-
-        ResponseUtil.createResponseMessage(response, baseResponse);
+        ResponseUtil.createResponseBody(response, tokenResponse, HttpStatus.OK);
     }
-
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
-        // 1. Http Response Message 세팅 후 반환
-        Object failedType = failed.getClass();
+        String error = "email, password 가 일치하지 않습니다.";
 
-        BaseResponse baseResponse = null;
-
-        // 2. 예외에 따른 response 세팅
-        if (failedType.equals(BadCredentialsException.class) || failedType.equals(UsernameNotFoundException.class)) {
-            baseResponse = new BaseResponse(
-                    HttpStatus.UNAUTHORIZED.value(),
-                    failed.getLocalizedMessage()
-            );
-        }
-        else {
-            baseResponse = new BaseResponse(
-                    HttpStatus.BAD_REQUEST.value(),
-                    failed.getLocalizedMessage()
-            );
-        }
-
-        ResponseUtil.createResponseMessage(response, baseResponse);
+        ResponseUtil.createResponseBody(response, error, HttpStatus.BAD_REQUEST);
     }
 
     private Long saveRefreshToken(Member member, String refreshToken) {
