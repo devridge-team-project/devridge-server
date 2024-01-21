@@ -94,7 +94,7 @@ public class MemberService {
             throw new PasswordNotMatchException();
         }
 
-        findMember.softDelete();
+        memberRepository.delete(findMember);
     }
 
     public List<Skill> areSkillsValid(List<Long> skillIds) {

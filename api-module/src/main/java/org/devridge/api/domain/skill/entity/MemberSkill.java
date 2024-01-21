@@ -7,12 +7,18 @@ import lombok.NoArgsConstructor;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.skill.entity.key.MemberSkillId;
 import org.devridge.common.dto.BaseTimeEntity;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
+@SQLDelete(sql = "UPDATE qna SET is_deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
 @Table(name = "member_skill")
 public class MemberSkill extends BaseTimeEntity {
 

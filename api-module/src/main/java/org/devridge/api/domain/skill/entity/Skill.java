@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.common.dto.BaseEntity;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -14,6 +17,9 @@ import java.util.Set;
 @Entity
 @Getter
 @NoArgsConstructor
+@DynamicInsert
+@SQLDelete(sql = "UPDATE qna SET is_deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
 @Table(name = "skill")
 public class Skill extends BaseEntity {
 
