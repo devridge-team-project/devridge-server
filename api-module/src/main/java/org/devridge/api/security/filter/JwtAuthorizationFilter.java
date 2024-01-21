@@ -11,11 +11,9 @@ import org.devridge.api.domain.member.repository.RefreshTokenRepository;
 import org.devridge.api.security.auth.AuthProperties;
 import org.devridge.api.security.auth.CustomMemberDetails;
 import org.devridge.api.security.auth.CustomMemberDetailsService;
-import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.AccessTokenUtil;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;
-import org.devridge.common.dto.BaseResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -120,11 +118,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         );
 
         if (!savedMember.isPresent()) {
-            BaseResponse baseResponse = new BaseResponse(
-                    HttpStatus.UNAUTHORIZED.value(),
-                    "엑세스 토큰이 유효하지 않습니다."
-            );
-            ResponseUtil.createResponseMessage(response, baseResponse);
+            ResponseUtil.createResponseBody(response, HttpStatus.UNAUTHORIZED);
             return null;
         }
 
@@ -142,11 +136,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         } catch (ExpiredJwtException e) {
             refreshTokenRepository.delete(refreshToken);
 
-            BaseResponse baseResponse = new BaseResponse(
-                    HttpStatus.UNAUTHORIZED.value(),
-                    "재인증이 필요합니다."
-            );
-            ResponseUtil.createResponseMessage(response, baseResponse);
+            ResponseUtil.createResponseBody(response, HttpStatus.UNAUTHORIZED);
+
             return true;
         } catch (MalformedJwtException e) {
             filterChain.doFilter(request, response);
@@ -162,13 +153,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String newAccessToken = JwtUtil.createAccessToken(savedMember, refreshToken.getId());
 
         if (refreshTokenClaims != null) {
-            BaseResponse baseResponse = new BaseResponse(
-                    HttpStatus.OK.value(),
-                    "엑세스토큰 재발급",
-                    new TokenResponse(newAccessToken)
-            );
-
-            ResponseUtil.createResponseMessage(response, baseResponse);
+            ResponseUtil.createResponseBody(response, newAccessToken, HttpStatus.OK);
         }
         return false;
     }

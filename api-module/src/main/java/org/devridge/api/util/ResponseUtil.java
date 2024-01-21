@@ -1,26 +1,28 @@
 package org.devridge.api.util;
 
-import com.fasterxml.jackson.core.exc.StreamWriteException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.devridge.common.dto.BaseResponse;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ResponseUtil {
 
-    public static void createResponseMessage(HttpServletResponse response, BaseResponse baseResponse) throws StreamWriteException, DatabindException, IOException {
+    public static void createResponseBody(HttpServletResponse response, Object object, HttpStatus status) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+        String jsonResponse = objectMapper.writeValueAsString(object);
 
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        response.setContentType(MediaType.APPLICATION_JSON.toString());
-        response.setStatus(baseResponse.getCode());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(jsonResponse);
+        response.setStatus(status.value());
+    }
 
-        objectMapper.writeValue(response.getOutputStream(), baseResponse);
+    public static void createResponseBody(HttpServletResponse response, HttpStatus status) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(status.value());
     }
 }
