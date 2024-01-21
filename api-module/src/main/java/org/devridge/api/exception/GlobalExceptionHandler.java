@@ -15,7 +15,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<BaseResponse> handleException(NoSuchElementException e) {
         BaseResponse response = new BaseResponse(HttpStatus.NOT_FOUND.value(), "해당 요소를 찾을 수 없습니다.");
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return ResponseEntity.badRequest().build();
     }
 
     @ExceptionHandler(PasswordNotMatchException.class)
