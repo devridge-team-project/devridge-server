@@ -1,14 +1,13 @@
 package org.devridge.api.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.devridge.api.constant.SkillConstants;
 import org.devridge.api.domain.member.dto.request.CreateMemberRequest;
 import org.devridge.api.domain.member.dto.request.DeleteMemberRequest;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.skill.entity.MemberSkill;
-import org.devridge.api.domain.skill.entity.key.MemberSkillId;
 import org.devridge.api.domain.skill.entity.Skill;
+import org.devridge.api.domain.skill.entity.key.MemberSkillId;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.domain.skill.repository.SkillRepository;
 import org.devridge.api.exception.member.DuplEmailException;
@@ -21,7 +20,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,34 +37,42 @@ public class MemberService {
     @Transactional
     public void createMember(CreateMemberRequest memberRequest){
         checkDuplMember(memberRequest);
-
         passwordChecker.checkWeakPassword(memberRequest.getPassword());
 
-        String[] skills = getSkills(memberRequest.getSkills());
+        String encodedPassword = passwordEncoder.encode(memberRequest.getPassword());
 
-        if (!areSkillsValid(skills)) {
-            throw new SkillsNotValidException();
+        Member member = Member.builder()
+                .email(memberRequest.getEmail())
+                .password(encodedPassword)
+                .provider("normal")
+                .roles("ROLE_" + SecurityConstant.USER_ROLE)
+                .nickname(memberRequest.getNickname())
+                .build();
+
+        memberRepository.save(member);
+
+        List<Long> skillIds = memberRequest.getSkillIds();
+
+        if (!skillIds.isEmpty()) {
+            List skills = areSkillsValid(skillIds);
+            createMemberSkill(skills, member);
         }
-
-        Member member = createNormalMember(memberRequest);
-        createMemberSkill(skills, member);
     }
 
-    private void createMemberSkill(String[] skills, Member member) {
-        /**
-         * 성능 최적화 하기!! (SQL query)
-        * */
-        for (String userSkill : skills) {
-            Skill skill = skillRepository.findBySkill(userSkill).get();
-            MemberSkillId memberSkillId = new MemberSkillId(member.getId(), skill.getId());
+    private void createMemberSkill(List<Skill> skills, Member member) {
+        List<MemberSkill> memberSkills = skills.stream()
+                .map(skill -> {
+                    MemberSkillId memberSkillId = new MemberSkillId(member.getId(), skill.getId());
 
-            MemberSkill memberSkill = MemberSkill.builder()
-                    .id(memberSkillId)
-                    .member(member)
-                    .skill(skill)
-                    .build();
-            memberSkillRepository.save(memberSkill);
-        }
+                    return MemberSkill.builder()
+                            .id(memberSkillId)
+                            .member(member)
+                            .skill(skill)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        memberSkillRepository.saveAll(memberSkills);
     }
 
     private void checkDuplMember(CreateMemberRequest reqDto) {
@@ -72,20 +81,6 @@ public class MemberService {
         if (user.isPresent()) {
             throw new DuplEmailException("[ERROR] 이미 존재하는 계정입니다.");
         }
-    }
-
-    private Member createNormalMember(CreateMemberRequest reqDto) {
-        String encodedPassword = passwordEncoder.encode(reqDto.getPassword());
-
-        Member member = Member.builder()
-                .email(reqDto.getEmail())
-                .password(encodedPassword)
-                .provider("normal")
-                .roles("ROLE_" + SecurityConstant.USER_ROLE)
-                .nickname(reqDto.getNickname())
-                .build();
-
-        return memberRepository.save(member);
     }
 
     @Transactional
@@ -102,22 +97,13 @@ public class MemberService {
         findMember.softDelete();
     }
 
-    public boolean areSkillsValid(String[] skills) {
-        Set<String> userSkillSet = new HashSet<>();
+    public List<Skill> areSkillsValid(List<Long> skillIds) {
+        List<Skill> skills = skillRepository.findAllById(skillIds);
 
-        for (String skill : skills) {
-            userSkillSet.add(skill);
+        if (skills.size() != skillIds.size()) {
+            throw new SkillsNotValidException();
         }
 
-        return SkillConstants.SKILL_SET.containsAll(userSkillSet);
+        return skills;
     }
-
-    public String[] getSkills(String skills){
-        String[] skillSet = Arrays.stream(skills.split(","))
-                .map(String::trim)
-                .map(String::toLowerCase)
-                .toArray(String[]::new);
-        return skillSet;
-    }
-
 }

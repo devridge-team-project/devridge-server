@@ -1,6 +1,5 @@
 package org.devridge.api.domain.skill.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +11,7 @@ import java.util.Set;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "skill")
 public class Skill extends AbstractTimeEntity {
 
@@ -30,4 +27,10 @@ public class Skill extends AbstractTimeEntity {
     @OneToMany(mappedBy = "skill")
     private Set<MemberSkill> memberSkills = new HashSet<>();
 
+    @Builder
+    public Skill(String skill, boolean isDeleted, Set<MemberSkill> memberSkills) {
+        this.skill = skill;
+        this.isDeleted = isDeleted;
+        this.memberSkills = memberSkills;
+    }
 }

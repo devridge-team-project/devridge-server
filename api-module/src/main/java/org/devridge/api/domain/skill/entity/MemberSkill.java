@@ -1,6 +1,6 @@
 package org.devridge.api.domain.skill.entity;
 
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +12,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "member_skill")
 public class MemberSkill extends AbstractTimeEntity {
 
@@ -33,4 +31,12 @@ public class MemberSkill extends AbstractTimeEntity {
 
     @Column(name = "is_deleted", columnDefinition = "TINYINT(1)")
     private boolean isDeleted;
+
+    @Builder
+    public MemberSkill(MemberSkillId id, Member member, Skill skill, boolean isDeleted) {
+        this.id = id;
+        this.member = member;
+        this.skill = skill;
+        this.isDeleted = isDeleted;
+    }
 }

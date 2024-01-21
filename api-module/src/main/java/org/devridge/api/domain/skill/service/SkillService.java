@@ -26,7 +26,7 @@ public class SkillService {
                         skillMapper.toSkillInformation(skill)
                 )
         );
-        
+
         return skillInformations;
     }
 }
