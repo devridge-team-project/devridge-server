@@ -3,6 +3,7 @@ package org.devridge.api.domain.community.service;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
+import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.entity.CommunityCommentLikeDislike;
 import org.devridge.api.domain.community.repository.CommunityCommentRepository;
@@ -21,11 +22,11 @@ public class CommunityCommentService {
         this.communityCommentRepository = communityCommentRepository;
     }
 
-    public void createComment(Long communityId, String content) {
+    public void createComment(Long communityId, CommunityCommentRequest commentRequest) {
         CommunityComment communityComment = CommunityComment
             .builder()
             .communityId(communityId)
-            .content(content)
+            .content(commentRequest.getContent())
             .memberId(SecurityContextHolderUtil.getMemberId())
             .build();
         communityCommentRepository.save(communityComment);
@@ -40,14 +41,14 @@ public class CommunityCommentService {
         return communityComments;
     }
 
-    public void updateComment(Long communityId, String content) {
-        Optional<CommunityComment> optionalCommunity = communityCommentRepository.findById(communityId);
+    public void updateComment(Long commentId, CommunityCommentRequest commentRequest) {
+        Optional<CommunityComment> optionalCommunity = communityCommentRepository.findById(commentId);
         optionalCommunity.ifPresentOrElse(
             community -> {
                 if (!community.getMemberId().equals(SecurityContextHolderUtil.getMemberId())) {
                     throw new AccessDeniedException("거부된 접근입니다.");
                 }
-                community.updateComment(content);
+                community.updateComment(commentRequest.getContent());
                 communityCommentRepository.save(community);
 
             },

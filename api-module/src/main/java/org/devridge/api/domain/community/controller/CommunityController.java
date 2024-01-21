@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
-import org.devridge.api.domain.community.dto.response.ReadCommunityResponse;
+import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.service.CommunityService;
 import org.devridge.common.dto.BaseResponse;
@@ -28,8 +28,8 @@ public class CommunityController {
     private final CommunityService communityService;
 
     @PostMapping
-    public ResponseEntity<?> writingCommunity(@Valid @RequestBody CreateCommunityRequest dto) {
-        communityService.createCommunity(dto);
+    public ResponseEntity<?> writingCommunity(@Valid @RequestBody CreateCommunityRequest communityRequest) {
+        communityService.createCommunity(communityRequest);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "게시글 작성 성공"
@@ -41,7 +41,7 @@ public class CommunityController {
     public ResponseEntity<?> viewCommunity(@PathVariable Long communityId) {
         Community community = communityService.getCommunityById(communityId);
         String nickName = community.getMember().getNickname();
-        ReadCommunityResponse dto = ReadCommunityResponse.builder()
+        CommunityDetailResponse communityDetailResponse = CommunityDetailResponse.builder()
             .nickName(nickName)
             .title(community.getTitle())
             .content(community.getContent())
@@ -53,7 +53,7 @@ public class CommunityController {
         BaseResponse response = new BaseResponse<>(
             HttpStatus.OK.value(),
             "게시글 조회 성공",
-            dto
+            communityDetailResponse
             // dto로 커뮤니티 글 작성자, 제목, 내용, 생성시간,수정시간 보내야함
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -62,9 +62,9 @@ public class CommunityController {
     @PutMapping("/{communityId}")
     public ResponseEntity<?> modifyCommunity(
         @PathVariable Long communityId,
-        @Valid @RequestBody CreateCommunityRequest dto
+        @Valid @RequestBody CreateCommunityRequest communityRequest
     ) {
-        communityService.updateCommunity(communityId, dto);
+        communityService.updateCommunity(communityId, communityRequest);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "게시글 수정 성공"
@@ -85,9 +85,9 @@ public class CommunityController {
     @GetMapping("/all") // 커뮤니티 글 전체 목록 보여주기
     public ResponseEntity<?> viewAllCommunity() {
         List<Community> communityList = communityService.viewAllCommunity();
-        List<ReadCommunityResponse> dtos = communityList.stream()
+        List<CommunityDetailResponse> communityDetailResponses = communityList.stream() // todo: stream vs for문
             .map(community ->
-                ReadCommunityResponse.builder()
+                CommunityDetailResponse.builder()
                     .nickName(community.getMember().getNickname())
                     .title(community.getTitle())
                     .content(community.getContent())
@@ -100,7 +100,7 @@ public class CommunityController {
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "게시글 전체 목록 조회 성공",
-            dtos
+            communityDetailResponses
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

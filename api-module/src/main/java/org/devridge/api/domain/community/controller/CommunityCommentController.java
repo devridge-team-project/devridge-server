@@ -30,10 +30,10 @@ public class CommunityCommentController {
 
     @PostMapping//todo: memberId 검증방법
     public ResponseEntity<?> writeComment(
-        @Valid @RequestBody CommunityCommentRequest dto,
+        @Valid @RequestBody CommunityCommentRequest commentRequest,
         @PathVariable Long communityId
     ) {
-        communityCommentService.createComment(communityId, dto.getContent());
+        communityCommentService.createComment(communityId, commentRequest);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "댓글 작성 성공"
@@ -44,28 +44,28 @@ public class CommunityCommentController {
     @GetMapping
     public ResponseEntity<?> viewComment(@PathVariable Long communityId) {
         List<CommunityComment> communityComments = communityCommentService.getAllComment(communityId);
-        List<CommunityCommentResponse> dtos = new ArrayList<>();
+        List<CommunityCommentResponse> commentResponses = new ArrayList<>();
         for (CommunityComment comment : communityComments) {
             Member member = comment.getMember(); // 댓글 작성자 정보 가져오기   //todo: 없는 맴버 안 가져오는 예외 처리
             CommunityCommentResponse communityCommentResponse = new CommunityCommentResponse(
                 member.getNickname(), comment.getUpdatedAt(), comment.getContent());
-            dtos.add(communityCommentResponse);
+            commentResponses.add(communityCommentResponse);
         }
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "댓글 목록 조회 성공",
-            dtos
+            commentResponses
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/{commentId}")
     public ResponseEntity<?> updateComment(
-        @RequestBody CommunityCommentRequest dto,
+        @RequestBody CommunityCommentRequest commentRequest,
         @PathVariable Long commentId,
         @PathVariable Long communityId
     ) {
-        communityCommentService.updateComment(commentId, dto.getContent());
+        communityCommentService.updateComment(commentId, commentRequest);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "댓글 수정 성공"

@@ -22,10 +22,10 @@ public class CommunityService {
         this.communityRepository = communityRepository;
     }
 
-    public void createCommunity(CreateCommunityRequest dto) {
+    public void createCommunity(CreateCommunityRequest communityRequest) {
         Community community = Community.builder()
-            .title(dto.getTitle())
-            .content(dto.getContent())
+            .title(communityRequest.getTitle())
+            .content(communityRequest.getContent())
             .memberId(SecurityContextHolderUtil.getMemberId())
             .build();
         communityRepository.save(community);
@@ -37,14 +37,14 @@ public class CommunityService {
         return communityRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 엔터티를 찾을 수 없습니다."));
     }
 
-    public void updateCommunity(Long id, CreateCommunityRequest dto) {
+    public void updateCommunity(Long id, CreateCommunityRequest communityRequest) {
         Optional<Community> optionalCommunity = communityRepository.findById(id);
         optionalCommunity.ifPresentOrElse(
             community -> {
                 if (!SecurityContextHolderUtil.getMemberId().equals(community.getMemberId())) {
                     throw new AccessDeniedException("거부된 접근입니다.");
                 }
-                community.updateCommunity(dto.getTitle(), dto.getContent());
+                community.updateCommunity(communityRequest.getTitle(), communityRequest.getContent());
                 communityRepository.save(community);
             },
             () -> {
