@@ -31,10 +31,7 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private Role role;
-
-    @Column(name = "roles", nullable = false)
-    private String roles;
+    private Role roles;
 
     @Column(name = "introduction", nullable = true)
     private String introduction;
@@ -46,7 +43,7 @@ public class Member extends BaseEntity {
     private boolean isDeleted;
 
     @Builder
-    public Member(String email, String password, String provider, String nickname, String roles, String introduction, String profileImageUrl, boolean isDeleted) {
+    public Member(String email, String password, String provider, String nickname, Role roles, String introduction, String profileImageUrl, boolean isDeleted) {
         this.email = email;
         this.password = password;
         this.provider = provider;

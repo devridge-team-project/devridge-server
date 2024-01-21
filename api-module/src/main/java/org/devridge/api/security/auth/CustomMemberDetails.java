@@ -1,8 +1,10 @@
 package org.devridge.api.security.auth;
 
 import lombok.Getter;
+import org.devridge.api.constant.Role;
 import org.devridge.api.domain.member.entity.Member;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
@@ -21,8 +23,8 @@ public class CustomMemberDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
 
-        String roles = member.getRoles();
-        authorities.add(() -> roles.strip());
+        Role role = member.getRoles();
+        authorities.add(new SimpleGrantedAuthority(role.name()));
 
         return authorities;
     }

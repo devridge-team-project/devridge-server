@@ -1,6 +1,7 @@
 package org.devridge.api.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
+import org.devridge.api.constant.Role;
 import org.devridge.api.domain.member.dto.request.CreateMemberRequest;
 import org.devridge.api.domain.member.dto.request.DeleteMemberRequest;
 import org.devridge.api.domain.member.entity.Member;
@@ -14,7 +15,6 @@ import org.devridge.api.exception.member.DuplEmailException;
 import org.devridge.api.exception.member.MemberNotFoundException;
 import org.devridge.api.exception.member.PasswordNotMatchException;
 import org.devridge.api.exception.member.SkillsNotValidException;
-import org.devridge.api.security.constant.SecurityConstant;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class MemberService {
                 .email(memberRequest.getEmail())
                 .password(encodedPassword)
                 .provider("normal")
-                .roles("ROLE_" + SecurityConstant.USER_ROLE)
+                .roles(Role.valueOf("ROLE_USER"))
                 .nickname(memberRequest.getNickname())
                 .build();
 
