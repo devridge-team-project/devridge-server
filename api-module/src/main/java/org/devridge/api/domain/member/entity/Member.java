@@ -39,11 +39,8 @@ public class Member extends BaseEntity {
     @Column(name = "profile_image_url", nullable = true)
     private String profileImageUrl;
 
-    @Column(columnDefinition = "TINYINT(1)")
-    private boolean isDeleted;
-
     @Builder
-    public Member(String email, String password, String provider, String nickname, Role roles, String introduction, String profileImageUrl, boolean isDeleted) {
+    public Member(String email, String password, String provider, String nickname, Role roles, String introduction, String profileImageUrl) {
         this.email = email;
         this.password = password;
         this.provider = provider;
@@ -51,10 +48,5 @@ public class Member extends BaseEntity {
         this.roles = roles;
         this.introduction = introduction;
         this.profileImageUrl = profileImageUrl;
-        this.isDeleted = isDeleted;
-    }
-
-    public void softDelete(){
-        isDeleted = true;
     }
 }

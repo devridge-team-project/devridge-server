@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.devridge.api.domain.AbstractTimeEntity;
+import org.devridge.common.dto.BaseEntity;
 
 import javax.persistence.*;
 
@@ -12,12 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "refresh_token")
 @Getter
-public class RefreshToken extends AbstractTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+public class RefreshToken extends BaseEntity {
 
     private String refreshToken;
 
