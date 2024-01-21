@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.devridge.api.domain.member.constant.Role;
+import org.devridge.api.constant.Role;
 import org.devridge.common.dto.BaseEntity;
 import org.hibernate.annotations.ColumnDefault;
 

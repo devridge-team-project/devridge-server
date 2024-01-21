@@ -1,4 +1,4 @@
-package org.devridge.api.domain.member.constant;
+package org.devridge.api.constant;
 
 public enum Role {
     ROLE_USER,
