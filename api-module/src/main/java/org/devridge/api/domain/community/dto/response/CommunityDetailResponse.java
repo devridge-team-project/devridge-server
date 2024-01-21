@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class ReadCommunityResponse {
+public class CommunityDetailResponse {
 
     // 작성자 닉네임, 글제목, 내용, 뷰, 생성시간, 수정시간
     private String nickName;
@@ -21,7 +21,7 @@ public class ReadCommunityResponse {
     private LocalDateTime updatedAt;
 
     @Builder
-    public ReadCommunityResponse(String nickName, String title, String content, Long views, LocalDateTime createdAt,
+    public CommunityDetailResponse(String nickName, String title, String content, Long views, LocalDateTime createdAt,
         LocalDateTime updatedAt) {
         this.nickName = nickName;
         this.title = title;
