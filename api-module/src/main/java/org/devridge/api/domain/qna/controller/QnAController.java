@@ -2,10 +2,7 @@ package org.devridge.api.domain.qna.controller;
 
 import lombok.RequiredArgsConstructor;
 
-import org.devridge.api.domain.qna.dto.request.CreateQnACommentRequest;
-import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
-import org.devridge.api.domain.qna.dto.request.UpdateQnACommentRequest;
-import org.devridge.api.domain.qna.dto.request.UpdateQnARequest;
+import org.devridge.api.domain.qna.dto.request.*;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.dto.type.SortOption;
@@ -90,6 +87,15 @@ public class QnAController {
         @PathVariable Long commentId
     ) {
         qnaCommentService.deleteQnAComment(qnaId, commentId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{qnaId}")
+    public ResponseEntity<Void> createLikeOrDislike(
+        @PathVariable Long qnaId,
+        @Valid @RequestBody CreateLikeOrDislikeRequest likeOrDislikeRequest
+    ) {
+        qnaService.createLikeOrDislike(qnaId, likeOrDislikeRequest);
         return ResponseEntity.ok().build();
     }
 }
