@@ -14,16 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/community/comment/like-dislike")
+@RequestMapping("/api/community/comment/{commentId}/like-dislike/{status}")
 @RestController
 public class CommunityCommentLikeDislikeController {
 
     private final CommunityCommentLikeDislikeService communityCommentLikeDislikeService;
     private final CommunityCommentService communityCommentService;
 
-    @PostMapping("/{commentId}/{status}")
-    public ResponseEntity<?> likeDislikeCreate(@PathVariable Long commentId,
-        @PathVariable LikeStatus status) {
+    @PostMapping
+    public ResponseEntity<?> likeDislikeCreate(
+        @PathVariable Long commentId,
+        @PathVariable LikeStatus status
+    ) {
         String message;
         if (status.equals(LikeStatus.G)) {
             message = "좋아요를 눌렀습니다.";

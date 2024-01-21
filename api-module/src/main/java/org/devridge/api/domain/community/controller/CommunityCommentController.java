@@ -22,15 +22,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/community/comment")
+@RequestMapping("/api/community/{communityId}/comment")
 @RestController
 public class CommunityCommentController {
 
     private final CommunityCommentService communityCommentService;
 
-    @PostMapping("/write/{communityId}") //todo: memberId 검증방법
-    public ResponseEntity<?> writeComment(@Valid @RequestBody CommunityCommentRequest dto,
-        @PathVariable Long communityId) {
+    @PostMapping//todo: memberId 검증방법
+    public ResponseEntity<?> writeComment(
+        @Valid @RequestBody CommunityCommentRequest dto,
+        @PathVariable Long communityId
+    ) {
         communityCommentService.createComment(communityId, dto.getContent());
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
@@ -39,7 +41,7 @@ public class CommunityCommentController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/read/{communityId}")
+    @GetMapping
     public ResponseEntity<?> viewComment(@PathVariable Long communityId) {
         List<CommunityComment> communityComments = communityCommentService.getAllComment(communityId);
         List<CommunityCommentResponse> dtos = new ArrayList<>();
@@ -57,10 +59,13 @@ public class CommunityCommentController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/modify/{communityId}")
-    public ResponseEntity<?> updateComment(@RequestBody CommunityCommentRequest dto,
-        @PathVariable Long communityId) {
-        communityCommentService.updateComment(communityId, dto.getContent());
+    @PutMapping("/{commentId}")
+    public ResponseEntity<?> updateComment(
+        @RequestBody CommunityCommentRequest dto,
+        @PathVariable Long commentId,
+        @PathVariable Long communityId
+    ) {
+        communityCommentService.updateComment(commentId, dto.getContent());
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "댓글 수정 성공"
@@ -68,8 +73,11 @@ public class CommunityCommentController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{commentId}")
-    public ResponseEntity<?> CommentDelete(@PathVariable Long commentId) {
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<?> CommentDelete(
+        @PathVariable Long communityId,
+        @PathVariable Long commentId
+    ) {
         communityCommentService.deleteComment(commentId);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),

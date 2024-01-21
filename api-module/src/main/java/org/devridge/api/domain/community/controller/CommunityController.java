@@ -27,7 +27,7 @@ public class CommunityController {
 
     private final CommunityService communityService;
 
-    @PostMapping("/write")
+    @PostMapping
     public ResponseEntity<?> writingCommunity(@Valid @RequestBody CreateCommunityRequest dto) {
         communityService.createCommunity(dto);
         BaseResponse response = new BaseResponse(
@@ -37,9 +37,9 @@ public class CommunityController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/read/{id}")
-    public ResponseEntity<?> viewCommunity(@PathVariable Long id) {
-        Community community = communityService.getCommunityById(id);
+    @GetMapping("/{communityId}")
+    public ResponseEntity<?> viewCommunity(@PathVariable Long communityId) {
+        Community community = communityService.getCommunityById(communityId);
         String nickName = community.getMember().getNickname();
         ReadCommunityResponse dto = ReadCommunityResponse.builder()
             .nickName(nickName)
@@ -59,9 +59,12 @@ public class CommunityController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PutMapping("/modify/{id}")
-    public ResponseEntity<?> modifyCommunity(@PathVariable Long id, @Valid @RequestBody CreateCommunityRequest dto) {
-        communityService.updateCommunity(id, dto);
+    @PutMapping("/{communityId}")
+    public ResponseEntity<?> modifyCommunity(
+        @PathVariable Long communityId,
+        @Valid @RequestBody CreateCommunityRequest dto
+    ) {
+        communityService.updateCommunity(communityId, dto);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "게시글 수정 성공"
@@ -69,9 +72,9 @@ public class CommunityController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/del/{id}")
-    public ResponseEntity<?> deleteCommunity(@PathVariable Long id) {
-        communityService.deleteCommunity(id);
+    @DeleteMapping("/{communityId}")
+    public ResponseEntity<?> deleteCommunity(@PathVariable Long communityId) {
+        communityService.deleteCommunity(communityId);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "게시글 삭제 성공"
@@ -79,7 +82,7 @@ public class CommunityController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/read/all") // 커뮤니티 글 전체 목록 보여주기
+    @GetMapping("/all") // 커뮤니티 글 전체 목록 보여주기
     public ResponseEntity<?> viewAllCommunity() {
         List<Community> communityList = communityService.viewAllCommunity();
         List<ReadCommunityResponse> dtos = communityList.stream()

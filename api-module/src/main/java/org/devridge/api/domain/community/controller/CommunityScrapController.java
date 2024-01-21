@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/community/scrap")
+@RequestMapping("/api/community/{communityId}/scrap")
 @RestController
 public class CommunityScrapController {
 
     private final CommunityScrapService communityScrapService;
 
-    @PostMapping("/{communityId}")
+    @PostMapping
     public ResponseEntity<?> scrapCreate(@PathVariable Long communityId) {
         communityScrapService.createScrap(communityId);
         BaseResponse response = new BaseResponse(
@@ -28,7 +28,7 @@ public class CommunityScrapController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{communityId}")
+    @DeleteMapping
     public ResponseEntity<?> scrapdelete(@PathVariable Long communityId) {
         communityScrapService.deleteScrap(communityId);
         BaseResponse response = new BaseResponse(
