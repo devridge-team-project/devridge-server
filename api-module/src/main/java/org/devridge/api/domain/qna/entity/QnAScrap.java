@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.entity.id.QnAScrapId;
 import org.devridge.common.dto.BaseTimeEntity;
 
@@ -21,7 +22,6 @@ import javax.persistence.Table;
 @Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "qna_scrap")
-@DynamicInsert
 @Entity
 public class QnAScrap extends BaseTimeEntity {
 
@@ -29,7 +29,7 @@ public class QnAScrap extends BaseTimeEntity {
     private QnAScrapId id;
 
     @Builder
-    public QnAScrap(Long memberId, QnA qna) {
-        this.id = new QnAScrapId(memberId, qna);
+    public QnAScrap(Member member, QnA qna) {
+        this.id = new QnAScrapId(member, qna);
     }
 }

@@ -1,13 +1,15 @@
 package org.devridge.api.domain.qna.entity;
 
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.dto.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.id.QnALikeDislikeId;
 import org.devridge.common.dto.BaseTimeEntity;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -28,7 +30,7 @@ public class QnALikeDislike extends BaseTimeEntity {
     private LikeStatus status;
 
     @Builder
-    public QnALikeDislike(Long memberId, QnA qna) {
-        this.id = new QnALikeDislikeId(memberId, qna);
+    public QnALikeDislike(Member member, QnA qna) {
+        this.id = new QnALikeDislikeId(member, qna);
     }
 }

@@ -1,11 +1,13 @@
 package org.devridge.api.domain.qna.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.dto.BaseEntity;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -25,7 +27,9 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class QnAComment extends BaseEntity {
 
-    private Long memberId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "qna_id")
@@ -42,7 +46,8 @@ public class QnAComment extends BaseEntity {
     private Integer dislikes;
 
     @Builder
-    public QnAComment(QnA qna, String content) {
+    public QnAComment(QnA qna, Member member, String content) {
+        this.member = member;
         this.qna = qna;
         this.content = content;
     }
