@@ -31,7 +31,6 @@ public class SecurityConfig {
     private final CustomMemberDetailsService customMemberDetailsService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
-    private final TokenResponse tokenResponse;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -98,7 +97,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager) {
-        JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(refreshTokenRepository, tokenResponse);
+        JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(refreshTokenRepository, new TokenResponse());
         authenticationFilter.setAuthenticationManager(authenticationManager);
 
         SecurityContextRepository contextRepository = new HttpSessionSecurityContextRepository();
