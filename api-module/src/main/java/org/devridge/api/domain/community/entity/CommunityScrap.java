@@ -7,7 +7,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,8 +19,6 @@ import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Entity
 @DynamicInsert
 @SQLDelete(sql = "UPDATE community_scrap SET is_deleted = true WHERE community_id = ? AND member_id = ?")
@@ -40,4 +37,11 @@ public class CommunityScrap extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id", insertable = false, updatable = false)
     private Community community;
+
+    @Builder
+    public CommunityScrap(CommunityScrapId id, Member member, Community community) {
+        this.id = new CommunityScrapId(member.getId(), community.getId());
+        this.member = member;
+        this.community = community;
+    }
 }

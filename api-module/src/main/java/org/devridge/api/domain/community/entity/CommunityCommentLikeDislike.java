@@ -9,7 +9,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +21,6 @@ import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Entity
 @DynamicInsert
 @SQLDelete(sql = "UPDATE community_comment_like_dislike SET is_deleted = true WHERE community_comment_id = ? AND member_id = ?")
@@ -45,6 +42,15 @@ public class CommunityCommentLikeDislike extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private LikeStatus status;
+
+    @Builder
+    public CommunityCommentLikeDislike(CommunityCommentLikeDislikeId id, Member member,
+        CommunityComment communityComment, LikeStatus status) {
+        this.id = new CommunityCommentLikeDislikeId(member.getId(), communityComment.getId());
+        this.member = member;
+        this.communityComment = communityComment;
+        this.status = status;
+    }
 
     public void changeStatus(LikeStatus status) {
         this.status = status;
