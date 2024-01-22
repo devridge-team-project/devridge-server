@@ -1,25 +1,21 @@
 package org.devridge.api.domain.community.service;
 
 import javax.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityScrap;
 import org.devridge.api.domain.community.entity.id.CommunityScrapId;
 import org.devridge.api.domain.community.repository.CommunityScrapRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class CommunityScrapService {
 
     private final CommunityScrapRepository communityScrapRepository;
-
-    @Autowired
-    public CommunityScrapService(CommunityScrapRepository communityScrapRepository) {
-        this.communityScrapRepository = communityScrapRepository;
-    }
 
     public void createScrap(Long communityId) {
         try {

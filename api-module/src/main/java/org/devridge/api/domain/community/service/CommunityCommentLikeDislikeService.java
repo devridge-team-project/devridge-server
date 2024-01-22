@@ -2,6 +2,7 @@ package org.devridge.api.domain.community.service;
 
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.entity.CommunityCommentLikeDislike;
 import org.devridge.api.domain.community.repository.CommunityCommentLikeDislikeRepository;
@@ -9,20 +10,14 @@ import org.devridge.api.domain.community.entity.id.CommunityCommentLikeDislikeId
 import org.devridge.api.domain.community.entity.LikeStatus;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class CommunityCommentLikeDislikeService {
 
     private final CommunityCommentLikeDislikeRepository communityCommentLikeDislikeRepository;
-
-    @Autowired
-    public CommunityCommentLikeDislikeService(
-        CommunityCommentLikeDislikeRepository communityCommentLikeDislikeRepository) {
-        this.communityCommentLikeDislikeRepository = communityCommentLikeDislikeRepository;
-    }
 
     public void createLikeDisLike(Long commentId, LikeStatus status) {
         Member member = SecurityContextHolderUtil.getMember();

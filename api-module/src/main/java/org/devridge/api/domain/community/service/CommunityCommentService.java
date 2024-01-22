@@ -3,24 +3,20 @@ package org.devridge.api.domain.community.service;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.entity.CommunityCommentLikeDislike;
 import org.devridge.api.domain.community.repository.CommunityCommentRepository;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class CommunityCommentService {
 
     private final CommunityCommentRepository communityCommentRepository;
-
-    @Autowired
-    public CommunityCommentService(CommunityCommentRepository communityCommentRepository) {
-        this.communityCommentRepository = communityCommentRepository;
-    }
 
     public void createComment(Long communityId, CommunityCommentRequest commentRequest) {
         CommunityComment communityComment = CommunityComment
