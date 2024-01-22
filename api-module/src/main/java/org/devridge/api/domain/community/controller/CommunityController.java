@@ -1,12 +1,10 @@
 package org.devridge.api.domain.community.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
-import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.service.CommunityService;
 import org.devridge.common.dto.BaseResponse;
 import org.springframework.http.HttpStatus;
@@ -39,24 +37,8 @@ public class CommunityController {
 
     @GetMapping("/{communityId}")
     public ResponseEntity<?> viewCommunity(@PathVariable Long communityId) {
-        Community community = communityService.getCommunityById(communityId);
-        String nickName = community.getMember().getNickname();
-        CommunityDetailResponse communityDetailResponse = CommunityDetailResponse.builder()
-            .nickName(nickName)
-            .title(community.getTitle())
-            .content(community.getContent())
-            .views(community.getViews())
-            .createdAt(community.getCreatedAt())
-            .updatedAt(community.getUpdatedAt())
-            .build();
-        // dto로 커뮤니티 글 작성자, 제목, 내용, 생성시간,수정시간 보내야함
-        BaseResponse response = new BaseResponse<>(
-            HttpStatus.OK.value(),
-            "게시글 조회 성공",
-            communityDetailResponse
-            // dto로 커뮤니티 글 작성자, 제목, 내용, 생성시간,수정시간 보내야함
-        );
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        CommunityDetailResponse communityDetailResponse = communityService.getCommunityById(communityId);
+        return ResponseEntity.ok().body(communityDetailResponse);
     }
 
     @PutMapping("/{communityId}")
@@ -84,25 +66,8 @@ public class CommunityController {
 
     @GetMapping("/all") // 커뮤니티 글 전체 목록 보여주기
     public ResponseEntity<?> viewAllCommunity() {
-        List<Community> communityList = communityService.viewAllCommunity();
-        List<CommunityDetailResponse> communityDetailResponses = communityList.stream() // todo: stream vs for문
-            .map(community ->
-                CommunityDetailResponse.builder()
-                    .nickName(community.getMember().getNickname())
-                    .title(community.getTitle())
-                    .content(community.getContent())
-                    .views(community.getViews())
-                    .createdAt(community.getCreatedAt())
-                    .updatedAt(community.getUpdatedAt())
-                    .build()
-            )
-            .collect(Collectors.toList());
-        BaseResponse response = new BaseResponse(
-            HttpStatus.OK.value(),
-            "게시글 전체 목록 조회 성공",
-            communityDetailResponses
-        );
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        List<CommunityDetailResponse> communityDetailResponses = communityService.viewAllCommunity();
+        return ResponseEntity.ok().body(communityDetailResponses);
     }
 }
 

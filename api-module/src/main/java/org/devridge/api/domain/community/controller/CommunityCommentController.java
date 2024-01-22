@@ -1,14 +1,11 @@
 package org.devridge.api.domain.community.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
-import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.service.CommunityCommentService;
-import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.dto.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,21 +39,9 @@ public class CommunityCommentController {
     }
 
     @GetMapping
-    public ResponseEntity<?> viewComment(@PathVariable Long communityId) {
-        List<CommunityComment> communityComments = communityCommentService.getAllComment(communityId);
-        List<CommunityCommentResponse> commentResponses = new ArrayList<>();
-        for (CommunityComment comment : communityComments) {
-            Member member = comment.getMember(); // 댓글 작성자 정보 가져오기   //todo: 없는 맴버 안 가져오는 예외 처리
-            CommunityCommentResponse communityCommentResponse = new CommunityCommentResponse(
-                member.getNickname(), comment.getUpdatedAt(), comment.getContent());
-            commentResponses.add(communityCommentResponse);
-        }
-        BaseResponse response = new BaseResponse(
-            HttpStatus.OK.value(),
-            "댓글 목록 조회 성공",
-            commentResponses
-        );
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<List<CommunityCommentResponse>> viewComment(@PathVariable Long communityId) {
+        List<CommunityCommentResponse> CommentResponses = communityCommentService.getAllComment(communityId);
+        return ResponseEntity.ok().body(CommentResponses);
     }
 
     @PutMapping("/{commentId}")
