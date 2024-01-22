@@ -2,11 +2,9 @@ package org.devridge.api.domain.community.service;
 
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityScrap;
 import org.devridge.api.domain.community.entity.id.CommunityScrapId;
 import org.devridge.api.domain.community.repository.CommunityScrapRepository;
-import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -19,12 +17,9 @@ public class CommunityScrapService {
 
     public void createScrap(Long communityId) {
         try {
-            Member member = SecurityContextHolderUtil.getMember();
-            Community community = Community.builder().id(communityId).build();
+            Long memberId = SecurityContextHolderUtil.getMemberId();
             CommunityScrap communityScrap = CommunityScrap.builder()
-                .id(new CommunityScrapId(member.getId(), communityId))
-                .member(member)
-                .community(community)
+                .id(new CommunityScrapId(memberId, communityId))
                 .build();
             communityScrapRepository.save(communityScrap);
         } catch (DataIntegrityViolationException e) {
