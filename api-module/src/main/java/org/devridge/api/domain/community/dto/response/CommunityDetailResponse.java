@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
+@Builder
 @Getter
 public class CommunityDetailResponse {
 
@@ -19,15 +20,4 @@ public class CommunityDetailResponse {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
-
-    @Builder
-    public CommunityDetailResponse(String nickName, String title, String content, Long views, LocalDateTime createdAt,
-        LocalDateTime updatedAt) {
-        this.nickName = nickName;
-        this.title = title;
-        this.content = content;
-        this.views = views;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
 }

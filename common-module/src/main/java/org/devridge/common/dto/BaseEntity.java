@@ -1,6 +1,9 @@
 package org.devridge.common.dto;
 
 import lombok.Getter;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
@@ -14,6 +17,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder
 @DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass

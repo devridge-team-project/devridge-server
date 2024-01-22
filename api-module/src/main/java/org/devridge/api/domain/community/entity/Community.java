@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.dto.BaseEntity;
 import org.hibernate.annotations.DynamicInsert;
@@ -18,7 +19,7 @@ import org.hibernate.annotations.Where;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
 @DynamicInsert
 @SQLDelete(sql = "UPDATE community SET is_deleted = true WHERE id = ?")
