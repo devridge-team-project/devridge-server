@@ -37,7 +37,7 @@ public class CommunityController {
 
     @GetMapping("/{communityId}")
     public ResponseEntity<?> viewCommunity(@PathVariable Long communityId) {
-        CommunityDetailResponse communityDetailResponse = communityService.getCommunityById(communityId);
+        CommunityDetailResponse communityDetailResponse = communityService.getCommunity(communityId);
         return ResponseEntity.ok().body(communityDetailResponse);
     }
 

@@ -65,11 +65,11 @@ public class CommunityScrapService {
         communityScrapRepository.deleteById(communityScrapId);
     }
 
-    public Member getMemberById(Long memberId) {
+    private Member getMemberById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException());
     }
 
-    public Community getCommunityById(Long communityId) {
+    private Community getCommunityById(Long communityId) {
         return communityRepository.findById(communityId).orElseThrow(() -> new EntityNotFoundException());
     }
 

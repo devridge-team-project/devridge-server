@@ -50,7 +50,7 @@ public class CommunityCommentController {
         @PathVariable Long commentId,
         @PathVariable Long communityId
     ) {
-        communityCommentService.updateComment(commentId, commentRequest);
+        communityCommentService.updateComment(communityId, commentId, commentRequest);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "댓글 수정 성공"
@@ -63,7 +63,7 @@ public class CommunityCommentController {
         @PathVariable Long communityId,
         @PathVariable Long commentId
     ) {
-        communityCommentService.deleteComment(commentId);
+        communityCommentService.deleteComment(communityId, commentId);
         BaseResponse response = new BaseResponse(
             HttpStatus.OK.value(),
             "댓글 삭제 성공"
