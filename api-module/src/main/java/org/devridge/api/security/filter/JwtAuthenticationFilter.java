@@ -9,6 +9,7 @@ import org.devridge.api.security.auth.CustomMemberDetails;
 import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;
+import org.devridge.common.dto.BaseErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -73,9 +74,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
-        String error = "email, password 가 일치하지 않습니다.";
+        BaseErrorResponse errorResponse = new BaseErrorResponse("email, password 가 일치하지 않습니다.");
 
-        ResponseUtil.createResponseBody(response, error, HttpStatus.BAD_REQUEST);
+        ResponseUtil.createResponseBody(response, errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     private Long saveRefreshToken(Member member, String refreshToken) {

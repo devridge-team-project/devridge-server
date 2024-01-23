@@ -10,6 +10,7 @@ import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
 import org.devridge.api.security.auth.AuthProperties;
 import org.devridge.api.security.auth.CustomMemberDetails;
+import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.AccessTokenUtil;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;
@@ -146,9 +147,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         // 리프레시 토큰이 존재한다면 액세스토큰 재발급
         String newAccessToken = JwtUtil.createAccessToken(savedMember, refreshToken.getId());
+        TokenResponse tokenResponse = new TokenResponse(newAccessToken);
 
         if (refreshTokenClaims != null) {
-            ResponseUtil.createResponseBody(response, newAccessToken, HttpStatus.OK);
+            ResponseUtil.createResponseBody(response, tokenResponse, HttpStatus.OK);
+            return true;
         }
         return false;
     }
