@@ -1,6 +1,7 @@
 package org.devridge.api.exception;
 
 import org.devridge.api.exception.member.*;
+import org.devridge.common.dto.BaseErrorResponse;
 import org.devridge.common.dto.BaseResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,38 +15,37 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<BaseResponse> handleException(NoSuchElementException e) {
-        BaseResponse response = new BaseResponse(HttpStatus.NOT_FOUND.value(), "해당 요소를 찾을 수 없습니다.");
         return ResponseEntity.badRequest().build();
     }
 
     @ExceptionHandler(PasswordNotMatchException.class)
-    public ResponseEntity<BaseResponse> handleException(PasswordNotMatchException e) {
-        BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST.value(), "비밀번호가 일치하지 않습니다.");
+    public ResponseEntity<BaseErrorResponse> handleException(PasswordNotMatchException e) {
+        BaseErrorResponse response = new BaseErrorResponse("password does not match.");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SkillsNotValidException.class)
-    public ResponseEntity<BaseResponse> handleException(SkillsNotValidException e) {
-        BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST.value(), "서버에 존재하지 않는 직군이 포함되어 있습니다. 다시 확인 바랍니다.");
+    public ResponseEntity<BaseErrorResponse> handleException(SkillsNotValidException e) {
+        BaseErrorResponse response = new BaseErrorResponse("skills not valid.");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(WeakPasswordException.class)
-    public ResponseEntity<BaseResponse> handleException(WeakPasswordException e) {
-        BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    public ResponseEntity<BaseErrorResponse> handleException(WeakPasswordException e) {
+        BaseErrorResponse response = new BaseErrorResponse("weak password.");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DuplEmailException.class)
-    public ResponseEntity<BaseResponse> handleException(DuplEmailException e) {
-        BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    public ResponseEntity<BaseErrorResponse> handleException(DuplEmailException e) {
+        BaseErrorResponse response = new BaseErrorResponse("email already exists.");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MemberNotFoundException.class)
-    public ResponseEntity<BaseResponse> handleException(MemberNotFoundException e) {
-        BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<BaseErrorResponse> handleException(MemberNotFoundException e) {
+        BaseErrorResponse response = new BaseErrorResponse("member not found");
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 }

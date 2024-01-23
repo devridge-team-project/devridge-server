@@ -82,7 +82,7 @@ public class MemberService {
         final Optional<Member> user = memberRepository.findByEmailAndProvider(reqDto.getEmail(), reqDto.getProvider());
 
         if (user.isPresent()) {
-            throw new DuplEmailException("[ERROR] 이미 존재하는 계정입니다.");
+            throw new DuplEmailException();
         }
     }
 
