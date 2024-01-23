@@ -1,5 +1,6 @@
 package org.devridge.api.domain.community.controller;
 
+import java.net.URI;
 import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.entity.LikeStatus;
@@ -30,7 +31,8 @@ public class CommunityCommentLikeDislikeController {
             communityCommentLikeDislikeService.createLikeDisLike(communityId, commentId, status);
             communityCommentLikeDislikeService.updateLikeDislike(commentId);
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.created(
+            URI.create("/api/community/" + communityId + "/comment/" + commentId + "/like-dislike/" + status)).build();
     }
 
 

@@ -25,13 +25,13 @@ public class CommunityCommentService {
     private final CommunityRepository communityRepository;
     private final MemberRepository memberRepository;
 
-    public void createComment(Long communityId, CommunityCommentRequest commentRequest) {
+    public Long createComment(Long communityId, CommunityCommentRequest commentRequest) {
         Community community = getCommunityById(communityId);
         Long memberId = SecurityContextHolderUtil.getMemberId();
         Member member = getMemberById(memberId);
         CommunityComment communityComment =
             communityCommentMapper.toCommunityComment(community, member, commentRequest);
-        communityCommentRepository.save(communityComment);
+        return communityCommentRepository.save(communityComment).getId();
     }
 
     public List<CommunityCommentResponse> getAllComment(Long communityId) {

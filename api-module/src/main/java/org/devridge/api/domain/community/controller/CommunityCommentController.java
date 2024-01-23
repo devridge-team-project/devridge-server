@@ -1,13 +1,12 @@
 package org.devridge.api.domain.community.controller;
 
+import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
 import org.devridge.api.domain.community.service.CommunityCommentService;
-import org.devridge.common.dto.BaseResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,12 +29,8 @@ public class CommunityCommentController {
         @Valid @RequestBody CommunityCommentRequest commentRequest,
         @PathVariable Long communityId
     ) {
-        communityCommentService.createComment(communityId, commentRequest);
-        BaseResponse response = new BaseResponse(
-            HttpStatus.OK.value(),
-            "댓글 작성 성공"
-        );
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        Long commentId = communityCommentService.createComment(communityId, commentRequest);
+        return ResponseEntity.created(URI.create("/api/community/" + communityId + "/comment" + commentId)).build();
     }
 
     @GetMapping
@@ -51,11 +46,7 @@ public class CommunityCommentController {
         @PathVariable Long communityId
     ) {
         communityCommentService.updateComment(communityId, commentId, commentRequest);
-        BaseResponse response = new BaseResponse(
-            HttpStatus.OK.value(),
-            "댓글 수정 성공"
-        );
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{commentId}")
@@ -64,10 +55,6 @@ public class CommunityCommentController {
         @PathVariable Long commentId
     ) {
         communityCommentService.deleteComment(communityId, commentId);
-        BaseResponse response = new BaseResponse(
-            HttpStatus.OK.value(),
-            "댓글 삭제 성공"
-        );
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 }

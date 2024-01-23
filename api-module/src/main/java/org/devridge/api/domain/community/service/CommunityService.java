@@ -24,11 +24,11 @@ public class CommunityService {
     private final MemberRepository memberRepository;
 
 
-    public void createCommunity(CreateCommunityRequest communityRequest) {
+    public Long createCommunity(CreateCommunityRequest communityRequest) {
         Long memberId = SecurityContextHolderUtil.getMemberId();
         Member member = getMemberById(memberId);
         Community community = communityMapper.toCommunity(member, communityRequest);
-        communityRepository.save(community);
+        return communityRepository.save(community).getId();
     }
 
     @Transactional

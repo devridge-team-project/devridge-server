@@ -1,13 +1,12 @@
 package org.devridge.api.domain.community.controller;
 
+import java.net.URI;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
 import org.devridge.api.domain.community.service.CommunityService;
-import org.devridge.common.dto.BaseResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +26,8 @@ public class CommunityController {
 
     @PostMapping
     public ResponseEntity<?> writingCommunity(@Valid @RequestBody CreateCommunityRequest communityRequest) {
-        communityService.createCommunity(communityRequest);
-        BaseResponse response = new BaseResponse(
-            HttpStatus.OK.value(),
-            "게시글 작성 성공"
-        );
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        Long communityId = communityService.createCommunity(communityRequest);
+        return ResponseEntity.created(URI.create("/api/community/" + communityId)).build();
     }
 
     @GetMapping("/{communityId}")
@@ -47,21 +42,13 @@ public class CommunityController {
         @Valid @RequestBody CreateCommunityRequest communityRequest
     ) {
         communityService.updateCommunity(communityId, communityRequest);
-        BaseResponse response = new BaseResponse(
-            HttpStatus.OK.value(),
-            "게시글 수정 성공"
-        );
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{communityId}")
     public ResponseEntity<?> deleteCommunity(@PathVariable Long communityId) {
         communityService.deleteCommunity(communityId);
-        BaseResponse response = new BaseResponse(
-            HttpStatus.OK.value(),
-            "게시글 삭제 성공"
-        );
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/all") // 커뮤니티 글 전체 목록 보여주기
