@@ -11,6 +11,7 @@ import org.devridge.api.security.filter.JwtAuthorizationFilter;
 import org.devridge.api.security.handler.CustomLogoutHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -60,6 +61,10 @@ public class SecurityConfig {
         http
             .authorizeRequests()
             .antMatchers(securityConstant().ALL_PERMIT_PATHS).permitAll()
+            .antMatchers(HttpMethod.GET, "/api/qna/**").permitAll()
+            .antMatchers("/api/qna/**").authenticated()
+            .antMatchers(HttpMethod.GET, "/api/community/**").permitAll()
+            .antMatchers("/api/community/**").authenticated()
             .antMatchers(securityConstant().USER_ROLE_PERMIT_PATHS).hasRole(SecurityConstant.USER_ROLE)
             .anyRequest().denyAll();
 
