@@ -25,7 +25,7 @@ import org.hibernate.annotations.Where;
 public class Community extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", insertable = false, updatable = false)
+    @JoinColumn(name = "member_id", updatable = false)
     private Member member;
 
     private String title;

@@ -1,12 +1,9 @@
 package org.devridge.api.domain.community.entity;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,19 +23,16 @@ import org.hibernate.annotations.Where;
 public class CommunityComment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "community_id", insertable = false, updatable = false)
+    @JoinColumn(name = "community_id", updatable = false)
     private Community community;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", insertable = false, updatable = false)
+    @JoinColumn(name = "member_id", updatable = false)
     private Member member;
 
     private String content;
 
     private Long likeCount;
-
-    @OneToMany(mappedBy = "communityComment")
-    private List<CommunityCommentLikeDislike> communityCommentLikeDislike = new ArrayList<>();
 
     @Builder
     public CommunityComment(Community community, Member member, String content) {
