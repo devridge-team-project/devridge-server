@@ -35,7 +35,7 @@ public class MemberService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
-    public void createMember(CreateMemberRequest memberRequest){
+    public Long createMember(CreateMemberRequest memberRequest){
         checkDuplMember(memberRequest);
         passwordChecker.checkWeakPassword(memberRequest.getPassword());
 
@@ -44,9 +44,10 @@ public class MemberService {
         Member member = Member.builder()
                 .email(memberRequest.getEmail())
                 .password(encodedPassword)
-                .provider("normal")
+                .provider(memberRequest.getProvider())
                 .roles(Role.valueOf("ROLE_USER"))
                 .nickname(memberRequest.getNickname())
+                .profileImageUrl(memberRequest.getProfileImageUrl())
                 .build();
 
         memberRepository.save(member);
@@ -57,6 +58,8 @@ public class MemberService {
             List skills = areSkillsValid(skillIds);
             createMemberSkill(skills, member);
         }
+
+        return member.getId();
     }
 
     private void createMemberSkill(List<Skill> skills, Member member) {

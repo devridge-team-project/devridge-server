@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,13 +18,13 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("")
-    public ResponseEntity<?> signUp(@Valid @RequestBody CreateMemberRequest memberRequest) {
-        memberService.createMember(memberRequest);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> signUp(@Valid @RequestBody CreateMemberRequest memberRequest) {
+        Long userId = memberService.createMember(memberRequest);
+        return ResponseEntity.created(URI.create("/api/users/" + userId)).build();
     }
 
     @DeleteMapping("")
-    public ResponseEntity<?> deleteMember(@RequestBody DeleteMemberRequest memberRequest) {
+    public ResponseEntity<Void> deleteMember(@RequestBody DeleteMemberRequest memberRequest) {
         memberService.deleteMember(memberRequest);
         return ResponseEntity.ok().build();
     }
