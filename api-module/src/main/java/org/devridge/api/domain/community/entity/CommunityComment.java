@@ -41,18 +41,6 @@ public class CommunityComment extends BaseEntity {
         this.content = content;
     }
 
-    public void countLikeDislike(List<CommunityCommentLikeDislike> list) {
-        long sum = 0;
-        for (CommunityCommentLikeDislike like : list) {
-            if (like.getStatus() == LikeStatus.B) {
-                --sum;
-            }
-            if (like.getStatus() == LikeStatus.G) {
-                ++sum;
-            }
-        }
-        this.likeCount = sum;
-    }
 
     public void updateComment(String content) {
         this.content = content;

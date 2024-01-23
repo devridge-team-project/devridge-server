@@ -67,10 +67,5 @@ public class CommunityCommentService {
         );
     }
 
-    public void updateLikeDislike(Long commentId) {
-        CommunityComment communityComment = communityCommentRepository.findById(commentId).orElseThrow();
-        List<CommunityCommentLikeDislike> list = communityComment.getCommunityCommentLikeDislike();
-        communityComment.countLikeDislike(list);
-        communityCommentRepository.save(communityComment);
     }
 }
