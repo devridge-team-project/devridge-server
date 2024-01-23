@@ -4,36 +4,40 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.devridge.api.domain.AbstractTimeEntity;
+import org.devridge.api.constant.Role;
+import org.devridge.common.dto.BaseEntity;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "member")
 @Getter
+@DynamicInsert
+@SQLDelete(sql = "UPDATE qna SET is_deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends AbstractTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "email", nullable = false)
+public class Member extends BaseEntity {
+    @NotNull
     private String email;
 
-    @Column(name = "password", nullable = false)
+    @NotNull
     private String password;
 
-    @Column(name = "provider")
+    @NotNull
     @ColumnDefault("normal")
     private String provider;
 
-    @Column(name = "nickname", nullable = false)
+    @NotNull
     private String nickname;
 
-    @Column(name = "roles", nullable = false)
-    private String roles;
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private Role roles;
 
     @Column(name = "introduction", nullable = true)
     private String introduction;
@@ -41,11 +45,8 @@ public class Member extends AbstractTimeEntity {
     @Column(name = "profile_image_url", nullable = true)
     private String profileImageUrl;
 
-    @Column(columnDefinition = "TINYINT(1)")
-    private boolean isDeleted;
-
     @Builder
-    public Member(String email, String password, String provider, String nickname, String roles, String introduction, String profileImageUrl, boolean isDeleted) {
+    public Member(String email, String password, String provider, String nickname, Role roles, String introduction, String profileImageUrl) {
         this.email = email;
         this.password = password;
         this.provider = provider;
@@ -53,10 +54,5 @@ public class Member extends AbstractTimeEntity {
         this.roles = roles;
         this.introduction = introduction;
         this.profileImageUrl = profileImageUrl;
-        this.isDeleted = isDeleted;
-    }
-
-    public void softDelete(){
-        isDeleted = true;
     }
 }

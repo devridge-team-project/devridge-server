@@ -23,13 +23,12 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         CustomMemberDetails savedMember = (CustomMemberDetails) customMemberDetailsService.loadUserByUsername(email);
 
-        if(!passwordEncoder.matches(password, savedMember.getPassword())) {
+        if (!passwordEncoder.matches(password, savedMember.getPassword())) {
             throw new BadCredentialsException("로그인 정보가 올바르지 않습니다.");
         }
 
         return new UsernamePasswordAuthenticationToken(savedMember, password, savedMember.getAuthorities());
     }
-
 
     @Override
     public boolean supports(Class<?> authentication) {

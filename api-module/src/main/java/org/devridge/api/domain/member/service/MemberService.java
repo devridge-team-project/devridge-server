@@ -1,27 +1,25 @@
 package org.devridge.api.domain.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.devridge.api.constant.SkillConstants;
+import org.devridge.api.constant.Role;
 import org.devridge.api.domain.member.dto.request.CreateMemberRequest;
 import org.devridge.api.domain.member.dto.request.DeleteMemberRequest;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.skill.entity.MemberSkill;
-import org.devridge.api.domain.skill.entity.MemberSkillId;
 import org.devridge.api.domain.skill.entity.Skill;
+import org.devridge.api.domain.skill.entity.key.MemberSkillId;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.domain.skill.repository.SkillRepository;
-import org.devridge.api.exception.member.DuplEmailException;
-import org.devridge.api.exception.member.MemberNotFoundException;
-import org.devridge.api.exception.member.PasswordNotMatchException;
-import org.devridge.api.exception.member.SkillsNotValidException;
-import org.devridge.api.security.constant.SecurityConstant;
+import org.devridge.api.exception.member.*;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,58 +32,64 @@ public class MemberService {
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
-    public void createMember(CreateMemberRequest memberRequest){
-        checkDuplMember(memberRequest);
-
+    public Long createMember(CreateMemberRequest memberRequest){
+        checkDuplEmail(memberRequest);
+        checkDuplNickname(memberRequest);
         passwordChecker.checkWeakPassword(memberRequest.getPassword());
 
-        String[] skills = getSkills(memberRequest.getSkills());
-
-        if (!areSkillsValid(skills)) {
-            throw new SkillsNotValidException();
-        }
-
-        Member member = createNormalMember(memberRequest);
-        createMemberSkill(skills, member);
-    }
-
-    private void createMemberSkill(String[] skills, Member member) {
-        /**
-         * 성능 최적화 하기!! (SQL query)
-        * */
-        for (String userSkill : skills) {
-            Skill skill = skillRepository.findBySkill(userSkill).get();
-            MemberSkillId memberSkillId = new MemberSkillId(member.getId(), skill.getId());
-
-            MemberSkill memberSkill = MemberSkill.builder()
-                    .id(memberSkillId)
-                    .member(member)
-                    .skill(skill)
-                    .build();
-            memberSkillRepository.save(memberSkill);
-        }
-    }
-
-    private void checkDuplMember(CreateMemberRequest reqDto) {
-        final Optional<Member> user = memberRepository.findByEmailAndProvider(reqDto.getEmail(), reqDto.getProvider());
-
-        if (user.isPresent()) {
-            throw new DuplEmailException("[ERROR] 이미 존재하는 계정입니다.");
-        }
-    }
-
-    private Member createNormalMember(CreateMemberRequest reqDto) {
-        String encodedPassword = passwordEncoder.encode(reqDto.getPassword());
+        String encodedPassword = passwordEncoder.encode(memberRequest.getPassword());
 
         Member member = Member.builder()
-                .email(reqDto.getEmail())
+                .email(memberRequest.getEmail())
                 .password(encodedPassword)
-                .provider("normal")
-                .roles("ROLE_" + SecurityConstant.USER_ROLE)
-                .nickname(reqDto.getNickname())
+                .provider(memberRequest.getProvider())
+                .roles(Role.valueOf("ROLE_USER"))
+                .nickname(memberRequest.getNickname())
+                .profileImageUrl(memberRequest.getProfileImageUrl())
                 .build();
 
-        return memberRepository.save(member);
+        memberRepository.save(member);
+
+        List<Long> skillIds = memberRequest.getSkillIds();
+
+        if (!skillIds.isEmpty()) {
+            List skills = areSkillsValid(skillIds);
+            createMemberSkill(skills, member);
+        }
+
+        return member.getId();
+    }
+
+    private void createMemberSkill(List<Skill> skills, Member member) {
+        List<MemberSkill> memberSkills = skills.stream()
+                .map(skill -> {
+                    MemberSkillId memberSkillId = new MemberSkillId(member.getId(), skill.getId());
+
+                    return MemberSkill.builder()
+                            .id(memberSkillId)
+                            .member(member)
+                            .skill(skill)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        memberSkillRepository.saveAll(memberSkills);
+    }
+
+    private void checkDuplEmail(CreateMemberRequest reqDto) {
+        final Optional<Member> member = memberRepository.findByEmailAndProvider(reqDto.getEmail(), reqDto.getProvider());
+
+        if (member.isPresent()) {
+            throw new DuplEmailException();
+        }
+    }
+
+    private void checkDuplNickname(CreateMemberRequest memberRequest) {
+        Optional<Member> member = memberRepository.findByNickname(memberRequest.getNickname());
+
+        if (member.isPresent()) {
+            throw new DuplNicknameException();
+        }
     }
 
     @Transactional
@@ -99,25 +103,16 @@ public class MemberService {
             throw new PasswordNotMatchException();
         }
 
-        findMember.softDelete();
+        memberRepository.delete(findMember);
     }
 
-    public boolean areSkillsValid(String[] skills) {
-        Set<String> userSkillSet = new HashSet<>();
+    public List<Skill> areSkillsValid(List<Long> skillIds) {
+        List<Skill> skills = skillRepository.findAllById(skillIds);
 
-        for (String skill : skills) {
-            userSkillSet.add(skill);
+        if (skills.size() != skillIds.size()) {
+            throw new SkillsNotValidException();
         }
 
-        return SkillConstants.SKILL_SET.containsAll(userSkillSet);
+        return skills;
     }
-
-    public String[] getSkills(String skills){
-        String[] skillSet = Arrays.stream(skills.split(","))
-                .map(String::trim)
-                .map(String::toLowerCase)
-                .toArray(String[]::new);
-        return skillSet;
-    }
-
 }

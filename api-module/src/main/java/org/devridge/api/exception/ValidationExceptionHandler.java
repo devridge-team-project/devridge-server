@@ -1,6 +1,6 @@
 package org.devridge.api.exception;
 
-import org.devridge.common.dto.BaseResponse;
+import org.devridge.common.dto.BaseErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -15,15 +15,15 @@ import java.util.stream.Collectors;
 public class ValidationExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<BaseResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<BaseErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        String errorMessage = String.join(", ", errors);
-        BaseResponse response = new BaseResponse(HttpStatus.BAD_REQUEST.value(), errorMessage);
+        String errorMessage = String.join(" ", errors);
+        BaseErrorResponse response = new BaseErrorResponse(errorMessage);
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 public class CreateMemberRequest {
 
     @NotBlank(message = "빈 이메일을 입력할 수 없습니다.")
+    @Email(message = "유효하지 않은 이메일 형식입니다.")
     private String email;
 
     @NotBlank(message = "빈 패스워드를 입력할 수 없습니다.")
@@ -25,6 +28,5 @@ public class CreateMemberRequest {
 
     private String profileImageUrl;
 
-    private String skills;
-
+    private List<Long> skillIds;
 }

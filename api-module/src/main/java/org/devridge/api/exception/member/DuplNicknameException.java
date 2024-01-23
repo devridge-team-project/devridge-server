@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Getter
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class WeakPasswordException extends RuntimeException {
-    public WeakPasswordException(String message) {
-        super(message);
+public class DuplNicknameException extends RuntimeException {
+
+    public DuplNicknameException() {
+        super();
     }
 }
