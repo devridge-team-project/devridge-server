@@ -42,6 +42,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(DuplNicknameException.class)
+    public ResponseEntity<BaseErrorResponse> handleException(DuplNicknameException e) {
+        BaseErrorResponse response = new BaseErrorResponse("nickname already exists.");
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MemberNotFoundException.class)
     public ResponseEntity<BaseErrorResponse> handleException(MemberNotFoundException e) {
         BaseErrorResponse response = new BaseErrorResponse("member not found");

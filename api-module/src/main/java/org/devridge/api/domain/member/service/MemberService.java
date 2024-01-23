@@ -11,10 +11,7 @@ import org.devridge.api.domain.skill.entity.Skill;
 import org.devridge.api.domain.skill.entity.key.MemberSkillId;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.domain.skill.repository.SkillRepository;
-import org.devridge.api.exception.member.DuplEmailException;
-import org.devridge.api.exception.member.MemberNotFoundException;
-import org.devridge.api.exception.member.PasswordNotMatchException;
-import org.devridge.api.exception.member.SkillsNotValidException;
+import org.devridge.api.exception.member.*;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,7 +33,8 @@ public class MemberService {
 
     @Transactional
     public Long createMember(CreateMemberRequest memberRequest){
-        checkDuplMember(memberRequest);
+        checkDuplEmail(memberRequest);
+        checkDuplNickname(memberRequest);
         passwordChecker.checkWeakPassword(memberRequest.getPassword());
 
         String encodedPassword = passwordEncoder.encode(memberRequest.getPassword());
@@ -78,11 +76,19 @@ public class MemberService {
         memberSkillRepository.saveAll(memberSkills);
     }
 
-    private void checkDuplMember(CreateMemberRequest reqDto) {
-        final Optional<Member> user = memberRepository.findByEmailAndProvider(reqDto.getEmail(), reqDto.getProvider());
+    private void checkDuplEmail(CreateMemberRequest reqDto) {
+        final Optional<Member> member = memberRepository.findByEmailAndProvider(reqDto.getEmail(), reqDto.getProvider());
 
-        if (user.isPresent()) {
+        if (member.isPresent()) {
             throw new DuplEmailException();
+        }
+    }
+
+    private void checkDuplNickname(CreateMemberRequest memberRequest) {
+        Optional<Member> member = memberRepository.findByNickname(memberRequest.getNickname());
+
+        if (member.isPresent()) {
+            throw new DuplNicknameException();
         }
     }
 
