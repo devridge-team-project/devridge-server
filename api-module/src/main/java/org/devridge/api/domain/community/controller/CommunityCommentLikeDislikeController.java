@@ -19,7 +19,7 @@ public class CommunityCommentLikeDislikeController {
     private final CommunityCommentLikeDislikeService communityCommentLikeDislikeService;
 
     @PostMapping
-    public ResponseEntity<?> likeDislikeCreate(
+    public ResponseEntity<Void> likeDislikeCreate(
         @PathVariable Long communityId,
         @PathVariable Long commentId,
         @PathVariable LikeStatus status

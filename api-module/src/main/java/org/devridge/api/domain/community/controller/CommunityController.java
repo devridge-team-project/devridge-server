@@ -25,19 +25,19 @@ public class CommunityController {
     private final CommunityService communityService;
 
     @PostMapping
-    public ResponseEntity<?> createCommunity(@Valid @RequestBody CreateCommunityRequest communityRequest) {
+    public ResponseEntity<Void> createCommunity(@Valid @RequestBody CreateCommunityRequest communityRequest) {
         Long communityId = communityService.createCommunity(communityRequest);
         return ResponseEntity.created(URI.create("/api/community/" + communityId)).build();
     }
 
     @GetMapping("/{communityId}")
-    public ResponseEntity<?> getCommunity(@PathVariable Long communityId) {
+    public ResponseEntity<CommunityDetailResponse> getCommunity(@PathVariable Long communityId) {
         CommunityDetailResponse communityDetailResponse = communityService.getCommunity(communityId);
         return ResponseEntity.ok().body(communityDetailResponse);
     }
 
     @PutMapping("/{communityId}")
-    public ResponseEntity<?> updateCommunity(
+    public ResponseEntity<Void> updateCommunity(
         @PathVariable Long communityId,
         @Valid @RequestBody CreateCommunityRequest communityRequest
     ) {
@@ -46,13 +46,13 @@ public class CommunityController {
     }
 
     @DeleteMapping("/{communityId}")
-    public ResponseEntity<?> deleteCommunity(@PathVariable Long communityId) {
+    public ResponseEntity<Void> deleteCommunity(@PathVariable Long communityId) {
         communityService.deleteCommunity(communityId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/all") // 커뮤니티 글 전체 목록 보여주기
-    public ResponseEntity<?> getAllCommunity() {
+    public ResponseEntity<List<CommunityDetailResponse>> getAllCommunity() {
         List<CommunityDetailResponse> communityDetailResponses = communityService.getAllCommunity();
         return ResponseEntity.ok().body(communityDetailResponses);
     }

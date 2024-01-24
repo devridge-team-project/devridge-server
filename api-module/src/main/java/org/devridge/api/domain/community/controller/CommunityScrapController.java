@@ -18,13 +18,13 @@ public class CommunityScrapController {
     private final CommunityScrapService communityScrapService;
 
     @PostMapping
-    public ResponseEntity<?> scrapCreate(@PathVariable Long communityId) {
+    public ResponseEntity<Void> scrapCreate(@PathVariable Long communityId) {
         communityScrapService.createScrap(communityId);
         return ResponseEntity.created(URI.create("/api/community/" + communityId + "/scrap")).build();
     }
 
     @DeleteMapping
-    public ResponseEntity<?> scrapdelete(@PathVariable Long communityId) {
+    public ResponseEntity<Void> scrapdelete(@PathVariable Long communityId) {
         communityScrapService.deleteScrap(communityId);
         return ResponseEntity.ok().build();
     }
