@@ -9,7 +9,6 @@ import org.devridge.api.domain.member.repository.RefreshTokenRepository;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.exception.member.WrongLoginException;
 import org.devridge.api.security.auth.CustomMemberDetails;
-import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;
 import org.devridge.common.dto.BaseErrorResponse;
@@ -25,16 +24,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private RefreshTokenRepository refreshTokenRepository;
     private MemberSkillRepository memberSkillRepository;
 
-    public JwtAuthenticationFilter(RefreshTokenRepository refreshTokenRepository) {
+    public JwtAuthenticationFilter(RefreshTokenRepository refreshTokenRepository, MemberSkillRepository memberSkillRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
+        this.memberSkillRepository = memberSkillRepository;
         setFilterProcessesUrl("/api/login");
     }
 
@@ -70,8 +68,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 3. AccessToken 발급
         String accessToken = JwtUtil.createAccessToken(member, refreshTokenId);
 
-        TokenResponse tokenResponse = new TokenResponse(accessToken);
-        List<Long> skillIdList = getMemberSkillIdList(member);
+        List<Long> skillIdList = getSkillIdListFromMember(member);
 
         MemberResponse memberResponse = MemberResponse.builder()
                 .id(member.getId())
@@ -81,23 +78,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .skillIds(skillIdList)
                 .build();
 
-        LoginResponse loginResponse = LoginResponse.builder()
-                .accessToken(tokenResponse)
-                .member(memberResponse)
-                .build();
+        LoginResponse loginResponse = new LoginResponse(accessToken, memberResponse);
 
         ResponseUtil.createResponseBody(response, loginResponse, HttpStatus.OK);
     }
 
-    private static List<Long> getMemberSkillIdList(Member member) {
-        List<Long> skillIdList = new ArrayList<>();
-
-        member.getMemberSkills().forEach(
-                memberSkill -> {
-                    skillIdList.add(memberSkill.getId().getSkillId());
-                }
-        );
-
+    public List<Long> getSkillIdListFromMember(Member member) {
+        List<Long> skillIdList = memberSkillRepository.findSkillIdByMemberId(member.getId());
         return skillIdList;
     }
 
@@ -110,27 +97,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private Long saveRefreshToken(Member member, String refreshToken) {
         try{
-            Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByMemberId(member.getId());
+            refreshTokenRepository.findByMemberId(member.getId())
+                    .ifPresent(refreshTokenRepository::delete);
 
-            if (refreshTokenOpt.isPresent()){
-                refreshTokenRepository.delete(refreshTokenOpt.get());
-            }
-            RefreshToken newRefreshToken = buildRefreshToken(member, refreshToken);
+            RefreshToken newRefreshToken = new RefreshToken(refreshToken, member);
 
             return refreshTokenRepository.save(newRefreshToken).getId();
-
         } catch (NullPointerException e) {
             throw new AuthenticationServiceException("유효하지 않은 사용자입니다.");
         }
     }
-
-    private static RefreshToken buildRefreshToken(Member member, String refreshToken) {
-        RefreshToken newRefreshToken = RefreshToken.builder()
-                .refreshToken(refreshToken)
-                .member(member)
-                .build();
-
-        return newRefreshToken;
-    }
-
 }

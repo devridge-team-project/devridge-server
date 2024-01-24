@@ -3,6 +3,7 @@ package org.devridge.api.security.config;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
+import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.security.auth.CustomMemberDetailsService;
 import org.devridge.api.security.auth.JwtAuthenticationProvider;
 import org.devridge.api.security.constant.SecurityConstant;
@@ -31,6 +32,7 @@ public class SecurityConfig {
     private final CustomMemberDetailsService customMemberDetailsService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
+    private final MemberSkillRepository memberSkillRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -101,7 +103,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager) {
-        JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(refreshTokenRepository);
+        JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(refreshTokenRepository, memberSkillRepository);
         authenticationFilter.setAuthenticationManager(authenticationManager);
 
         SecurityContextRepository contextRepository = new HttpSessionSecurityContextRepository();
