@@ -22,10 +22,10 @@ public class CommunityScrapService {
     private final CommunityRepository communityRepository;
 
     public void createScrap(Long communityId) {
-        Long memberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(memberId);
+        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
+        Member member = getMemberById(writeMemberId);
         Community community = getCommunityById(communityId);
-        CommunityScrapId communityScrapId = new CommunityScrapId(memberId, communityId);
+        CommunityScrapId communityScrapId = new CommunityScrapId(writeMemberId, communityId);
 
         communityScrapRepository.findById(communityScrapId)
             .ifPresent(cs -> {
@@ -33,13 +33,13 @@ public class CommunityScrapService {
             });
 
         if (communityScrapRepository.findById(communityScrapId).isEmpty()) { // 없나확인
-            Long countResult = communityScrapRepository.checkSoftDelete(communityId, memberId); // 0이외의 값은 가짜없음
+            Long countResult = communityScrapRepository.checkSoftDelete(communityId, writeMemberId); // 0이외의 값은 가짜없음
             boolean isSoftDeleted = countResult != 0L;
 
             //가짜없음
             //reCreateScrap쿼리하기
             if (isSoftDeleted) {  // 참이면 가짜없음임 즉 실행되면
-                communityScrapRepository.reCreateScrap(communityId, memberId);
+                communityScrapRepository.reCreateScrap(communityId, writeMemberId);
             }
 
             //  진짜없음
@@ -55,11 +55,11 @@ public class CommunityScrapService {
     }
 
     public void deleteScrap(Long communityId) {
-        Long memberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(memberId);
+        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
+        Member member = getMemberById(writeMemberId);
         getCommunityById(communityId);
 
-        CommunityScrapId communityScrapId = new CommunityScrapId(memberId, communityId);
+        CommunityScrapId communityScrapId = new CommunityScrapId(writeMemberId, communityId);
         communityScrapRepository.findById(communityScrapId)
             .orElseThrow(() -> new EntityNotFoundException("스크랩이 존재하지 않습니다."));
         communityScrapRepository.deleteById(communityScrapId);

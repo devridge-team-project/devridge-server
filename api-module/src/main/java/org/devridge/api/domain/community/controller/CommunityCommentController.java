@@ -25,7 +25,7 @@ public class CommunityCommentController {
     private final CommunityCommentService communityCommentService;
 
     @PostMapping//todo: memberId 검증방법
-    public ResponseEntity<?> writeComment(
+    public ResponseEntity<?> createComment(
         @Valid @RequestBody CommunityCommentRequest commentRequest,
         @PathVariable Long communityId
     ) {
@@ -34,9 +34,9 @@ public class CommunityCommentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CommunityCommentResponse>> viewComment(@PathVariable Long communityId) {
-        List<CommunityCommentResponse> CommentResponses = communityCommentService.getAllComment(communityId);
-        return ResponseEntity.ok().body(CommentResponses);
+    public ResponseEntity<List<CommunityCommentResponse>> getAllComments(@PathVariable Long communityId) {
+        List<CommunityCommentResponse> commentResponses = communityCommentService.getAllComment(communityId);
+        return ResponseEntity.ok().body(commentResponses);
     }
 
     @PutMapping("/{commentId}")
@@ -50,7 +50,7 @@ public class CommunityCommentController {
     }
 
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<?> CommentDelete(
+    public ResponseEntity<?> deleteComment(
         @PathVariable Long communityId,
         @PathVariable Long commentId
     ) {

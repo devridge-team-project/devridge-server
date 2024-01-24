@@ -25,8 +25,8 @@ public class CommunityService {
 
 
     public Long createCommunity(CreateCommunityRequest communityRequest) {
-        Long memberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(memberId);
+        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
+        Member member = getMemberById(writeMemberId);
         Community community = communityMapper.toCommunity(member, communityRequest);
         return communityRepository.save(community).getId();
     }
@@ -39,27 +39,36 @@ public class CommunityService {
     }
 
     public void updateCommunity(Long communityId, CreateCommunityRequest communityRequest) {
+        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(writeMemberId);
         Community community = getCommunityById(communityId);
-        if (!SecurityContextHolderUtil.getMemberId().equals(community.getMember().getId())) {
+
+        if (!writeMemberId.equals(community.getMember().getId())) {
             throw new AccessDeniedException("거부된 접근입니다.");
         }
+
         community.updateCommunity(communityRequest.getTitle(), communityRequest.getContent());
         communityRepository.save(community);
     }
 
     public void deleteCommunity(Long communityId) {
+        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
         Community community = getCommunityById(communityId);
-        if (!SecurityContextHolderUtil.getMemberId().equals(community.getMember().getId())) {
+
+        if (!writeMemberId.equals(community.getMember().getId())) {
             throw new AccessDeniedException("거부된 접근입니다.");
         }
+
         communityRepository.deleteById(communityId);
     }
 
-    public List<CommunityDetailResponse> viewAllCommunity() {
+    public List<CommunityDetailResponse> getAllCommunity() {
         List<Community> communities = communityRepository.findAll();
+
         if (communities.isEmpty()) {
             throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
         }
+
         return communityMapper.toCommunityDetailResponses(communities);
     }
 

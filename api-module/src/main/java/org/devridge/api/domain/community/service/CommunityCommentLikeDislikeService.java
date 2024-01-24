@@ -28,8 +28,8 @@ public class CommunityCommentLikeDislikeService {
     private final CommunityQuerydslRepository communityQuerydslRepository;
 
     public void createLikeDisLike(Long communityId, Long commentId, LikeStatus status) {
-        Long memberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(memberId);
+        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
+        Member member = getMemberById(writeMemberId);
         getCommunityById(communityId);
         CommunityComment comment = getCommentById(commentId);
 
@@ -47,13 +47,15 @@ public class CommunityCommentLikeDislikeService {
     }
 
     public void changeCommunityCommentLikeDislike(Long communityId, Long commentId, LikeStatus status) {
-        Long memberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(memberId);
+        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
+        Member member = getMemberById(writeMemberId);
         getCommunityById(communityId);
         CommunityComment comment = getCommentById(commentId);
+
         CommunityCommentLikeDislike CommentLikeDislike = communityCommentLikeDislikeRepository.findById(
                 new CommunityCommentLikeDislikeId(member.getId(), comment.getId()))
             .orElseThrow(() -> new EntityNotFoundException());
+
         CommentLikeDislike.changeStatus(status);
         communityCommentLikeDislikeRepository.save(CommentLikeDislike);
     }
