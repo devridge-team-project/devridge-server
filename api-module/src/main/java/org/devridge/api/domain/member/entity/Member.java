@@ -49,7 +49,7 @@ public class Member extends BaseEntity {
     private String profileImageUrl;
 
     @Getter
-    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "member")
     private List<MemberSkill> memberSkills = new ArrayList<>();
 
     @Builder
