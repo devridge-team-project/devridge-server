@@ -1,12 +1,14 @@
 package org.devridge.api.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.devridge.api.domain.member.dto.response.LoginResponse;
+import org.devridge.api.domain.member.dto.response.MemberResponse;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.entity.RefreshToken;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
+import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.exception.member.WrongLoginException;
 import org.devridge.api.security.auth.CustomMemberDetails;
-import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;
 import org.devridge.common.dto.BaseErrorResponse;
@@ -22,13 +24,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
+import java.util.List;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private RefreshTokenRepository refreshTokenRepository;
+    private MemberSkillRepository memberSkillRepository;
 
-    public JwtAuthenticationFilter(RefreshTokenRepository refreshTokenRepository) {
+    public JwtAuthenticationFilter(RefreshTokenRepository refreshTokenRepository, MemberSkillRepository memberSkillRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
+        this.memberSkillRepository = memberSkillRepository;
         setFilterProcessesUrl("/api/login");
     }
 
@@ -64,44 +68,43 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 3. AccessToken 발급
         String accessToken = JwtUtil.createAccessToken(member, refreshTokenId);
 
-        TokenResponse tokenResponse = TokenResponse.builder()
-            .accessToken(accessToken)
-            .build();
+        List<Long> skillIdList = getSkillIdListFromMember(member);
 
-        ResponseUtil.createResponseBody(response, tokenResponse, HttpStatus.OK);
+        MemberResponse memberResponse = MemberResponse.builder()
+                .id(member.getId())
+                .nickname(member.getNickname())
+                .imageUrl(member.getProfileImageUrl())
+                .introduction(member.getIntroduction())
+                .skillIds(skillIdList)
+                .build();
+
+        LoginResponse loginResponse = new LoginResponse(accessToken, memberResponse);
+
+        ResponseUtil.createResponseBody(response, loginResponse, HttpStatus.OK);
+    }
+
+    public List<Long> getSkillIdListFromMember(Member member) {
+        List<Long> skillIdList = memberSkillRepository.findSkillIdByMemberId(member.getId());
+        return skillIdList;
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
         BaseErrorResponse errorResponse = new BaseErrorResponse("email, password 가 일치하지 않습니다.");
-
         ResponseUtil.createResponseBody(response, errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     private Long saveRefreshToken(Member member, String refreshToken) {
         try{
-            Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findByMemberId(member.getId());
+            refreshTokenRepository.findByMemberId(member.getId())
+                    .ifPresent(refreshTokenRepository::delete);
 
-            if (refreshTokenOpt.isPresent()){
-                refreshTokenRepository.delete(refreshTokenOpt.get());
-            }
-            RefreshToken newRefreshToken = buildRefreshToken(member, refreshToken);
+            RefreshToken newRefreshToken = new RefreshToken(refreshToken, member);
 
             return refreshTokenRepository.save(newRefreshToken).getId();
-
         } catch (NullPointerException e) {
             throw new AuthenticationServiceException("유효하지 않은 사용자입니다.");
         }
     }
-
-    private static RefreshToken buildRefreshToken(Member member, String refreshToken) {
-        RefreshToken newRefreshToken = RefreshToken.builder()
-                .refreshToken(refreshToken)
-                .member(member)
-                .build();
-
-        return newRefreshToken;
-    }
-
 }
