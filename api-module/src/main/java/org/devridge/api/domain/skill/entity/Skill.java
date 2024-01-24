@@ -1,32 +1,35 @@
 package org.devridge.api.domain.skill.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.devridge.api.domain.AbstractTimeEntity;
+import org.devridge.common.dto.BaseEntity;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
+@DynamicInsert
+@SQLDelete(sql = "UPDATE qna SET is_deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
 @Table(name = "skill")
-public class Skill extends AbstractTimeEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Skill extends BaseEntity {
 
     private String skill;
-
-    private boolean isDeleted;
 
     @OneToMany(mappedBy = "skill")
     private Set<MemberSkill> memberSkills = new HashSet<>();
 
+    @Builder
+    public Skill(String skill) {
+        this.skill = skill;
+    }
 }
