@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.constant.Role;
+import org.devridge.api.domain.skill.entity.MemberSkill;
 import org.devridge.common.dto.BaseEntity;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
@@ -13,6 +14,8 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "member")
@@ -44,6 +47,10 @@ public class Member extends BaseEntity {
 
     @Column(name = "profile_image_url", nullable = true)
     private String profileImageUrl;
+
+    @Getter
+    @OneToMany(mappedBy = "member")
+    private List<MemberSkill> memberSkills = new ArrayList<>();
 
     @Builder
     public Member(String email, String password, String provider, String nickname, Role roles, String introduction, String profileImageUrl) {

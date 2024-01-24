@@ -26,12 +26,12 @@ public class MemberSkill extends BaseTimeEntity {
     private MemberSkillId id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("memberId") // MemberSkillId 내의 memberId와 매핑
+    @MapsId("memberId")
     @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne
-    @MapsId("skillId") // MemberSkillId 내의 skillId와 매핑
+    @MapsId("skillId")
     @JoinColumn(name = "skill_id")
     private Skill skill;
 
