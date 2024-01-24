@@ -1,14 +1,21 @@
 package org.devridge.api.exception;
 
-import org.devridge.api.exception.member.*;
+import java.util.NoSuchElementException;
+import javax.persistence.EntityNotFoundException;
+import org.devridge.api.exception.member.DuplEmailException;
+import org.devridge.api.exception.member.DuplNicknameException;
+import org.devridge.api.exception.member.MemberNotFoundException;
+import org.devridge.api.exception.member.PasswordNotMatchException;
+import org.devridge.api.exception.member.SkillsNotValidException;
+import org.devridge.api.exception.member.WeakPasswordException;
 import org.devridge.common.dto.BaseErrorResponse;
 import org.devridge.common.dto.BaseResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.NoSuchElementException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -54,4 +61,21 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<BaseErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
+        BaseErrorResponse response = new BaseErrorResponse("해당 엔티티를 찾을 수 없습니다.");
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<BaseErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException e) {
+        BaseErrorResponse response = new BaseErrorResponse("이미 존재하는 데이터입니다.");
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<BaseErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
+        BaseErrorResponse response = new BaseErrorResponse("거부된 접근입니다.");
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
 }
