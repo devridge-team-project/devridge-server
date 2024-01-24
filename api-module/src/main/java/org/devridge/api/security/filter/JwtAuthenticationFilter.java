@@ -1,9 +1,12 @@
 package org.devridge.api.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.devridge.api.domain.member.dto.response.LoginResponse;
+import org.devridge.api.domain.member.dto.response.MemberResponse;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.entity.RefreshToken;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
+import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.exception.member.WrongLoginException;
 import org.devridge.api.security.auth.CustomMemberDetails;
 import org.devridge.api.security.dto.TokenResponse;
@@ -22,10 +25,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private RefreshTokenRepository refreshTokenRepository;
+    private MemberSkillRepository memberSkillRepository;
 
     public JwtAuthenticationFilter(RefreshTokenRepository refreshTokenRepository) {
         this.refreshTokenRepository = refreshTokenRepository;
@@ -64,18 +70,41 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 3. AccessToken 발급
         String accessToken = JwtUtil.createAccessToken(member, refreshTokenId);
 
-        TokenResponse tokenResponse = TokenResponse.builder()
-            .accessToken(accessToken)
-            .build();
+        TokenResponse tokenResponse = new TokenResponse(accessToken);
+        List<Long> skillIdList = getMemberSkillIdList(member);
 
-        ResponseUtil.createResponseBody(response, tokenResponse, HttpStatus.OK);
+        MemberResponse memberResponse = MemberResponse.builder()
+                .id(member.getId())
+                .nickname(member.getNickname())
+                .imageUrl(member.getProfileImageUrl())
+                .introduction(member.getIntroduction())
+                .skillIds(skillIdList)
+                .build();
+
+        LoginResponse loginResponse = LoginResponse.builder()
+                .accessToken(tokenResponse)
+                .member(memberResponse)
+                .build();
+
+        ResponseUtil.createResponseBody(response, loginResponse, HttpStatus.OK);
+    }
+
+    private static List<Long> getMemberSkillIdList(Member member) {
+        List<Long> skillIdList = new ArrayList<>();
+
+        member.getMemberSkills().forEach(
+                memberSkill -> {
+                    skillIdList.add(memberSkill.getId().getSkillId());
+                }
+        );
+
+        return skillIdList;
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException, ServletException {
         BaseErrorResponse errorResponse = new BaseErrorResponse("email, password 가 일치하지 않습니다.");
-
         ResponseUtil.createResponseBody(response, errorResponse, HttpStatus.BAD_REQUEST);
     }
 
