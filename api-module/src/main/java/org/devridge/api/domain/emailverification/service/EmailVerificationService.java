@@ -22,10 +22,10 @@ public class EmailVerificationService {
     private final TemplateEngine templateEngine;
 
     @Value("${devridge.email.expire-minutes.signup}")
-    private final int EMAIL_EXP_MINUTES;
+    private int EMAIL_EXP_MINUTES;
 
     @Value("${devridge.email.expire-minutes.signup}")
-    private final int VERIFICATION_COMPLETION_EFFECTIVE_TIME;
+    private int VERIFICATION_COMPLETION_EFFECTIVE_TIME;
 
     public void sendVerificationEmail(EmailRequest emailRequest) {
         EmailVerification emailVerification = createEmailVerification(emailRequest.getEmail(), EMAIL_EXP_MINUTES);
@@ -33,6 +33,7 @@ public class EmailVerificationService {
 
         Context context = new Context();
         context.setVariable("verificationCode", emailVerification.getContent());
+
         String htmlContent = templateEngine.process("verificationEmailTemplate", context);
 
         emailMessageSender.sendSimpleMessage(

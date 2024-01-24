@@ -6,6 +6,6 @@ public class RandomGeneratorUtil {
 
     public static int generateFourDigitNumber() {
         SecureRandom secureRandom = new SecureRandom();
-        return secureRandom.nextInt(9700) + 300;
+        return secureRandom.nextInt(9990) + 10;
     }
 }
