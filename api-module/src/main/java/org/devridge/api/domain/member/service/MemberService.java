@@ -28,14 +28,12 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final SkillRepository skillRepository;
     private final MemberSkillRepository memberSkillRepository;
-    private final PasswordChecker passwordChecker;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
     public Long createMember(CreateMemberRequest memberRequest){
         checkDuplEmail(memberRequest);
         checkDuplNickname(memberRequest);
-        passwordChecker.checkWeakPassword(memberRequest.getPassword());
 
         String encodedPassword = passwordEncoder.encode(memberRequest.getPassword());
 
