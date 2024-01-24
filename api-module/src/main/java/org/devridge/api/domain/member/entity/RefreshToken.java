@@ -1,19 +1,21 @@
 package org.devridge.api.domain.member.entity;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.devridge.api.domain.AbstractTimeEntity;
 
 import javax.persistence.*;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "refresh_token")
 @Getter
 public class RefreshToken extends AbstractTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Long id;
 
     private String refreshToken;
@@ -26,8 +28,5 @@ public class RefreshToken extends AbstractTimeEntity {
     public RefreshToken(String refreshToken, Member member) {
         this.refreshToken = refreshToken;
         this.member = member;
-    }
-
-    protected RefreshToken() {
     }
 }

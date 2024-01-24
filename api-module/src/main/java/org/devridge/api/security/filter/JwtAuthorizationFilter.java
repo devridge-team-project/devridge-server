@@ -10,14 +10,10 @@ import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
 import org.devridge.api.security.auth.AuthProperties;
 import org.devridge.api.security.auth.CustomMemberDetails;
-import org.devridge.api.security.auth.CustomMemberDetailsService;
 import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.AccessTokenUtil;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;
-import org.devridge.common.dto.BaseResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,7 +36,6 @@ import java.util.Optional;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private MemberRepository memberRepository;
     private RefreshTokenRepository refreshTokenRepository;
-    private static final Logger logger = LoggerFactory.getLogger(CustomMemberDetailsService.class);
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, MemberRepository memberRepository, RefreshTokenRepository refreshTokenRepository) {
         super(authenticationManager);
@@ -71,7 +66,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         try {
             accessToken = AccessTokenUtil.extractAccessTokenFromRequest(request);
         } catch (NullPointerException e){
-            System.out.println("no access token");
             filterChain.doFilter(request, response);
             return;
         }
@@ -96,8 +90,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         if (!memberOpt.isPresent()) return;
 
         if (isAccessTokenExpired) {
-            System.out.println("엑세스토큰이 만료되었습니다.");
-
             Long refreshTokenId = ((Integer)claims.get("refreshTokenId")).longValue();
             Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findById(refreshTokenId);
 
@@ -123,11 +115,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         );
 
         if (!savedMember.isPresent()) {
-            BaseResponse baseResponse = new BaseResponse(
-                    HttpStatus.UNAUTHORIZED.value(),
-                    "엑세스 토큰이 유효하지 않습니다."
-            );
-            ResponseUtil.createResponseMessage(response, baseResponse);
+            ResponseUtil.createResponseBody(response, HttpStatus.UNAUTHORIZED);
             return null;
         }
 
@@ -144,12 +132,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             hasErrorOccured = false;
         } catch (ExpiredJwtException e) {
             refreshTokenRepository.delete(refreshToken);
+            ResponseUtil.createResponseBody(response, HttpStatus.UNAUTHORIZED);
 
-            BaseResponse baseResponse = new BaseResponse(
-                    HttpStatus.UNAUTHORIZED.value(),
-                    "재인증이 필요합니다."
-            );
-            ResponseUtil.createResponseMessage(response, baseResponse);
             return true;
         } catch (MalformedJwtException e) {
             filterChain.doFilter(request, response);
@@ -163,15 +147,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         // 리프레시 토큰이 존재한다면 액세스토큰 재발급
         String newAccessToken = JwtUtil.createAccessToken(savedMember, refreshToken.getId());
+        TokenResponse tokenResponse = new TokenResponse(newAccessToken);
 
         if (refreshTokenClaims != null) {
-            BaseResponse baseResponse = new BaseResponse(
-                    HttpStatus.OK.value(),
-                    "엑세스토큰 재발급",
-                    new TokenResponse(newAccessToken)
-            );
-
-            ResponseUtil.createResponseMessage(response, baseResponse);
+            ResponseUtil.createResponseBody(response, tokenResponse, HttpStatus.OK);
+            return true;
         }
         return false;
     }
