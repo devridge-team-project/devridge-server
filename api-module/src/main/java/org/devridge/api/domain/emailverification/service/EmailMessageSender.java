@@ -5,22 +5,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.mail.internet.MimeMessage;
 
-@Service
+@Component
 public class EmailMessageSender {
 
     @Autowired
-    private JavaMailSender javaMailSender;
+    private JavaMailSender emailSender;
 
     @Value("${spring.mail.username}")
     private String fromEmail;
 
     public void sendSimpleMessage(String recipientEmail, String emailSubject, String text) {
-        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessage message = emailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
@@ -29,7 +29,7 @@ public class EmailMessageSender {
             helper.setSubject(emailSubject);
             helper.setText(text, true);
 
-            javaMailSender.send(message);
+            emailSender.send(message);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 발송에 실패했습니다.", e);
         }
