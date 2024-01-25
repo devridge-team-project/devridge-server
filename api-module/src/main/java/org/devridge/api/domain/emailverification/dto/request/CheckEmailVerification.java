@@ -8,7 +8,7 @@ import javax.validation.constraints.Pattern;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class EmailCodeReuqest {
+public class CheckEmailVerification {
 
     private String email;
 

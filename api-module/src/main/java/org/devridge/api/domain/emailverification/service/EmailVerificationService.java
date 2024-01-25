@@ -2,9 +2,10 @@ package org.devridge.api.domain.emailverification.service;
 
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.constant.EmailVerificationContentType;
-import org.devridge.api.domain.emailverification.dto.request.EmailRequest;
+import org.devridge.api.domain.emailverification.dto.request.CheckEmailVerification;
 import org.devridge.api.domain.emailverification.entity.EmailVerification;
 import org.devridge.api.domain.emailverification.repository.EmailVerificationRepository;
+import org.devridge.api.exception.email.EmailVerificationInvalidException;
 import org.devridge.api.util.RandomGeneratorUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,8 +28,8 @@ public class EmailVerificationService {
     @Value("${devridge.email.expire-minutes.signup}")
     private int VERIFICATION_COMPLETION_EFFECTIVE_TIME;
 
-    public void sendVerificationEmail(EmailRequest emailRequest) {
-        EmailVerification emailVerification = createEmailVerification(emailRequest.getEmail(), EMAIL_EXP_MINUTES);
+    public void sendVerificationEmail(CheckEmailVerification emailVerificationRequest) {
+        EmailVerification emailVerification = createEmailVerification(emailVerificationRequest.getEmail(), EMAIL_EXP_MINUTES);
         emailVerificationRepository.save(emailVerification);
 
         Context context = new Context();
@@ -49,6 +50,7 @@ public class EmailVerificationService {
 
         return EmailVerification.builder()
                 .receiptEmail(email)
+                .userId(1L)
                 .contentType(EmailVerificationContentType.SIGNUP)
                 .content(content)
                 .checkStatus(false)
@@ -56,4 +58,14 @@ public class EmailVerificationService {
                 .build();
     }
 
+    public void checkEmailVerification(CheckEmailVerification codeRequest) {
+        String email = codeRequest.getEmail();
+        String verificationCode = codeRequest.getVerificationCode();
+
+        EmailVerification emailVerification = emailVerificationRepository.findLatestByReceiptEmailAndContentType(
+                email, EmailVerificationContentType.SIGNUP
+        ).orElseThrow(() -> new EmailVerificationInvalidException());
+
+        LocalDateTime current = LocalDateTime.now();
+    }
 }
