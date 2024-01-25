@@ -1,0 +1,16 @@
+name: Code Format
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: axel-op/googlejavaformat-action@v3
+        with:
+          args: "--replace"
+          commit-message: "style: Google Java 컨벤션에 맞게 코드 스타일 수정"
