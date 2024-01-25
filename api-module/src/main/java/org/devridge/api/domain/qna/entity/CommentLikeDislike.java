@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.domain.qna.dto.type.LikeStatus;
+import org.devridge.api.domain.qna.validator.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.id.CommentLikeDislikeId;
 import org.devridge.common.dto.BaseTimeEntity;
 
