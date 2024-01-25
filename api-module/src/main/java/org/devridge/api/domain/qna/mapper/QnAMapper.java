@@ -60,6 +60,15 @@ public class QnAMapper {
     }
 
     private FindWriterInformation toMember(Member member) {
+        if (member.isDeleted()) {
+            return FindWriterInformation.builder()
+                .id(0L)
+                .nickname("탈퇴한 사용자")
+                .introduction("탈퇴한 사용자입니다.")
+                .profileImageUrl("user.png")
+                .build();
+        }
+
         return FindWriterInformation.builder()
             .id(member.getId())
             .nickname(member.getNickname())
