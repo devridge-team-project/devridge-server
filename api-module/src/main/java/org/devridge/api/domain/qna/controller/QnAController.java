@@ -90,12 +90,9 @@ public class QnAController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{qnaId}")
-    public ResponseEntity<Void> createLikeOrDislike(
-        @PathVariable Long qnaId,
-        @Valid @RequestBody CreateLikeOrDislikeRequest likeOrDislikeRequest
-    ) {
-        qnaService.createLikeOrDislike(qnaId, likeOrDislikeRequest);
+    @PostMapping("/like/{qnaId}")
+    public ResponseEntity<Void> createLikeOrDislike(@PathVariable Long qnaId) {
+        qnaService.createLikeOrDislike(qnaId);
         return ResponseEntity.ok().build();
     }
 }

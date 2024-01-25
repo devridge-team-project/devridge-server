@@ -2,7 +2,6 @@ package org.devridge.api.domain.qna.service;
 
 import lombok.RequiredArgsConstructor;
 
-import org.devridge.api.domain.qna.dto.request.CreateLikeOrDislikeRequest;
 import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
 import org.devridge.api.domain.qna.dto.request.UpdateQnARequest;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
@@ -12,7 +11,6 @@ import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnALikeDislike;
 import org.devridge.api.domain.qna.entity.id.QnALikeDislikeId;
 import org.devridge.api.domain.qna.mapper.QnAMapper;
-import org.devridge.api.domain.qna.repository.QnACommentRepository;
 import org.devridge.api.domain.qna.repository.QnALikeDislikeRepository;
 import org.devridge.api.domain.qna.repository.QnAQuerydslRepository;
 import org.devridge.api.domain.qna.repository.QnARepository;
@@ -72,19 +70,30 @@ public class QnAService {
         qnaRepository.deleteById(qnaId);
     }
 
-    public void createLikeOrDislike(
-        Long qnaId,
-        CreateLikeOrDislikeRequest likeOrDislikeRequest
-    ) {
+    @Transactional
+    public void createLikeOrDislike(Long qnaId) {
         Member member = this.getMember();
         QnA qna = this.checkQnAValidate(qnaId);
         QnALikeDislikeId id = new QnALikeDislikeId(member, qna);
 
-        QnALikeDislike qnaLikeDislike = qnaLikeDislikeRepository
-            .findById(new QnALikeDislikeId(member, qna))
-            .orElseGet(() -> new QnALikeDislike(id, LikeStatus.valueOf(likeOrDislikeRequest.getLikeStatus())));
+        qnaLikeDislikeRepository.findById(id)
+            .ifPresentOrElse(
+                result -> {
+                    switch (result.getStatus()) {
+                        case G:
+                            qnaLikeDislikeRepository.deleteById(member, qna);
+                            break;
 
-        qnaLikeDislikeRepository.save(qnaLikeDislike);
+                        case B:
+                            qnaLikeDislikeRepository.updateQnALikeStatusToBad(member, qna);
+                            break;
+                    }
+                },
+                () -> {
+                    QnALikeDislike likeDislike = new QnALikeDislike(id, LikeStatus.valueOf("G"));
+                    qnaLikeDislikeRepository.save(likeDislike);
+                }
+            );
     }
 
     private QnA checkQnAValidate(Long qnaId) {
