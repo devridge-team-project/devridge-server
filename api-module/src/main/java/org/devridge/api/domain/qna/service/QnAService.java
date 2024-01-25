@@ -94,6 +94,8 @@ public class QnAService {
                     qnaLikeDislikeRepository.save(likeDislike);
                 }
             );
+
+        this.updateLikesAndDislikes(qna);
     }
 
     @Transactional
@@ -120,6 +122,8 @@ public class QnAService {
                     qnaLikeDislikeRepository.save(likeDislike);
                 }
             );
+
+        this.updateLikesAndDislikes(qna);
     }
 
     private QnA checkQnAValidate(Long qnaId) {
@@ -129,5 +133,12 @@ public class QnAService {
     private Member getMember() {
         Long memberId = getMemberId();
         return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
+    }
+
+    private void updateLikesAndDislikes(QnA qna) {
+        // TODO: 추후 batch 혹은 Trigger 사용
+        int likes = qnaLikeDislikeRepository.countQnALikeByQnAId(qna);
+        int dislikes = qnaLikeDislikeRepository.countQnADislikeByQnAId(qna);
+        qnaRepository.updateLikeAndDiscount(likes, dislikes, qna.getId());
     }
 }

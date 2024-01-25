@@ -23,17 +23,31 @@ public interface QnALikeDislikeRepository extends JpaRepository<QnALikeDislike, 
 
     @Modifying(clearAutomatically = true)
     @Query(
-            value = "UPDATE QnALikeDislike " +
-                    "SET status = 'B' " +
-                    "WHERE id.member = :member AND id.qna = :qna AND isDeleted = false"
+        value = "UPDATE QnALikeDislike " +
+                "SET status = 'B' " +
+                "WHERE id.member = :member AND id.qna = :qna AND isDeleted = false"
     )
     void updateQnALikeStatusToBad(@Param("member")Member member, @Param("qna") QnA qna);
 
     @Modifying(clearAutomatically = true)
     @Query(
-            value = "UPDATE QnALikeDislike " +
-                    "SET isDeleted = true " +
-                    "WHERE id.member = :member AND id.qna = :qna"
+        value = "UPDATE QnALikeDislike " +
+                "SET isDeleted = true " +
+                "WHERE id.member = :member AND id.qna = :qna"
     )
     void deleteById(@Param("member")Member member, @Param("qna") QnA qna);
+
+    @Query(
+        value = "SELECT COUNT(q) " +
+                "FROM QnALikeDislike q " +
+                "WHERE q.id.qna = :qna AND q.status = 'G'"
+    )
+    int countQnALikeByQnAId(@Param("qna") QnA qna);
+
+    @Query(
+        value = "SELECT COUNT(q) " +
+                "FROM QnALikeDislike q " +
+                "WHERE q.id.qna = :qna AND q.status = 'B'"
+    )
+    int countQnADislikeByQnAId(@Param("qna") QnA qna);
 }
