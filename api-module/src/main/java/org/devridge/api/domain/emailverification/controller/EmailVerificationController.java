@@ -2,9 +2,8 @@ package org.devridge.api.domain.emailverification.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.emailverification.dto.request.EmailRequest;
-import org.devridge.api.domain.emailverification.dto.request.EmailVerificationCode;
+import org.devridge.api.domain.emailverification.dto.request.EmailCodeReuqest;
 import org.devridge.api.domain.emailverification.service.EmailVerificationService;
-import org.devridge.api.domain.member.entity.Member;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +26,7 @@ public class EmailVerificationController {
 
     @PatchMapping("/verifications")
     public ResponseEntity<?> verifyCode(
-            @Valid @RequestBody EmailVerificationCode verificationCode
+            @Valid @RequestBody EmailCodeReuqest verificationCode
     ) {
         emailVerificationService.verifyEmailCode(verificationCode);
         return ResponseEntity.ok().build();
