@@ -71,7 +71,7 @@ public class QnAService {
     }
 
     @Transactional
-    public void createLikeOrDislike(Long qnaId) {
+    public void createLike(Long qnaId) {
         Member member = this.getMember();
         QnA qna = this.checkQnAValidate(qnaId);
         QnALikeDislikeId id = new QnALikeDislikeId(member, qna);
@@ -85,12 +85,38 @@ public class QnAService {
                             break;
 
                         case B:
-                            qnaLikeDislikeRepository.updateQnALikeStatusToBad(member, qna);
+                            qnaLikeDislikeRepository.updateQnALikeStatusToGood(member, qna);
                             break;
                     }
                 },
                 () -> {
                     QnALikeDislike likeDislike = new QnALikeDislike(id, LikeStatus.valueOf("G"));
+                    qnaLikeDislikeRepository.save(likeDislike);
+                }
+            );
+    }
+
+    @Transactional
+    public void createDislike(Long qnaId) {
+        Member member = this.getMember();
+        QnA qna = this.checkQnAValidate(qnaId);
+        QnALikeDislikeId id = new QnALikeDislikeId(member, qna);
+
+        qnaLikeDislikeRepository.findById(id)
+            .ifPresentOrElse(
+                result -> {
+                    switch (result.getStatus()) {
+                        case G:
+                            qnaLikeDislikeRepository.updateQnALikeStatusToBad(member, qna);
+                            break;
+
+                        case B:
+                            qnaLikeDislikeRepository.deleteById(member, qna);
+                            break;
+                    }
+                },
+                () -> {
+                    QnALikeDislike likeDislike = new QnALikeDislike(id, LikeStatus.valueOf("B"));
                     qnaLikeDislikeRepository.save(likeDislike);
                 }
             );

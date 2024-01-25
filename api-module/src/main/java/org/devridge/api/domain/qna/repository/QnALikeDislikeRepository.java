@@ -16,6 +16,14 @@ public interface QnALikeDislikeRepository extends JpaRepository<QnALikeDislike, 
     @Modifying(clearAutomatically = true)
     @Query(
             value = "UPDATE QnALikeDislike " +
+                    "SET status = 'G' " +
+                    "WHERE id.member = :member AND id.qna = :qna"
+    )
+    void updateQnALikeStatusToGood(@Param("member")Member member, @Param("qna") QnA qna);
+
+    @Modifying(clearAutomatically = true)
+    @Query(
+            value = "UPDATE QnALikeDislike " +
                     "SET status = 'B' " +
                     "WHERE id.member = :member AND id.qna = :qna"
     )
