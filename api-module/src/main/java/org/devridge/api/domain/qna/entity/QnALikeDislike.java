@@ -18,7 +18,6 @@ import javax.persistence.*;
 
 @Getter
 @SQLDelete(sql = "UPDATE qna_scrap SET is_deleted = true WHERE id = ?")
-@Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "qna_like_dislike")
 @DynamicInsert

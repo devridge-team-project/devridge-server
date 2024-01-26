@@ -49,4 +49,12 @@ public interface QnALikeDislikeRepository extends JpaRepository<QnALikeDislike, 
                 "WHERE q.id.qna = :qna AND q.status = 'B'"
     )
     int countQnADislikeByQnAId(@Param("qna") QnA qna);
+
+    @Modifying
+    @Query(
+            value = "UPDATE QnALikeDislike " +
+                    "SET isDeleted = false " +
+                    "WHERE id.member = :member AND id.qna = :qna"
+    )
+    int recoverLikeDislike(@Param("member")Member member, @Param("qna") QnA qna);
 }
