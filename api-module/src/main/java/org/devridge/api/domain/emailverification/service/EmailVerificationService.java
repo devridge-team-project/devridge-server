@@ -28,6 +28,7 @@ public class EmailVerificationService {
     @Value("${devridge.email.expire-minutes.signup}")
     private int EMAIL_EXP_MINUTES;
 
+    @Transactional
     public void sendVerificationEmail(SendEmailRequest emailVerificationRequest) {
         EmailVerification emailVerification = createEmailVerification(emailVerificationRequest.getEmail(), EMAIL_EXP_MINUTES);
         emailVerificationRepository.save(emailVerification);
@@ -60,8 +61,7 @@ public class EmailVerificationService {
     public void checkVerificationCode(String email, String code) {
         EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailOrderByCreatedAtDesc(email)
                 .orElseThrow(() -> new EmailVerificationInvalidException());
-        System.out.println("emailVerification = " + emailVerification);
-        
+
         LocalDateTime current = LocalDateTime.now();
 
         validateEmailVerification(emailVerification, current);
@@ -73,7 +73,7 @@ public class EmailVerificationService {
     }
 
     private static void validateEmailVerification(EmailVerification emailVerification, LocalDateTime current) {
-        if (emailVerification.isCheckStatus() == true) {
+        if (emailVerification.isCheckStatus()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "유효하지 않은 인증 번호입니다.");
         }
         if (emailVerification.getExpireAt().isBefore(current)) {

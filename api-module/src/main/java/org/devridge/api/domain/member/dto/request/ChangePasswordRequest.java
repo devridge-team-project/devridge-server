@@ -1,8 +1,6 @@
 package org.devridge.api.domain.member.dto.request;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -10,7 +8,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChangePasswordRequest {
 
     @NotBlank(message = "빈 이메일을 입력할 수 없습니다.")

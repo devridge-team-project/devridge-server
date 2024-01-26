@@ -10,12 +10,14 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "email_verification")
 @Getter
 @DynamicInsert
-@SQLDelete(sql = "UPDATE qna SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE email_verification SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EmailVerification extends BaseEntity {

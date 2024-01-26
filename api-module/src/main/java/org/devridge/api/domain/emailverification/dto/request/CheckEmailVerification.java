@@ -1,12 +1,9 @@
 package org.devridge.api.domain.emailverification.dto.request;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Pattern;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class CheckEmailVerification {
 
