@@ -83,13 +83,10 @@ public class MemberService {
     }
 
     private void checkDuplEmail(CreateMemberRequest memberRequest) {
-        final Optional<Member> member = memberRepository.findByEmailAndProvider(
-                memberRequest.getEmail(), memberRequest.getProvider()
-        );
-
-        if (member.isPresent()) {
-            throw new DuplEmailException();
-        }
+        memberRepository.findByEmailAndProvider(
+                memberRequest.getEmail(),
+                memberRequest.getProvider()
+        ).orElseThrow(DuplEmailException::new);
     }
 
     private void checkDuplNickname(CreateMemberRequest memberRequest) {
@@ -129,7 +126,8 @@ public class MemberService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        member.changePassword(passwordRequest.getPassword());
+        String encodedPassword = passwordEncoder.encode(passwordRequest.getPassword());
+        member.changePassword(encodedPassword);
     }
 
     public List<Skill> areSkillsValid(List<Long> skillIds) {

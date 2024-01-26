@@ -63,7 +63,7 @@ public class Member extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
     }
 
-    public void changePassword(String password) {
-        this.password = password;
+    public void changePassword(String encodePassword) {
+        this.password = encodePassword;
     }
 }
