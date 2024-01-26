@@ -48,7 +48,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     // 3. DB 에서 리프레시토큰 조회. 리프레시 토큰이 유효하다면 -> 새로운 액세스토큰 발급, 그렇지 않다면 -> 인증된 객체를 저장하지 않고 doFilter
 
     private final List<RequestMatcher> excludedUrlPatterns = Arrays.asList(//이 필터 적용 안할 url 지정
-            new AntPathRequestMatcher("api/email-verifications")
+            new AntPathRequestMatcher("/api/email-verifications")
             // 추가적인 URL 패턴을 필요에 따라 설정
     );
 
