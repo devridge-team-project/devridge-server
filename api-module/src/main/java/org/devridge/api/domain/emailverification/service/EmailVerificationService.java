@@ -23,12 +23,10 @@ public class EmailVerificationService {
     private final EmailVerificationRepository emailVerificationRepository;
     private final EmailMessageSender emailMessageSender;
     private final TemplateEngine templateEngine;
+    private final RandomGeneratorUtil randomGeneratorUtil;
 
     @Value("${devridge.email.expire-minutes.signup}")
     private int EMAIL_EXP_MINUTES;
-
-    @Value("${devridge.email.expire-minutes.signup}")
-    private int VERIFICATION_COMPLETION_EFFECTIVE_TIME;
 
     public void sendVerificationEmail(SendEmailRequest emailVerificationRequest) {
         EmailVerification emailVerification = createEmailVerification(emailVerificationRequest.getEmail(), EMAIL_EXP_MINUTES);
@@ -47,7 +45,7 @@ public class EmailVerificationService {
     }
 
     private EmailVerification createEmailVerification(String email, int expMinutes) {
-        String content = String.valueOf(RandomGeneratorUtil.generateFourDigitNumber());
+        String content = String.valueOf(randomGeneratorUtil.generateFourDigitNumber());
         LocalDateTime expiredAt = LocalDateTime.now().plusMinutes(expMinutes);
 
         return EmailVerification.builder()
