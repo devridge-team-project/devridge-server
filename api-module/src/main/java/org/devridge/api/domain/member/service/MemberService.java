@@ -82,8 +82,10 @@ public class MemberService {
         memberSkillRepository.saveAll(memberSkills);
     }
 
-    private void checkDuplEmail(CreateMemberRequest reqDto) {
-        final Optional<Member> member = memberRepository.findByEmailAndProvider(reqDto.getEmail(), reqDto.getProvider());
+    private void checkDuplEmail(CreateMemberRequest memberRequest) {
+        final Optional<Member> member = memberRepository.findByEmailAndProvider(
+                memberRequest.getEmail(), memberRequest.getProvider()
+        );
 
         if (member.isPresent()) {
             throw new DuplEmailException();
@@ -99,13 +101,13 @@ public class MemberService {
     }
 
     @Transactional
-    public void deleteMember(DeleteMemberRequest reqDto) {
+    public void deleteMember(DeleteMemberRequest memberRequest) {
         Member member = SecurityContextHolderUtil.getMember();
 
         Member findMember = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new MemberNotFoundException("member not found"));
 
-        if (!passwordEncoder.matches(reqDto.getPassword(), findMember.getPassword())) {
+        if (!passwordEncoder.matches(memberRequest.getPassword(), findMember.getPassword())) {
             throw new PasswordNotMatchException();
         }
 

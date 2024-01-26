@@ -18,13 +18,13 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<Void> signUp(@Valid @RequestBody CreateMemberRequest memberRequest) {
         Long userId = memberService.createMember(memberRequest);
         return ResponseEntity.created(URI.create("/api/users/" + userId)).build();
     }
 
-    @DeleteMapping("")
+    @DeleteMapping
     public ResponseEntity<Void> deleteMember(@RequestBody DeleteMemberRequest memberRequest) {
         memberService.deleteMember(memberRequest);
         return ResponseEntity.ok().build();
