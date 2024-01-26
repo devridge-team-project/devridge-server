@@ -18,7 +18,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @DynamicInsert
-@SQLDelete(sql = "UPDATE qna SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE skill SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
 @Table(name = "skill")
 public class Skill extends BaseEntity {

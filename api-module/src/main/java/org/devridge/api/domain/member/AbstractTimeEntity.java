@@ -1,4 +1,4 @@
-package org.devridge.api.domain;
+package org.devridge.api.domain.member;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

@@ -1,6 +1,7 @@
 package org.devridge.api.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.devridge.api.domain.member.dto.request.ChangePasswordRequest;
 import org.devridge.api.domain.member.dto.request.CreateMemberRequest;
 import org.devridge.api.domain.member.dto.request.DeleteMemberRequest;
 import org.devridge.api.domain.member.service.MemberService;
@@ -17,15 +18,21 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<Void> signUp(@Valid @RequestBody CreateMemberRequest memberRequest) {
         Long userId = memberService.createMember(memberRequest);
         return ResponseEntity.created(URI.create("/api/users/" + userId)).build();
     }
 
-    @DeleteMapping("")
+    @DeleteMapping
     public ResponseEntity<Void> deleteMember(@RequestBody DeleteMemberRequest memberRequest) {
         memberService.deleteMember(memberRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/password")
+    public ResponseEntity<Void> resetPassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        memberService.changePassword(changePasswordRequest);
         return ResponseEntity.ok().build();
     }
 }
