@@ -14,7 +14,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
-@DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
 public abstract class BaseEntity {

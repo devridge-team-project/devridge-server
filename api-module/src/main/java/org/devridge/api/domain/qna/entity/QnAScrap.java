@@ -22,6 +22,7 @@ import javax.persistence.Table;
 @Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "qna_scrap")
+@DynamicInsert
 @Entity
 public class QnAScrap extends BaseTimeEntity {
 
