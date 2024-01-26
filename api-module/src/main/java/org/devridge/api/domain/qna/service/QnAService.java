@@ -6,8 +6,12 @@ import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
 import org.devridge.api.domain.qna.dto.request.UpdateQnARequest;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
+import org.devridge.api.domain.qna.dto.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.QnA;
+import org.devridge.api.domain.qna.entity.QnALikeDislike;
+import org.devridge.api.domain.qna.entity.id.QnALikeDislikeId;
 import org.devridge.api.domain.qna.mapper.QnAMapper;
+import org.devridge.api.domain.qna.repository.QnALikeDislikeRepository;
 import org.devridge.api.domain.qna.repository.QnAQuerydslRepository;
 import org.devridge.api.domain.qna.repository.QnARepository;
 import org.devridge.api.domain.member.repository.MemberRepository;
@@ -29,6 +33,7 @@ public class QnAService {
     private final QnAMapper qnaMapper;
     private final QnAQuerydslRepository qnaQuerydslRepository;
     private final MemberRepository memberRepository;
+    private final QnALikeDislikeRepository qnaLikeDislikeRepository;
 
     @Transactional(readOnly = true)
     public List<GetAllQnAResponse> getAllQnASortByViews(String sortOption) {
@@ -43,14 +48,12 @@ public class QnAService {
 
     @Transactional(readOnly = true)
     public GetQnADetailResponse getQnADetail(Long qnaId) {
-        QnA result = this.checkQnAValidate(qnaId);
-        return qnaMapper.toGetQnADetailResponse(result);
+        QnA qna = this.checkQnAValidate(qnaId);
+        return qnaMapper.toGetQnADetailResponse(qna);
     }
 
     public Long createQnA(CreateQnARequest qnaRequest) {
-        Long writerId = getMemberId();
-        Member member = memberRepository.findById(writerId).orElseThrow(() -> new DataNotFoundException());
-
+        Member member = this.getMember();
         QnA qna = qnaMapper.toQnA(qnaRequest, member);
 
         return qnaRepository.save(qna).getId();
@@ -67,7 +70,89 @@ public class QnAService {
         qnaRepository.deleteById(qnaId);
     }
 
+    @Transactional
+    public void createLike(Long qnaId) {
+        Member member = this.getMember();
+        QnA qna = this.checkQnAValidate(qnaId);
+        QnALikeDislikeId id = new QnALikeDislikeId(member, qna);
+
+        qnaLikeDislikeRepository.findById(id)
+            .ifPresentOrElse(
+                result -> {
+                    switch (result.getStatus()) {
+                        case G:
+                            this.updateDeleteStatus(result, id);
+                            break;
+
+                        case B:
+                            if (result.getIsDeleted()) {
+                                qnaLikeDislikeRepository.recoverLikeDislike(member, qna);
+                            }
+                            qnaLikeDislikeRepository.updateQnALikeStatusToGood(member, qna);
+                            break;
+                    }
+                },
+                () -> {
+                    QnALikeDislike likeDislike = new QnALikeDislike(id, LikeStatus.valueOf("G"));
+                    qnaLikeDislikeRepository.save(likeDislike);
+                }
+            );
+
+        this.updateLikesAndDislikes(qna);
+    }
+
+    @Transactional
+    public void createDislike(Long qnaId) {
+        Member member = this.getMember();
+        QnA qna = this.checkQnAValidate(qnaId);
+        QnALikeDislikeId id = new QnALikeDislikeId(member, qna);
+
+        qnaLikeDislikeRepository.findById(id)
+            .ifPresentOrElse(
+                result -> {
+                    switch (result.getStatus()) {
+                        case G:
+                            if (result.getIsDeleted()) {
+                                qnaLikeDislikeRepository.recoverLikeDislike(member, qna);
+                            }
+                            qnaLikeDislikeRepository.updateQnALikeStatusToBad(member, qna);
+                            break;
+
+                        case B:
+                            this.updateDeleteStatus(result, id);
+                            break;
+                    }
+                },
+                () -> {
+                    QnALikeDislike likeDislike = new QnALikeDislike(id, LikeStatus.valueOf("B"));
+                    qnaLikeDislikeRepository.save(likeDislike);
+                }
+            );
+
+        this.updateLikesAndDislikes(qna);
+    }
+
     private QnA checkQnAValidate(Long qnaId) {
         return qnaRepository.findById(qnaId).orElseThrow(() -> new DataNotFoundException());
+    }
+
+    private Member getMember() {
+        Long memberId = getMemberId();
+        return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
+    }
+
+    private void updateLikesAndDislikes(QnA qna) {
+        // TODO: 추후 batch 혹은 Trigger 사용
+        int likes = qnaLikeDislikeRepository.countQnALikeByQnAId(qna);
+        int dislikes = qnaLikeDislikeRepository.countQnADislikeByQnAId(qna);
+        qnaRepository.updateLikeAndDiscount(likes, dislikes, qna.getId());
+    }
+
+    private void updateDeleteStatus(QnALikeDislike likeDislike, QnALikeDislikeId id) {
+        if (!likeDislike.getIsDeleted()) {
+            qnaLikeDislikeRepository.deleteById(id.getMember(), id.getQna());
+        } else {
+            qnaLikeDislikeRepository.recoverLikeDislike(id.getMember(), id.getQna());
+        }
     }
 }
