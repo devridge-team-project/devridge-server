@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface QnALikeDislikeRepository extends JpaRepository<QnALikeDislike, QnALikeDislikeId> {
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query(
             value = "UPDATE QnALikeDislike " +
                     "SET status = 'G' " +
@@ -21,7 +21,7 @@ public interface QnALikeDislikeRepository extends JpaRepository<QnALikeDislike, 
     )
     void updateQnALikeStatusToGood(@Param("member")Member member, @Param("qna") QnA qna);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query(
         value = "UPDATE QnALikeDislike " +
                 "SET status = 'B' " +
@@ -29,7 +29,7 @@ public interface QnALikeDislikeRepository extends JpaRepository<QnALikeDislike, 
     )
     void updateQnALikeStatusToBad(@Param("member")Member member, @Param("qna") QnA qna);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying
     @Query(
         value = "UPDATE QnALikeDislike " +
                 "SET isDeleted = true " +
