@@ -1,14 +1,15 @@
 package org.devridge.api.domain.emailverification.service;
 
 import lombok.RequiredArgsConstructor;
-import org.devridge.api.constant.EmailVerificationContentType;
-import org.devridge.api.domain.emailverification.dto.request.CheckEmailVerification;
+import org.devridge.api.domain.emailverification.dto.request.SendEmailRequest;
 import org.devridge.api.domain.emailverification.entity.EmailVerification;
 import org.devridge.api.domain.emailverification.repository.EmailVerificationRepository;
 import org.devridge.api.exception.email.EmailVerificationInvalidException;
 import org.devridge.api.util.RandomGeneratorUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -28,7 +29,7 @@ public class EmailVerificationService {
     @Value("${devridge.email.expire-minutes.signup}")
     private int VERIFICATION_COMPLETION_EFFECTIVE_TIME;
 
-    public void sendVerificationEmail(CheckEmailVerification emailVerificationRequest) {
+    public void sendVerificationEmail(SendEmailRequest emailVerificationRequest) {
         EmailVerification emailVerification = createEmailVerification(emailVerificationRequest.getEmail(), EMAIL_EXP_MINUTES);
         emailVerificationRepository.save(emailVerification);
 
@@ -50,22 +51,37 @@ public class EmailVerificationService {
 
         return EmailVerification.builder()
                 .receiptEmail(email)
-                .userId(1L)
-                .contentType(EmailVerificationContentType.SIGNUP)
                 .content(content)
                 .checkStatus(false)
                 .expireAt(expiredAt)
                 .build();
     }
 
-    public void checkEmailVerification(CheckEmailVerification codeRequest) {
-        String email = codeRequest.getEmail();
-        String verificationCode = codeRequest.getVerificationCode();
-
-        EmailVerification emailVerification = emailVerificationRepository.findLatestByReceiptEmailAndContentType(
-                email, EmailVerificationContentType.SIGNUP
-        ).orElseThrow(() -> new EmailVerificationInvalidException());
-
+    public void checkVerificationCode(String email, String code) {
+        EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailOrderByCreatedAtDesc(email)
+                .orElseThrow(() -> new EmailVerificationInvalidException());
+        System.out.println("emailVerification = " + emailVerification);
+        
         LocalDateTime current = LocalDateTime.now();
+
+        validateEmailVerification(emailVerification, current);
+        validateVerificationCode(code, emailVerification.getContent());
+
+        emailVerificationRepository.save(emailVerification);
+    }
+
+    private static void validateEmailVerification(EmailVerification emailVerification, LocalDateTime current) {
+        if (emailVerification.isCheckStatus() == true) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "유효하지 않은 인증 번호입니다.");
+        }
+        if (emailVerification.getExpireAt().isBefore(current)) {
+            throw new ResponseStatusException(HttpStatus.GONE, "유효하지 않은 인증 번호입니다.");
+        }
+    }
+
+    public void validateVerificationCode(String code, String content) {
+        if (!content.equals(code)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "인증 번호가 일치하지 않습니다.");
+        }
     }
 }
