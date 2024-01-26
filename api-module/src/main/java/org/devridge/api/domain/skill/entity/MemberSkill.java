@@ -17,7 +17,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
-@SQLDelete(sql = "UPDATE qna SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE member_skill SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
 @Table(name = "member_skill")
 public class MemberSkill extends BaseTimeEntity {
