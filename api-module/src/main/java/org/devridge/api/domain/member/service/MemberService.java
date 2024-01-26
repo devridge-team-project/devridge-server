@@ -126,7 +126,7 @@ public class MemberService {
         LocalDateTime current = LocalDateTime.now();
 
         if (emailVerification.getExpireAt().isBefore(current) || !emailVerification.isCheckStatus()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이메일 인증을 수행해주새요");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         member.changePassword(passwordRequest.getPassword());
