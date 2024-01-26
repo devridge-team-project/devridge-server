@@ -35,4 +35,8 @@ public class EmailVerification extends BaseEntity {
         this.checkStatus = checkStatus;
         this.expireAt = expireAt;
     }
+
+    public void changeCheckStatus() {
+        this.checkStatus = true;
+    }
 }

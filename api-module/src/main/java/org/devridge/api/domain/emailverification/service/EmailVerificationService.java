@@ -9,6 +9,7 @@ import org.devridge.api.util.RandomGeneratorUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -57,6 +58,7 @@ public class EmailVerificationService {
                 .build();
     }
 
+    @Transactional
     public void checkVerificationCode(String email, String code) {
         EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailOrderByCreatedAtDesc(email)
                 .orElseThrow(() -> new EmailVerificationInvalidException());
@@ -66,6 +68,8 @@ public class EmailVerificationService {
 
         validateEmailVerification(emailVerification, current);
         validateVerificationCode(code, emailVerification.getContent());
+
+        emailVerification.changeCheckStatus();
 
         emailVerificationRepository.save(emailVerification);
     }
