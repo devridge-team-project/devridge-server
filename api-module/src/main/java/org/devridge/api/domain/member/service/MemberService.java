@@ -84,9 +84,10 @@ public class MemberService {
 
     private void checkDuplEmail(CreateMemberRequest memberRequest) {
         memberRepository.findByEmailAndProvider(
-                memberRequest.getEmail(),
-                memberRequest.getProvider()
-        ).orElseThrow(DuplEmailException::new);
+                memberRequest.getEmail(), memberRequest.getProvider()
+        ).ifPresent(member -> {
+            throw new DuplEmailException();
+        });
     }
 
     private void checkDuplNickname(CreateMemberRequest memberRequest) {
