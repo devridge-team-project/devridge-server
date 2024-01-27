@@ -44,6 +44,6 @@ public class MemberController {
             @Valid @RequestBody UpdateMemberProfileRequest updateMemberRequest
     ) {
         UpdateMemberResponse result = memberService.updateMember(memberId, updateMemberRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(result);
     }
 }

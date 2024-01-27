@@ -165,14 +165,14 @@ public class MemberService {
                 updateMemberRequest.getProfileImageUrl(),
                 updateMemberRequest.getIntroduction()
         );
-        updateMemberSkills(member, updateMemberRequest);
+        List<Long> newSkillIds = updateMemberSkills(member, updateMemberRequest);
 
-        MemberResponse memberResponse = buildMemberResponse(member);
+        MemberResponse memberResponse = buildMemberResponse(member, newSkillIds);
 
         return new UpdateMemberResponse(memberResponse);
     }
 
-    private void updateMemberSkills(Member member, UpdateMemberProfileRequest updateMemberRequest) {
+    public List<Long> updateMemberSkills(Member member, UpdateMemberProfileRequest updateMemberRequest) {
         List<Long> currentSkillIds = getSkillIdListFromMember(member);
         List<Long> newSkillIds = updateMemberRequest.getSkillIds();
 
@@ -185,6 +185,8 @@ public class MemberService {
                 .filter(skillId -> !newSkillIds.contains(skillId))
                 .collect(Collectors.toList());
         removeMemberSkills(member.getId(), skillsToRemove);
+
+        return newSkillIds;
     }
 
     private List<Long> getSkillIdListFromMember(Member member) {
@@ -209,13 +211,13 @@ public class MemberService {
         }
     }
 
-    private MemberResponse buildMemberResponse(Member member) {
+    private MemberResponse buildMemberResponse(Member member, List<Long> SkillIds) {
         return MemberResponse.builder()
                 .id(member.getId())
                 .nickname(member.getNickname())
                 .imageUrl(member.getProfileImageUrl())
                 .introduction(member.getIntroduction())
-                .skillIds(getSkillIdListFromMember(member))
+                .skillIds(SkillIds)
                 .build();
     }
 }
