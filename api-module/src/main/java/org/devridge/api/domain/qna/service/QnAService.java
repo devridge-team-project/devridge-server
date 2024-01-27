@@ -21,6 +21,7 @@ import org.devridge.common.exception.DataNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
@@ -48,7 +49,7 @@ public class QnAService {
 
     @Transactional(readOnly = true)
     public GetQnADetailResponse getQnADetail(Long qnaId) {
-        QnA qna = this.checkQnAValidate(qnaId);
+        QnA qna = this.getQnA(qnaId);
         return qnaMapper.toGetQnADetailResponse(qna);
     }
 
@@ -61,19 +62,19 @@ public class QnAService {
 
     @Transactional
     public void updateQnA(Long qnaId, UpdateQnARequest qnaRequest) {
-        checkQnAValidate(qnaId);
+        getQnA(qnaId);
         qnaRepository.updateQnA(qnaRequest.getTitle(), qnaRequest.getContent(), qnaId);
     }
 
     public void deleteQnA(Long qnaId) {
-        checkQnAValidate(qnaId);
+        getQnA(qnaId);
         qnaRepository.deleteById(qnaId);
     }
 
     @Transactional
     public void createLike(Long qnaId) {
         Member member = this.getMember();
-        QnA qna = this.checkQnAValidate(qnaId);
+        QnA qna = this.getQnA(qnaId);
         QnALikeDislikeId id = new QnALikeDislikeId(member, qna);
 
         qnaLikeDislikeRepository.findById(id)
@@ -104,7 +105,7 @@ public class QnAService {
     @Transactional
     public void createDislike(Long qnaId) {
         Member member = this.getMember();
-        QnA qna = this.checkQnAValidate(qnaId);
+        QnA qna = this.getQnA(qnaId);
         QnALikeDislikeId id = new QnALikeDislikeId(member, qna);
 
         qnaLikeDislikeRepository.findById(id)
@@ -132,8 +133,10 @@ public class QnAService {
         this.updateLikesAndDislikes(qna);
     }
 
-    private QnA checkQnAValidate(Long qnaId) {
+    private QnA getQnA(Long qnaId) {
+
         return qnaRepository.findById(qnaId).orElseThrow(() -> new DataNotFoundException());
+
     }
 
     private Member getMember() {

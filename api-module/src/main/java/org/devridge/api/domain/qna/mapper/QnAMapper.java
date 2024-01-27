@@ -6,12 +6,14 @@ import org.devridge.api.domain.qna.dto.response.FindWriterInformation;
 import org.devridge.api.domain.qna.dto.response.GetAllCommentByQnAId;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.entity.QnA;
-
 import org.devridge.api.domain.qna.entity.QnAComment;
+
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.devridge.api.domain.qna.mapper.MemberMapper.toMember;
 
 @Component
 public class QnAMapper {
@@ -47,7 +49,7 @@ public class QnAMapper {
             result.add(
                 GetAllCommentByQnAId.builder()
                     .id(comment.getId())
-                    .member(this.toMember(comment.getMember()))
+                    .member(toMember(comment.getMember()))
                     .content(comment.getContent())
                     .likes(comment.getLikes())
                     .dislikes(comment.getDislikes())
@@ -57,14 +59,5 @@ public class QnAMapper {
         }
 
         return result;
-    }
-
-    private FindWriterInformation toMember(Member member) {
-        return FindWriterInformation.builder()
-            .id(member.getId())
-            .nickname(member.getNickname())
-            .introduction(member.getIntroduction())
-            .profileImageUrl(member.getProfileImageUrl())
-            .build();
     }
 }
