@@ -69,13 +69,10 @@ public class QnACommentService {
                 result -> {
                     switch (result.getStatus()) {
                         case G:
-                            this.updateDeleteStatus(result, id);
+                            qnaCommentLikeDislikeRepository.updateDeleteStatus(member, qnaComment);
                             break;
 
                         case B:
-                            if (result.getIsDeleted()) {
-                                qnaCommentLikeDislikeRepository.recoverLikeDislike(member, qnaComment);
-                            }
                             qnaCommentLikeDislikeRepository.updateQnACommentLikeStatusToGood(member, qnaComment);
                             break;
                     }
@@ -99,14 +96,11 @@ public class QnACommentService {
                 result -> {
                     switch (result.getStatus()) {
                         case G:
-                            if (result.getIsDeleted()) {
-                                qnaCommentLikeDislikeRepository.recoverLikeDislike(member, qnaComment);
-                            }
                             qnaCommentLikeDislikeRepository.updateQnACommentLikeStatusToBad(member, qnaComment);
                             break;
 
                         case B:
-                            this.updateDeleteStatus(result, id);
+                            qnaCommentLikeDislikeRepository.updateDeleteStatus(member, qnaComment);
                             break;
                     }
                 },
@@ -128,13 +122,5 @@ public class QnACommentService {
 
     private QnAComment getQnAComment(Long commentId) {
         return qnaCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
-    }
-
-    private void updateDeleteStatus(QnACommentLikeDislike likeDislike, QnACommentLikeDislikeId id) {
-        if (!likeDislike.getIsDeleted()) {
-            qnaCommentLikeDislikeRepository.deleteById(id.getMember(), id.getQnaComment());
-        } else {
-            qnaCommentLikeDislikeRepository.recoverLikeDislike(id.getMember(), id.getQnaComment());
-        }
     }
 }

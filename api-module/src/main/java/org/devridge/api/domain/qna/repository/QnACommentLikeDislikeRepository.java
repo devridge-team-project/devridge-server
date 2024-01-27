@@ -15,32 +15,24 @@ public interface QnACommentLikeDislikeRepository extends JpaRepository<QnACommen
     @Modifying
     @Query(
         value = "UPDATE QnACommentLikeDislike " +
-                "SET status = 'G' " +
-                "WHERE id.member = :member AND id.qnaComment = :qnaComment AND isDeleted = false"
+                "SET status = 'G', isDeleted = false " +
+                "WHERE id.member = :member AND id.qnaComment = :qnaComment"
     )
     void updateQnACommentLikeStatusToGood(@Param("member") Member member, @Param("qnaComment") QnAComment qnaComment);
 
     @Modifying
     @Query(
         value = "UPDATE QnACommentLikeDislike " +
-                "SET status = 'B' " +
-                "WHERE id.member = :member AND id.qnaComment = :qnaComment AND isDeleted = false"
+                "SET status = 'B', isDeleted = false " +
+                "WHERE id.member = :member AND id.qnaComment = :qnaComment"
     )
     void updateQnACommentLikeStatusToBad(@Param("member")Member member, @Param("qnaComment") QnAComment qnaComment);
 
     @Modifying
     @Query(
-            value = "UPDATE QnACommentLikeDislike " +
-                    "SET isDeleted = true " +
-                    "WHERE id.member = :member AND id.qnaComment = :qnaComment"
+        value = "UPDATE QnACommentLikeDislike " +
+                "SET isDeleted = IF(isDeleted, false, true) " +
+                "WHERE id.member = :member AND id.qnaComment = :qnaComment"
     )
-    void deleteById(@Param("member")Member member, @Param("qnaComment") QnAComment qnaComment);
-
-    @Modifying
-    @Query(
-            value = "UPDATE QnACommentLikeDislike " +
-                    "SET isDeleted = false " +
-                    "WHERE id.member = :member AND id.qnaComment = :qnaComment"
-    )
-    int recoverLikeDislike(@Param("member")Member member, @Param("qnaComment") QnAComment qnaComment);
+    void updateDeleteStatus(@Param("member")Member member, @Param("qnaComment") QnAComment qnaComment);
 }
