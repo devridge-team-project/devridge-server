@@ -123,8 +123,6 @@ public class MemberService {
 
     @Transactional
     public void resetPassword(ResetPasswordRequest passwordRequest) {
-        Member member = getAuthenticatedMember();
-
         EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailOrderByCreatedAtDesc(
                 passwordRequest.getEmail()
         ).orElseThrow(() -> new EmailVerificationInvalidException());
@@ -134,6 +132,10 @@ public class MemberService {
         if (emailVerification.getExpireAt().isBefore(current) || !emailVerification.isCheckStatus()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+
+        Member member = memberRepository.findByEmailAndProvider(passwordRequest.getEmail(), "normal").orElseThrow(
+                () -> new MemberNotFoundException()
+        );
 
         String encodedPassword = passwordEncoder.encode(passwordRequest.getPassword());
         member.changePassword(encodedPassword);

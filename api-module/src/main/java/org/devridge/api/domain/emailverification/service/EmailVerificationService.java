@@ -68,8 +68,6 @@ public class EmailVerificationService {
         validateVerificationCode(code, emailVerification.getContent());
 
         emailVerification.changeCheckStatus();
-
-        emailVerificationRepository.save(emailVerification);
     }
 
     private static void validateEmailVerification(EmailVerification emailVerification, LocalDateTime current) {
