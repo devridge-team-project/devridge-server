@@ -24,7 +24,6 @@ import org.devridge.api.exception.member.*;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.devridge.common.exception.DataNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -167,12 +166,8 @@ public class MemberService {
     }
 
     @Transactional
-    public UpdateMemberResponse updateMember(Long targetMemberId, UpdateMemberProfileRequest updateMemberRequest) {
+    public UpdateMemberResponse updateMember(UpdateMemberProfileRequest updateMemberRequest) {
         Long currentMemberId = SecurityContextHolderUtil.getMemberId();
-
-        if (!targetMemberId.equals(currentMemberId)) {
-            throw new AccessDeniedException("거부된 접근입니다.");
-        }
 
         Member member = memberRepository.findById(currentMemberId)
                 .orElseThrow(() -> new MemberNotFoundException());

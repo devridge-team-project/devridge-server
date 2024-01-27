@@ -38,12 +38,11 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/{memberId}")
+    @PatchMapping
     public ResponseEntity<UpdateMemberResponse> updateMember(
-            @PathVariable("memberId") Long memberId,
             @Valid @RequestBody UpdateMemberProfileRequest updateMemberRequest
     ) {
-        UpdateMemberResponse result = memberService.updateMember(memberId, updateMemberRequest);
+        UpdateMemberResponse result = memberService.updateMember(updateMemberRequest);
         return ResponseEntity.ok().body(result);
     }
 }
