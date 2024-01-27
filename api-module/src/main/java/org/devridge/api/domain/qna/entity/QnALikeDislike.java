@@ -14,7 +14,7 @@ import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
 
 @Getter
-@SQLDelete(sql = "UPDATE qna_scrap SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE qna_like_dislike SET is_deleted = true WHERE id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "qna_like_dislike")
 @DynamicInsert

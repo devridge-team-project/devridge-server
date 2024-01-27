@@ -18,10 +18,9 @@ import javax.persistence.*;
 
 @Getter
 @DynamicInsert
-@SQLDelete(sql = "UPDATE qna SET is_deleted = true WHERE id = ?")
-@Where(clause = "is_deleted = false")
+@SQLDelete(sql = "UPDATE qna_comment_like_dislike SET is_deleted = true WHERE id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "comment_like_dislike")
+@Table(name = "qna_comment_like_dislike")
 @Entity
 public class CommentLikeDislike extends BaseTimeEntity {
 
@@ -32,8 +31,8 @@ public class CommentLikeDislike extends BaseTimeEntity {
     private LikeStatus status;
 
     @Builder
-    public CommentLikeDislike(Member member, QnAComment qnaComment, LikeStatus status) {
-        this.id = new CommentLikeDislikeId(member, qnaComment);
+    public CommentLikeDislike(CommentLikeDislikeId id, LikeStatus status) {
+        this.id = id;
         this.status = status;
     }
 }

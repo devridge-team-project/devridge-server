@@ -6,7 +6,6 @@ import org.devridge.api.domain.qna.dto.request.*;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.dto.type.SortOption;
-import org.devridge.api.domain.qna.service.QnACommentService;
 import org.devridge.api.domain.qna.service.QnAService;
 import org.devridge.api.domain.qna.validator.ValidateSortOption;
 
@@ -68,7 +67,7 @@ public class QnAController {
     }
 
     @PostMapping("/dislike/{qnaId}")
-    public ResponseEntity<Void> createDislike(@PathVariable Long qnaId) {
+    public ResponseEntity<Void> createQnADislike(@PathVariable Long qnaId) {
         qnaService.createDislike(qnaId);
         return ResponseEntity.ok().build();
     }

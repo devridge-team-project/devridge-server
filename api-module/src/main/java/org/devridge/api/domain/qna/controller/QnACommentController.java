@@ -18,8 +18,8 @@ public class QnACommentController {
 
     @PostMapping
     public ResponseEntity<Void> createQnAComment(
-            @PathVariable Long qnaId,
-            @RequestBody CreateQnACommentRequest commentRequest
+        @PathVariable Long qnaId,
+        @RequestBody CreateQnACommentRequest commentRequest
     ) {
         Long commentId = qnaCommentService.createQnAComment(qnaId, commentRequest);
         return ResponseEntity.created(URI.create("/api/qna/" + qnaId + "/comments/" + commentId)).build();
@@ -27,9 +27,9 @@ public class QnACommentController {
 
     @PutMapping("/{commentId}")
     public ResponseEntity<Void> updateQnAComment(
-            @PathVariable Long qnaId,
-            @PathVariable Long commentId,
-            @RequestBody UpdateQnACommentRequest commentRequest
+        @PathVariable Long qnaId,
+        @PathVariable Long commentId,
+        @RequestBody UpdateQnACommentRequest commentRequest
     ) {
         qnaCommentService.updateQnAComment(qnaId, commentId, commentRequest);
         return ResponseEntity.ok().build();
@@ -37,10 +37,28 @@ public class QnACommentController {
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteQnAComment(
-            @PathVariable Long qnaId,
-            @PathVariable Long commentId
+        @PathVariable Long qnaId,
+        @PathVariable Long commentId
     ) {
         qnaCommentService.deleteQnAComment(qnaId, commentId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/like/{commentId}")
+    public ResponseEntity<Void> createQnALike(
+        @PathVariable Long qnaId,
+        @PathVariable Long commentId
+    ) {
+        qnaCommentService.createLike(qnaId, commentId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/dislike/{commentId}")
+    public ResponseEntity<Void> createQnADislike(
+        @PathVariable Long qnaId,
+        @PathVariable Long commentId
+    ) {
+        qnaCommentService.createDislike(qnaId, commentId);
         return ResponseEntity.ok().build();
     }
 }
