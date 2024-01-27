@@ -10,12 +10,14 @@ import org.devridge.api.domain.qna.dto.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnALikeDislike;
 import org.devridge.api.domain.qna.entity.id.QnALikeDislikeId;
+import org.devridge.api.domain.qna.entity.id.QnAScrapId;
 import org.devridge.api.domain.qna.mapper.QnAMapper;
 import org.devridge.api.domain.qna.repository.QnALikeDislikeRepository;
 import org.devridge.api.domain.qna.repository.QnAQuerydslRepository;
 import org.devridge.api.domain.qna.repository.QnARepository;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.domain.qna.repository.QnAScrapRepository;
 import org.devridge.common.exception.DataNotFoundException;
 
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ public class QnAService {
     private final QnAQuerydslRepository qnaQuerydslRepository;
     private final MemberRepository memberRepository;
     private final QnALikeDislikeRepository qnaLikeDislikeRepository;
+    private final QnAScrapRepository qnaScrapRepository;
 
     @Transactional(readOnly = true)
     public List<GetAllQnAResponse> getAllQnASortByViews(String sortOption) {
@@ -133,10 +136,14 @@ public class QnAService {
         this.updateLikesAndDislikes(qna);
     }
 
+    @Transactional
+    public void createQnAScrap(Long qnaId) {
+        Long memberId = getMemberId();
+        qnaScrapRepository.createOrUpdateQnAScrap(memberId, qnaId);
+    }
+
     private QnA getQnA(Long qnaId) {
-
         return qnaRepository.findById(qnaId).orElseThrow(() -> new DataNotFoundException());
-
     }
 
     private Member getMember() {

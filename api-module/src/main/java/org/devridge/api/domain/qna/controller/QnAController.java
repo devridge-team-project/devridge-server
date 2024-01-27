@@ -101,4 +101,10 @@ public class QnAController {
         qnaService.createDislike(qnaId);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/bookmarks/{qnaId}")
+    public ResponseEntity<Void> createQnAScrap(@PathVariable Long qnaId) {
+        qnaService.createQnAScrap(qnaId);
+        return ResponseEntity.ok().build();
+    }
 }
