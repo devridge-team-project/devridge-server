@@ -25,6 +25,7 @@ import java.util.List;
 @Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
+
     @NotNull
     private String email;
 
@@ -58,7 +59,7 @@ public class Member extends BaseEntity {
     private List<MemberSkill> memberSkills = new ArrayList<>();
 
     @Builder
-    public Member(String email, String password, String provider, String nickname, Role roles, String introduction, String profileImageUrl) {
+    public Member(String email, String password, String provider, String nickname, Role roles, String introduction, String profileImageUrl, Occupation occupation) {
         this.email = email;
         this.password = password;
         this.provider = provider;
@@ -66,6 +67,7 @@ public class Member extends BaseEntity {
         this.roles = roles;
         this.introduction = introduction;
         this.profileImageUrl = profileImageUrl;
+        this.occupation = occupation;
     }
 
     public void changePassword(String encodePassword) {

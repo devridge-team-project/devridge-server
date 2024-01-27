@@ -27,6 +27,9 @@ public class CreateMemberRequest {
     @NotBlank(message = "빈 닉네임을 입력할 수 없습니다.")
     private String nickname;
 
+    @NotBlank(message = "잘못된 입력입니다. 다시 입력해주세요.")
+    @Size(min = 5, max = 25, message = "잘못된 입력입니다. 다시 입력해주세요.")
+    @Pattern(regexp = "^[a-zA-Z가-힣 ]*$", message = "잘못된 입력입니다. 다시 입력해주세요.")
     private String introduction;
 
     // TODO: 이미지 처리
@@ -35,6 +38,5 @@ public class CreateMemberRequest {
     private List<Long> skillIds;
 
     @NotNull(message = "직군 ID를 입력해주세요.")
-    @Size(min = 1, max = 1, message = "직군 ID는 1개의 값만 가져야 합니다.")
     private Long occupationId;
 }

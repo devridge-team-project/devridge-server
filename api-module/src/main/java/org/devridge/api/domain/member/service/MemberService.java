@@ -11,7 +11,9 @@ import org.devridge.api.domain.member.dto.request.UpdateMemberProfileRequest;
 import org.devridge.api.domain.member.dto.response.MemberResponse;
 import org.devridge.api.domain.member.dto.response.UpdateMemberResponse;
 import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.domain.member.entity.Occupation;
 import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.domain.member.repository.OccupationRepository;
 import org.devridge.api.domain.skill.entity.MemberSkill;
 import org.devridge.api.domain.skill.entity.Skill;
 import org.devridge.api.domain.skill.entity.key.MemberSkillId;
@@ -20,6 +22,7 @@ import org.devridge.api.domain.skill.repository.SkillRepository;
 import org.devridge.api.exception.email.EmailVerificationInvalidException;
 import org.devridge.api.exception.member.*;
 import org.devridge.api.util.SecurityContextHolderUtil;
+import org.devridge.common.exception.DataNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,14 +44,17 @@ public class MemberService {
     private final MemberSkillRepository memberSkillRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailVerificationRepository emailVerificationRepository;
+    private final OccupationRepository occupationRepository;
 
     @Transactional
     public Long createMember(CreateMemberRequest memberRequest){
         checkDuplEmail(memberRequest);
         checkDuplNickname(memberRequest);
 
+        Occupation occupation = areOccupationValid(memberRequest.getOccupationId());
+
         String encodedPassword = passwordEncoder.encode(memberRequest.getPassword());
-        Member member = buildAndSaveMember(memberRequest, encodedPassword);
+        Member member = buildAndSaveMember(memberRequest, occupation, encodedPassword);
 
         List<Long> skillIds = memberRequest.getSkillIds();
 
@@ -60,13 +66,15 @@ public class MemberService {
         return member.getId();
     }
 
-    private Member buildAndSaveMember(CreateMemberRequest memberRequest, String encodedPassword) {
+    private Member buildAndSaveMember(CreateMemberRequest memberRequest, Occupation occupation, String encodedPassword) {
         Member member = Member.builder()
                 .email(memberRequest.getEmail())
                 .password(encodedPassword)
                 .provider(memberRequest.getProvider())
                 .roles(Role.valueOf("ROLE_USER"))
                 .nickname(memberRequest.getNickname())
+                .introduction(memberRequest.getIntroduction())
+                .occupation(occupation)
                 .profileImageUrl(memberRequest.getProfileImageUrl())
                 .build();
 
@@ -148,6 +156,14 @@ public class MemberService {
         }
 
         return skills;
+    }
+
+    public Occupation areOccupationValid(Long occupationId) {
+        Occupation occupation = occupationRepository.findById(occupationId).orElseThrow(
+                () -> new DataNotFoundException()
+        );
+
+        return occupation;
     }
 
     @Transactional
