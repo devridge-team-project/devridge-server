@@ -1,9 +1,11 @@
 package org.devridge.api.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.devridge.api.domain.member.dto.request.UpdateMemberProfileRequest;
 import org.devridge.api.domain.member.dto.request.ChangePasswordRequest;
 import org.devridge.api.domain.member.dto.request.CreateMemberRequest;
 import org.devridge.api.domain.member.dto.request.DeleteMemberRequest;
+import org.devridge.api.domain.member.dto.response.UpdateMemberResponse;
 import org.devridge.api.domain.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,15 @@ public class MemberController {
     @PatchMapping("/password")
     public ResponseEntity<Void> resetPassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         memberService.changePassword(changePasswordRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{memberId}")
+    public ResponseEntity<UpdateMemberResponse> updateMember(
+            @PathVariable("memberId") Long memberId,
+            @Valid @RequestBody UpdateMemberProfileRequest updateMemberRequest
+    ) {
+        UpdateMemberResponse result = memberService.updateMember(memberId, updateMemberRequest);
         return ResponseEntity.ok().build();
     }
 }
