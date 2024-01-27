@@ -30,6 +30,11 @@ public class CreateMemberRequest {
     @NotBlank(message = "빈 닉네임을 입력할 수 없습니다.")
     private String nickname;
 
+    private String introduction;
+
+    private List<Long> occupationIds;
+
+    // TODO: 이미지 처리
     private String profileImageUrl;
 
     private List<Long> skillIds;

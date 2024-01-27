@@ -42,11 +42,16 @@ public class Member extends BaseEntity {
     @NotNull
     private Role roles;
 
-    @Column(name = "introduction", nullable = true)
+    @Column(name = "introduction")
     private String introduction;
 
-    @Column(name = "profile_image_url", nullable = true)
+    @Column(name = "profile_image_url")
     private String profileImageUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "occupation_id")
+    @NotNull
+    private Occupation occupation;
 
     @Getter
     @OneToMany(mappedBy = "member")
