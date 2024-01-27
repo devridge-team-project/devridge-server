@@ -66,4 +66,9 @@ public class Member extends BaseEntity {
     public void changePassword(String encodePassword) {
         this.password = encodePassword;
     }
+
+    public void updateProfile(String profileImageUrl, String introduction) {
+        this.profileImageUrl = profileImageUrl;
+        this.introduction = introduction;
+    }
 }

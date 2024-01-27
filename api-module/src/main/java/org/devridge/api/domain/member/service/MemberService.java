@@ -7,6 +7,9 @@ import org.devridge.api.domain.emailverification.repository.EmailVerificationRep
 import org.devridge.api.domain.member.dto.request.ChangePasswordRequest;
 import org.devridge.api.domain.member.dto.request.CreateMemberRequest;
 import org.devridge.api.domain.member.dto.request.DeleteMemberRequest;
+import org.devridge.api.domain.member.dto.request.UpdateMemberProfileRequest;
+import org.devridge.api.domain.member.dto.response.MemberResponse;
+import org.devridge.api.domain.member.dto.response.UpdateMemberResponse;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.skill.entity.MemberSkill;
@@ -18,6 +21,7 @@ import org.devridge.api.exception.email.EmailVerificationInvalidException;
 import org.devridge.api.exception.member.*;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +48,19 @@ public class MemberService {
         checkDuplNickname(memberRequest);
 
         String encodedPassword = passwordEncoder.encode(memberRequest.getPassword());
+        Member member = buildAndSaveMember(memberRequest, encodedPassword);
 
+        List<Long> skillIds = memberRequest.getSkillIds();
+
+        if (!skillIds.isEmpty()) {
+            List skills = areSkillsValid(skillIds);
+            createMemberSkill(skills, member);
+        }
+
+        return member.getId();
+    }
+
+    private Member buildAndSaveMember(CreateMemberRequest memberRequest, String encodedPassword) {
         Member member = Member.builder()
                 .email(memberRequest.getEmail())
                 .password(encodedPassword)
@@ -55,15 +71,7 @@ public class MemberService {
                 .build();
 
         memberRepository.save(member);
-
-        List<Long> skillIds = memberRequest.getSkillIds();
-
-        if (!skillIds.isEmpty()) {
-            List skills = areSkillsValid(skillIds);
-            createMemberSkill(skills, member);
-        }
-
-        return member.getId();
+        return member;
     }
 
     private void createMemberSkill(List<Skill> skills, Member member) {
@@ -103,7 +111,7 @@ public class MemberService {
         Member member = SecurityContextHolderUtil.getMember();
 
         Member findMember = memberRepository.findById(member.getId())
-                .orElseThrow(() -> new MemberNotFoundException("member not found"));
+                .orElseThrow(() -> new MemberNotFoundException());
 
         if (!passwordEncoder.matches(memberRequest.getPassword(), findMember.getPassword())) {
             throw new PasswordNotMatchException();
@@ -115,7 +123,7 @@ public class MemberService {
     @Transactional
     public void changePassword(ChangePasswordRequest passwordRequest) {
         Member member = memberRepository.findByEmailAndProvider(passwordRequest.getEmail(), "normal")
-                .orElseThrow(() -> new MemberNotFoundException("member not found"));
+                .orElseThrow(() -> new MemberNotFoundException());
 
         EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailOrderByCreatedAtDesc(
                 passwordRequest.getEmail()
@@ -131,6 +139,7 @@ public class MemberService {
         member.changePassword(encodedPassword);
     }
 
+    // TODO: DB 조회 -> 캐싱
     public List<Skill> areSkillsValid(List<Long> skillIds) {
         List<Skill> skills = skillRepository.findAllById(skillIds);
 
@@ -139,5 +148,74 @@ public class MemberService {
         }
 
         return skills;
+    }
+
+    @Transactional
+    public UpdateMemberResponse updateMember(Long targetMemberId, UpdateMemberProfileRequest updateMemberRequest) {
+        Long currentMemberId = SecurityContextHolderUtil.getMemberId();
+
+        if (!targetMemberId.equals(currentMemberId)) {
+            throw new AccessDeniedException("거부된 접근입니다.");
+        }
+
+        Member member = memberRepository.findById(currentMemberId)
+                .orElseThrow(() -> new MemberNotFoundException());
+
+        member.updateProfile(
+                updateMemberRequest.getProfileImageUrl(),
+                updateMemberRequest.getIntroduction()
+        );
+        updateMemberSkills(member, updateMemberRequest);
+
+        MemberResponse memberResponse = buildMemberResponse(member);
+
+        return new UpdateMemberResponse(memberResponse);
+    }
+
+    private void updateMemberSkills(Member member, UpdateMemberProfileRequest updateMemberRequest) {
+        List<Long> currentSkillIds = getSkillIdListFromMember(member);
+        List<Long> newSkillIds = updateMemberRequest.getSkillIds();
+
+        List<Long> skillsToAdd = newSkillIds.stream()
+                .filter(skillId -> !currentSkillIds.contains(skillId))
+                .collect(Collectors.toList());
+        addMemberSkills(member, skillsToAdd);
+
+        List<Long> skillsToRemove = currentSkillIds.stream()
+                .filter(skillId -> !newSkillIds.contains(skillId))
+                .collect(Collectors.toList());
+        removeMemberSkills(member.getId(), skillsToRemove);
+    }
+
+    private List<Long> getSkillIdListFromMember(Member member) {
+        return member.getMemberSkills().stream()
+                .map(memberSkill -> memberSkill.getSkill().getId())
+                .collect(Collectors.toList());
+    }
+
+    private void addMemberSkills(Member member, List<Long> skillIdsToAdd) {
+        if (!skillIdsToAdd.isEmpty()) {
+            List<Skill> skillsToAdd = skillRepository.findAllById(skillIdsToAdd);
+            List<MemberSkill> newMemberSkills = skillsToAdd.stream()
+                    .map(skill -> new MemberSkill(new MemberSkillId(member.getId(), skill.getId()), member, skill))
+                    .collect(Collectors.toList());
+            memberSkillRepository.saveAll(newMemberSkills);
+        }
+    }
+
+    private void removeMemberSkills(Long memberId, List<Long> skillIdsToRemove) {
+        if (!skillIdsToRemove.isEmpty()) {
+            memberSkillRepository.deleteAllByMemberIdAndSkillIdIn(memberId, skillIdsToRemove);
+        }
+    }
+
+    private MemberResponse buildMemberResponse(Member member) {
+        return MemberResponse.builder()
+                .id(member.getId())
+                .nickname(member.getNickname())
+                .imageUrl(member.getProfileImageUrl())
+                .introduction(member.getIntroduction())
+                .skillIds(getSkillIdListFromMember(member))
+                .build();
     }
 }
