@@ -31,14 +31,14 @@ public interface QnALikeDislikeRepository extends JpaRepository<QnALikeDislike, 
     @Query(
         value = "SELECT COUNT(q) " +
                 "FROM QnALikeDislike q " +
-                "WHERE q.id.qna = :qna AND q.status = 'G'"
+                "WHERE q.id.qna = :qna AND q.status = 'G' AND q.isDeleted = false"
     )
     int countQnALikeByQnAId(@Param("qna") QnA qna);
 
     @Query(
         value = "SELECT COUNT(q) " +
                 "FROM QnALikeDislike q " +
-                "WHERE q.id.qna = :qna AND q.status = 'B'"
+                "WHERE q.id.qna = :qna AND q.status = 'B' AND q.isDeleted = false"
     )
     int countQnADislikeByQnAId(@Param("qna") QnA qna);
 
