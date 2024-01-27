@@ -24,7 +24,6 @@ import java.util.List;
 public class QnAController {
 
     private final QnAService qnaService;
-    private final QnACommentService qnaCommentService;
 
     @GetMapping
     public ResponseEntity<List<GetAllQnAResponse>> getAllQnASortByViews(
@@ -59,34 +58,6 @@ public class QnAController {
     @DeleteMapping("/{qnaId}")
     public ResponseEntity<Void> deleteQnA(@PathVariable Long qnaId) {
         qnaService.deleteQnA(qnaId);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/{qnaId}/comments")
-    public ResponseEntity<Void> createQnAComment(
-        @PathVariable Long qnaId,
-        @RequestBody CreateQnACommentRequest commentRequest
-    ) {
-        Long commentId = qnaCommentService.createQnAComment(qnaId, commentRequest);
-        return ResponseEntity.created(URI.create("/api/qna/" + qnaId + "/comments/" + commentId)).build();
-    }
-
-    @PutMapping("/{qnaId}/comments/{commentId}")
-    public ResponseEntity<Void> updateQnAComment(
-        @PathVariable Long qnaId,
-        @PathVariable Long commentId,
-        @RequestBody UpdateQnACommentRequest commentRequest
-    ) {
-        qnaCommentService.updateQnAComment(qnaId, commentId, commentRequest);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{qnaId}/comments/{commentId}")
-    public ResponseEntity<Void> deleteQnAComment(
-        @PathVariable Long qnaId,
-        @PathVariable Long commentId
-    ) {
-        qnaCommentService.deleteQnAComment(qnaId, commentId);
         return ResponseEntity.ok().build();
     }
 
