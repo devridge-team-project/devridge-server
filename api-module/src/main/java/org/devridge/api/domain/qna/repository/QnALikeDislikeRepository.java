@@ -1,6 +1,7 @@
 package org.devridge.api.domain.qna.repository;
 
 import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.domain.qna.dto.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnALikeDislike;
 import org.devridge.api.domain.qna.entity.id.QnALikeDislikeId;
@@ -15,18 +16,15 @@ public interface QnALikeDislikeRepository extends JpaRepository<QnALikeDislike, 
     @Modifying
     @Query(
             value = "UPDATE QnALikeDislike " +
-                    "SET status = 'G', isDeleted = false " +
+                    "SET status = :status, isDeleted = :isDeleted " +
                     "WHERE id.member = :member AND id.qna = :qna"
     )
-    void updateQnALikeStatusToGood(@Param("member")Member member, @Param("qna") QnA qna);
-
-    @Modifying
-    @Query(
-        value = "UPDATE QnALikeDislike " +
-                "SET status = 'B', isDeleted = false " +
-                "WHERE id.member = :member AND id.qna = :qna"
-    )
-    void updateQnALikeStatusToBad(@Param("member")Member member, @Param("qna") QnA qna);
+    void updateQnALikeStatusToGoodOrBad(
+        @Param("member")Member member,
+        @Param("qna") QnA qna,
+        @Param("isDeleted") Boolean isDeleted,
+        @Param("status")LikeStatus status
+    );
 
     @Query(
         value = "SELECT COUNT(q) " +

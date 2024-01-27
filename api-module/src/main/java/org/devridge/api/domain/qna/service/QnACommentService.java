@@ -73,7 +73,12 @@ public class QnACommentService {
                             break;
 
                         case B:
-                            qnaCommentLikeDislikeRepository.updateQnACommentLikeStatusToGood(member, qnaComment);
+                            qnaCommentLikeDislikeRepository.updateQnACommentLikeStatusToGoodOrBad(
+                                member,
+                                qnaComment,
+                                false,
+                                LikeStatus.G
+                            );
                             break;
                     }
                 },
@@ -96,7 +101,12 @@ public class QnACommentService {
                 result -> {
                     switch (result.getStatus()) {
                         case G:
-                            qnaCommentLikeDislikeRepository.updateQnACommentLikeStatusToBad(member, qnaComment);
+                            qnaCommentLikeDislikeRepository.updateQnACommentLikeStatusToGoodOrBad(
+                                member,
+                                qnaComment,
+                                false,
+                                LikeStatus.B
+                            );
                             break;
 
                         case B:

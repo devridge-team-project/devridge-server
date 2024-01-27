@@ -1,6 +1,7 @@
 package org.devridge.api.domain.qna.repository;
 
 import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.domain.qna.dto.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.QnACommentLikeDislike;
 import org.devridge.api.domain.qna.entity.QnAComment;
 import org.devridge.api.domain.qna.entity.id.QnACommentLikeDislikeId;
@@ -15,18 +16,15 @@ public interface QnACommentLikeDislikeRepository extends JpaRepository<QnACommen
     @Modifying
     @Query(
         value = "UPDATE QnACommentLikeDislike " +
-                "SET status = 'G', isDeleted = false " +
+                "SET status = :status, isDeleted = :isDeleted " +
                 "WHERE id.member = :member AND id.qnaComment = :qnaComment"
     )
-    void updateQnACommentLikeStatusToGood(@Param("member") Member member, @Param("qnaComment") QnAComment qnaComment);
-
-    @Modifying
-    @Query(
-        value = "UPDATE QnACommentLikeDislike " +
-                "SET status = 'B', isDeleted = false " +
-                "WHERE id.member = :member AND id.qnaComment = :qnaComment"
-    )
-    void updateQnACommentLikeStatusToBad(@Param("member")Member member, @Param("qnaComment") QnAComment qnaComment);
+    void updateQnACommentLikeStatusToGoodOrBad(
+        @Param("member") Member member,
+        @Param("qnaComment") QnAComment qnaComment,
+        @Param("isDeleted") Boolean isDeleted,
+        @Param("status") LikeStatus status
+    );
 
     @Modifying
     @Query(
