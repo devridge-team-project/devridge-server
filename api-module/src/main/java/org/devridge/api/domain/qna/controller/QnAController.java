@@ -25,7 +25,7 @@ public class QnAController {
     private final QnAService qnaService;
 
     @GetMapping
-    public ResponseEntity<List<GetAllQnAResponse>> getAllQnASortByViews(
+    public ResponseEntity<List<GetAllQnAResponse>> getAllQnA(
         @RequestParam(value = "sortOption", required = true)
         @ValidateSortOption(enumClass = SortOption.class) SortOption sortOption
     ) {
@@ -62,13 +62,13 @@ public class QnAController {
 
     @PostMapping("/like/{qnaId}")
     public ResponseEntity<Void> createQnALike(@PathVariable Long qnaId) {
-        qnaService.createLike(qnaId);
+        qnaService.createQnALike(qnaId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/dislike/{qnaId}")
     public ResponseEntity<Void> createQnADislike(@PathVariable Long qnaId) {
-        qnaService.createDislike(qnaId);
+        qnaService.createQnADislike(qnaId);
         return ResponseEntity.ok().build();
     }
 

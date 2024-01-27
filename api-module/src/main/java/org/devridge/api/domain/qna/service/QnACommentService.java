@@ -7,12 +7,10 @@ import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.qna.dto.request.CreateQnACommentRequest;
 import org.devridge.api.domain.qna.dto.request.UpdateQnACommentRequest;
 import org.devridge.api.domain.qna.dto.type.LikeStatus;
-import org.devridge.api.domain.qna.entity.CommentLikeDislike;
+import org.devridge.api.domain.qna.entity.QnACommentLikeDislike;
 import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnAComment;
-import org.devridge.api.domain.qna.entity.QnALikeDislike;
-import org.devridge.api.domain.qna.entity.id.CommentLikeDislikeId;
-import org.devridge.api.domain.qna.entity.id.QnALikeDislikeId;
+import org.devridge.api.domain.qna.entity.id.QnACommentLikeDislikeId;
 import org.devridge.api.domain.qna.mapper.QnACommentMapper;
 import org.devridge.api.domain.qna.repository.CommentLikeDislikeRepository;
 import org.devridge.api.domain.qna.repository.QnACommentRepository;
@@ -60,11 +58,11 @@ public class QnACommentService {
     }
 
     @Transactional
-    public void createLike(Long qnaId, Long commentId) {
+    public void createQnACommentLike(Long qnaId, Long commentId) {
         Member member = this.getMember();
         QnA qna = this.getQnA(qnaId);
         QnAComment qnaComment = this.getQnAComment(commentId);
-        CommentLikeDislikeId id = new CommentLikeDislikeId(member, qnaComment);
+        QnACommentLikeDislikeId id = new QnACommentLikeDislikeId(member, qnaComment);
 
         commentLikeDislikeRepository.findById(id)
             .ifPresentOrElse(
@@ -83,18 +81,18 @@ public class QnACommentService {
                     }
                 },
                 () -> {
-                    CommentLikeDislike likeDislike = new CommentLikeDislike(id, LikeStatus.valueOf("G"));
+                    QnACommentLikeDislike likeDislike = new QnACommentLikeDislike(id, LikeStatus.valueOf("G"));
                     commentLikeDislikeRepository.save(likeDislike);
                 }
             );
     }
 
     @Transactional
-    public void createDislike(Long qnaId, Long commentId) {
+    public void createQnACommentDislike(Long qnaId, Long commentId) {
         Member member = this.getMember();
         QnA qna = this.getQnA(qnaId);
         QnAComment qnaComment = this.getQnAComment(commentId);
-        CommentLikeDislikeId id = new CommentLikeDislikeId(member, qnaComment);
+        QnACommentLikeDislikeId id = new QnACommentLikeDislikeId(member, qnaComment);
 
         commentLikeDislikeRepository.findById(id)
             .ifPresentOrElse(
@@ -113,7 +111,7 @@ public class QnACommentService {
                     }
                 },
                 () -> {
-                    CommentLikeDislike likeDislike = new CommentLikeDislike(id, LikeStatus.valueOf("B"));
+                    QnACommentLikeDislike likeDislike = new QnACommentLikeDislike(id, LikeStatus.valueOf("B"));
                     commentLikeDislikeRepository.save(likeDislike);
                 }
             );
@@ -132,7 +130,7 @@ public class QnACommentService {
         return qnaCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
     }
 
-    private void updateDeleteStatus(CommentLikeDislike likeDislike, CommentLikeDislikeId id) {
+    private void updateDeleteStatus(QnACommentLikeDislike likeDislike, QnACommentLikeDislikeId id) {
         if (!likeDislike.getIsDeleted()) {
             commentLikeDislikeRepository.deleteById(id.getMember(), id.getQnaComment());
         } else {

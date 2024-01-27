@@ -1,7 +1,5 @@
 package org.devridge.api.domain.qna.repository;
 
-import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnAScrap;
 import org.devridge.api.domain.qna.entity.id.QnAScrapId;
 

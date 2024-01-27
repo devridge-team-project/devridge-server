@@ -1,9 +1,11 @@
 package org.devridge.api.domain.qna.controller;
 
 import lombok.RequiredArgsConstructor;
+
 import org.devridge.api.domain.qna.dto.request.CreateQnACommentRequest;
 import org.devridge.api.domain.qna.dto.request.UpdateQnACommentRequest;
 import org.devridge.api.domain.qna.service.QnACommentService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,20 +47,20 @@ public class QnACommentController {
     }
 
     @PostMapping("/like/{commentId}")
-    public ResponseEntity<Void> createQnALike(
+    public ResponseEntity<Void> createQnACommentLike(
         @PathVariable Long qnaId,
         @PathVariable Long commentId
     ) {
-        qnaCommentService.createLike(qnaId, commentId);
+        qnaCommentService.createQnACommentLike(qnaId, commentId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/dislike/{commentId}")
-    public ResponseEntity<Void> createQnADislike(
+    public ResponseEntity<Void> createQnACommentDislike(
         @PathVariable Long qnaId,
         @PathVariable Long commentId
     ) {
-        qnaCommentService.createDislike(qnaId, commentId);
+        qnaCommentService.createQnACommentDislike(qnaId, commentId);
         return ResponseEntity.ok().build();
     }
 }

@@ -10,7 +10,6 @@ import org.devridge.api.domain.qna.dto.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnALikeDislike;
 import org.devridge.api.domain.qna.entity.id.QnALikeDislikeId;
-import org.devridge.api.domain.qna.entity.id.QnAScrapId;
 import org.devridge.api.domain.qna.mapper.QnAMapper;
 import org.devridge.api.domain.qna.repository.QnALikeDislikeRepository;
 import org.devridge.api.domain.qna.repository.QnAQuerydslRepository;
@@ -23,7 +22,6 @@ import org.devridge.common.exception.DataNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
@@ -75,7 +73,7 @@ public class QnAService {
     }
 
     @Transactional
-    public void createLike(Long qnaId) {
+    public void createQnALike(Long qnaId) {
         Member member = this.getMember();
         QnA qna = this.getQnA(qnaId);
         QnALikeDislikeId id = new QnALikeDislikeId(member, qna);
@@ -106,7 +104,7 @@ public class QnAService {
     }
 
     @Transactional
-    public void createDislike(Long qnaId) {
+    public void createQnADislike(Long qnaId) {
         Member member = this.getMember();
         QnA qna = this.getQnA(qnaId);
         QnALikeDislikeId id = new QnALikeDislikeId(member, qna);
