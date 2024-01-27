@@ -6,7 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityContextHolderUtil {
-
+    // TODO: 멀티쓰레드 환경에서 동기화 작업
     public static Long getMemberId() {
         CustomMemberDetails principal = getCustomMemberDetails();
         Long memberId = principal.getMember().getId();

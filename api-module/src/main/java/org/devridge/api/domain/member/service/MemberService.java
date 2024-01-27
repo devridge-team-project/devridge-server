@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.devridge.api.constant.Role;
 import org.devridge.api.domain.emailverification.entity.EmailVerification;
 import org.devridge.api.domain.emailverification.repository.EmailVerificationRepository;
-import org.devridge.api.domain.member.dto.request.ChangePasswordRequest;
-import org.devridge.api.domain.member.dto.request.CreateMemberRequest;
-import org.devridge.api.domain.member.dto.request.DeleteMemberRequest;
-import org.devridge.api.domain.member.dto.request.UpdateMemberProfileRequest;
+import org.devridge.api.domain.member.dto.request.*;
 import org.devridge.api.domain.member.dto.response.MemberResponse;
 import org.devridge.api.domain.member.dto.response.UpdateMemberResponse;
 import org.devridge.api.domain.member.entity.Member;
@@ -115,22 +112,18 @@ public class MemberService {
 
     @Transactional
     public void deleteMember(DeleteMemberRequest memberRequest) {
-        Member member = SecurityContextHolderUtil.getMember();
+        Member member = getAuthenticatedMember();
 
-        Member findMember = memberRepository.findById(member.getId())
-                .orElseThrow(() -> new MemberNotFoundException());
-
-        if (!passwordEncoder.matches(memberRequest.getPassword(), findMember.getPassword())) {
+        if (!passwordEncoder.matches(memberRequest.getPassword(), member.getPassword())) {
             throw new PasswordNotMatchException();
         }
 
-        memberRepository.delete(findMember);
+        memberRepository.delete(member);
     }
 
     @Transactional
-    public void changePassword(ChangePasswordRequest passwordRequest) {
-        Member member = memberRepository.findByEmailAndProvider(passwordRequest.getEmail(), "normal")
-                .orElseThrow(() -> new MemberNotFoundException());
+    public void resetPassword(ResetPasswordRequest passwordRequest) {
+        Member member = getAuthenticatedMember();
 
         EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailOrderByCreatedAtDesc(
                 passwordRequest.getEmail()
@@ -141,6 +134,14 @@ public class MemberService {
         if (emailVerification.getExpireAt().isBefore(current) || !emailVerification.isCheckStatus()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
+
+        String encodedPassword = passwordEncoder.encode(passwordRequest.getPassword());
+        member.changePassword(encodedPassword);
+    }
+
+    @Transactional
+    public void updatePassword(ChangePasswordRequest passwordRequest) {
+        Member member = getAuthenticatedMember();
 
         String encodedPassword = passwordEncoder.encode(passwordRequest.getPassword());
         member.changePassword(encodedPassword);
@@ -167,10 +168,7 @@ public class MemberService {
 
     @Transactional
     public UpdateMemberResponse updateMember(UpdateMemberProfileRequest updateMemberRequest) {
-        Long currentMemberId = SecurityContextHolderUtil.getMemberId();
-
-        Member member = memberRepository.findById(currentMemberId)
-                .orElseThrow(() -> new MemberNotFoundException());
+        Member member = getAuthenticatedMember();
 
         member.updateProfile(
                 updateMemberRequest.getProfileImageUrl(),
@@ -230,5 +228,11 @@ public class MemberService {
                 .introduction(member.getIntroduction())
                 .skillIds(SkillIds)
                 .build();
+    }
+
+    private Member getAuthenticatedMember() {
+        Long memberId = SecurityContextHolderUtil.getMemberId();
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberNotFoundException());
     }
 }
