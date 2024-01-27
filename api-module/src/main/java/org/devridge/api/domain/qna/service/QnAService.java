@@ -83,13 +83,10 @@ public class QnAService {
                 result -> {
                     switch (result.getStatus()) {
                         case G:
-                            this.updateDeleteStatus(result, id);
+                            qnaLikeDislikeRepository.updateDeleteStatus(member, qna);
                             break;
 
                         case B:
-                            if (result.getIsDeleted()) {
-                                qnaLikeDislikeRepository.recoverLikeDislike(member, qna);
-                            }
                             qnaLikeDislikeRepository.updateQnALikeStatusToGood(member, qna);
                             break;
                     }
@@ -114,14 +111,11 @@ public class QnAService {
                 result -> {
                     switch (result.getStatus()) {
                         case G:
-                            if (result.getIsDeleted()) {
-                                qnaLikeDislikeRepository.recoverLikeDislike(member, qna);
-                            }
                             qnaLikeDislikeRepository.updateQnALikeStatusToBad(member, qna);
                             break;
 
                         case B:
-                            this.updateDeleteStatus(result, id);
+                            qnaLikeDislikeRepository.updateDeleteStatus(member, qna);
                             break;
                     }
                 },
@@ -154,13 +148,5 @@ public class QnAService {
         int likes = qnaLikeDislikeRepository.countQnALikeByQnAId(qna);
         int dislikes = qnaLikeDislikeRepository.countQnADislikeByQnAId(qna);
         qnaRepository.updateLikeAndDiscount(likes, dislikes, qna.getId());
-    }
-
-    private void updateDeleteStatus(QnALikeDislike likeDislike, QnALikeDislikeId id) {
-        if (!likeDislike.getIsDeleted()) {
-            qnaLikeDislikeRepository.deleteById(id.getMember(), id.getQna());
-        } else {
-            qnaLikeDislikeRepository.recoverLikeDislike(id.getMember(), id.getQna());
-        }
     }
 }

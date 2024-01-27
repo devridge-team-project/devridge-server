@@ -12,7 +12,7 @@ import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnAComment;
 import org.devridge.api.domain.qna.entity.id.QnACommentLikeDislikeId;
 import org.devridge.api.domain.qna.mapper.QnACommentMapper;
-import org.devridge.api.domain.qna.repository.CommentLikeDislikeRepository;
+import org.devridge.api.domain.qna.repository.QnACommentLikeDislikeRepository;
 import org.devridge.api.domain.qna.repository.QnACommentRepository;
 import org.devridge.api.domain.qna.repository.QnARepository;
 import org.devridge.common.exception.DataNotFoundException;
@@ -30,7 +30,7 @@ public class QnACommentService {
     private final QnACommentRepository qnaCommentRepository;
     private final MemberRepository memberRepository;
     private final QnACommentMapper qnaCommentMapper;
-    private final CommentLikeDislikeRepository commentLikeDislikeRepository;
+    private final QnACommentLikeDislikeRepository qnaCommentLikeDislikeRepository;
 
     public Long createQnAComment(Long qnaId, CreateQnACommentRequest commentRequest) {
         QnA qna = getQnA(qnaId);
@@ -64,7 +64,7 @@ public class QnACommentService {
         QnAComment qnaComment = this.getQnAComment(commentId);
         QnACommentLikeDislikeId id = new QnACommentLikeDislikeId(member, qnaComment);
 
-        commentLikeDislikeRepository.findById(id)
+        qnaCommentLikeDislikeRepository.findById(id)
             .ifPresentOrElse(
                 result -> {
                     switch (result.getStatus()) {
@@ -74,15 +74,15 @@ public class QnACommentService {
 
                         case B:
                             if (result.getIsDeleted()) {
-                                commentLikeDislikeRepository.recoverLikeDislike(member, qnaComment);
+                                qnaCommentLikeDislikeRepository.recoverLikeDislike(member, qnaComment);
                             }
-                            commentLikeDislikeRepository.updateQnACommentLikeStatusToGood(member, qnaComment);
+                            qnaCommentLikeDislikeRepository.updateQnACommentLikeStatusToGood(member, qnaComment);
                             break;
                     }
                 },
                 () -> {
                     QnACommentLikeDislike likeDislike = new QnACommentLikeDislike(id, LikeStatus.valueOf("G"));
-                    commentLikeDislikeRepository.save(likeDislike);
+                    qnaCommentLikeDislikeRepository.save(likeDislike);
                 }
             );
     }
@@ -94,15 +94,15 @@ public class QnACommentService {
         QnAComment qnaComment = this.getQnAComment(commentId);
         QnACommentLikeDislikeId id = new QnACommentLikeDislikeId(member, qnaComment);
 
-        commentLikeDislikeRepository.findById(id)
+        qnaCommentLikeDislikeRepository.findById(id)
             .ifPresentOrElse(
                 result -> {
                     switch (result.getStatus()) {
                         case G:
                             if (result.getIsDeleted()) {
-                                commentLikeDislikeRepository.recoverLikeDislike(member, qnaComment);
+                                qnaCommentLikeDislikeRepository.recoverLikeDislike(member, qnaComment);
                             }
-                            commentLikeDislikeRepository.updateQnACommentLikeStatusToBad(member, qnaComment);
+                            qnaCommentLikeDislikeRepository.updateQnACommentLikeStatusToBad(member, qnaComment);
                             break;
 
                         case B:
@@ -112,7 +112,7 @@ public class QnACommentService {
                 },
                 () -> {
                     QnACommentLikeDislike likeDislike = new QnACommentLikeDislike(id, LikeStatus.valueOf("B"));
-                    commentLikeDislikeRepository.save(likeDislike);
+                    qnaCommentLikeDislikeRepository.save(likeDislike);
                 }
             );
     }
@@ -132,9 +132,9 @@ public class QnACommentService {
 
     private void updateDeleteStatus(QnACommentLikeDislike likeDislike, QnACommentLikeDislikeId id) {
         if (!likeDislike.getIsDeleted()) {
-            commentLikeDislikeRepository.deleteById(id.getMember(), id.getQnaComment());
+            qnaCommentLikeDislikeRepository.deleteById(id.getMember(), id.getQnaComment());
         } else {
-            commentLikeDislikeRepository.recoverLikeDislike(id.getMember(), id.getQnaComment());
+            qnaCommentLikeDislikeRepository.recoverLikeDislike(id.getMember(), id.getQnaComment());
         }
     }
 }

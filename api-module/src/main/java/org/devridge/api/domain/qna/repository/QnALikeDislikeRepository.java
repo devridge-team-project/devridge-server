@@ -15,26 +15,18 @@ public interface QnALikeDislikeRepository extends JpaRepository<QnALikeDislike, 
     @Modifying
     @Query(
             value = "UPDATE QnALikeDislike " +
-                    "SET status = 'G' " +
-                    "WHERE id.member = :member AND id.qna = :qna AND isDeleted = false"
+                    "SET status = 'G', isDeleted = false " +
+                    "WHERE id.member = :member AND id.qna = :qna"
     )
     void updateQnALikeStatusToGood(@Param("member")Member member, @Param("qna") QnA qna);
 
     @Modifying
     @Query(
         value = "UPDATE QnALikeDislike " +
-                "SET status = 'B' " +
-                "WHERE id.member = :member AND id.qna = :qna AND isDeleted = false"
-    )
-    void updateQnALikeStatusToBad(@Param("member")Member member, @Param("qna") QnA qna);
-
-    @Modifying
-    @Query(
-        value = "UPDATE QnALikeDislike " +
-                "SET isDeleted = true " +
+                "SET status = 'B', isDeleted = false " +
                 "WHERE id.member = :member AND id.qna = :qna"
     )
-    void deleteById(@Param("member")Member member, @Param("qna") QnA qna);
+    void updateQnALikeStatusToBad(@Param("member")Member member, @Param("qna") QnA qna);
 
     @Query(
         value = "SELECT COUNT(q) " +
@@ -52,9 +44,9 @@ public interface QnALikeDislikeRepository extends JpaRepository<QnALikeDislike, 
 
     @Modifying
     @Query(
-            value = "UPDATE QnALikeDislike " +
-                    "SET isDeleted = false " +
-                    "WHERE id.member = :member AND id.qna = :qna"
+        value = "UPDATE QnALikeDislike " +
+                "SET isDeleted = IF(isDeleted, false, true) " +
+                "WHERE id.member = :member AND id.qna = :qna"
     )
-    int recoverLikeDislike(@Param("member")Member member, @Param("qna") QnA qna);
+    void updateDeleteStatus(@Param("member")Member member, @Param("qna") QnA qna);
 }
