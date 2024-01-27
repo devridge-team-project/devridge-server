@@ -155,8 +155,8 @@ public class QnAService {
 
     private void updateLikesAndDislikes(QnA qna) {
         // TODO: 추후 batch 혹은 Trigger 사용
-        int likes = qnaLikeDislikeRepository.countQnALikeByQnAId(qna);
-        int dislikes = qnaLikeDislikeRepository.countQnADislikeByQnAId(qna);
+        int likes = qnaLikeDislikeRepository.countQnALikeOrDislikeByQnAId(qna, LikeStatus.G, false);
+        int dislikes = qnaLikeDislikeRepository.countQnALikeOrDislikeByQnAId(qna, LikeStatus.B, false);
         qnaRepository.updateLikeAndDiscount(likes, dislikes, qna.getId());
     }
 }

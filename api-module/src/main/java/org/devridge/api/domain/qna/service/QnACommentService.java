@@ -87,6 +87,8 @@ public class QnACommentService {
                     qnaCommentLikeDislikeRepository.save(likeDislike);
                 }
             );
+
+        this.updateLikesAndDislikes(qnaComment);
     }
 
     @Transactional
@@ -119,6 +121,8 @@ public class QnACommentService {
                     qnaCommentLikeDislikeRepository.save(likeDislike);
                 }
             );
+
+        this.updateLikesAndDislikes(qnaComment);
     }
 
     private QnA getQnA(Long qnaId) {
@@ -132,5 +136,16 @@ public class QnACommentService {
 
     private QnAComment getQnAComment(Long commentId) {
         return qnaCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
+    }
+
+    private void updateLikesAndDislikes(QnAComment qnaComment) {
+        // TODO: 추후 batch 혹은 Trigger 사용
+        int likes = qnaCommentLikeDislikeRepository.countQnACommentLikeOrDislikeByQnAId(
+            qnaComment,
+            LikeStatus.G,
+            false
+        );
+        int dislikes = qnaCommentLikeDislikeRepository.countQnACommentLikeOrDislikeByQnAId(qnaComment, LikeStatus.B, false);
+        qnaCommentRepository.updateLikeAndDiscount(likes, dislikes, qnaComment.getId());
     }
 }

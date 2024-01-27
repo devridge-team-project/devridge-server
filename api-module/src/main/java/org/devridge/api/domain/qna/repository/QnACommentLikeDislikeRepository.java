@@ -2,6 +2,7 @@ package org.devridge.api.domain.qna.repository;
 
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.dto.type.LikeStatus;
+import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnACommentLikeDislike;
 import org.devridge.api.domain.qna.entity.QnAComment;
 import org.devridge.api.domain.qna.entity.id.QnACommentLikeDislikeId;
@@ -33,4 +34,15 @@ public interface QnACommentLikeDislikeRepository extends JpaRepository<QnACommen
                 "WHERE id.member = :member AND id.qnaComment = :qnaComment"
     )
     void updateDeleteStatus(@Param("member")Member member, @Param("qnaComment") QnAComment qnaComment);
+
+    @Query(
+        value = "SELECT COUNT(q) " +
+                "FROM QnACommentLikeDislike q " +
+                "WHERE q.id.qnaComment = :qnaComment AND q.status = :status AND q.isDeleted = :isDeleted"
+    )
+    int countQnACommentLikeOrDislikeByQnAId(
+        @Param("qnaComment") QnAComment qnaComment,
+        @Param("status") LikeStatus status,
+        @Param("isDeleted") Boolean isDeleted
+    );
 }

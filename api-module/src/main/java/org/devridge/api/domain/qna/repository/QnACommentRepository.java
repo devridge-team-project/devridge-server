@@ -16,4 +16,16 @@ public interface QnACommentRepository extends JpaRepository<QnAComment, Long> {
                 "WHERE id = :commentId"
     )
     void updateQnAComment(@Param("content") String content, @Param("commentId") Long commentId);
+
+    @Modifying(clearAutomatically = true)
+    @Query(
+        value = "UPDATE QnAComment " +
+                "SET likes = :likes, dislikes = :dislikes " +
+                "WHERE id = :qnaCommentId"
+    )
+    void updateLikeAndDiscount(
+        @Param("likes") int likes,
+        @Param("dislikes") int dislikes,
+        @Param("qnaCommentId") Long qnaCommentId
+    );
 }

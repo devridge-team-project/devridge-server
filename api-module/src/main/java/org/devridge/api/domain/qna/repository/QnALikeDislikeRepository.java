@@ -23,22 +23,19 @@ public interface QnALikeDislikeRepository extends JpaRepository<QnALikeDislike, 
         @Param("member")Member member,
         @Param("qna") QnA qna,
         @Param("isDeleted") Boolean isDeleted,
-        @Param("status")LikeStatus status
+        @Param("status") LikeStatus status
     );
 
     @Query(
         value = "SELECT COUNT(q) " +
                 "FROM QnALikeDislike q " +
-                "WHERE q.id.qna = :qna AND q.status = 'G' AND q.isDeleted = false"
+                "WHERE q.id.qna = :qna AND q.status = :status AND q.isDeleted = :isDeleted"
     )
-    int countQnALikeByQnAId(@Param("qna") QnA qna);
-
-    @Query(
-        value = "SELECT COUNT(q) " +
-                "FROM QnALikeDislike q " +
-                "WHERE q.id.qna = :qna AND q.status = 'B' AND q.isDeleted = false"
-    )
-    int countQnADislikeByQnAId(@Param("qna") QnA qna);
+    int countQnALikeOrDislikeByQnAId(
+        @Param("qna") QnA qna,
+        @Param("status") LikeStatus status,
+        @Param("isDeleted") Boolean isDeleted
+    );
 
     @Modifying
     @Query(
