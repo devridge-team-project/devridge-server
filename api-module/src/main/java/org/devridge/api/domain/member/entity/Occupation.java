@@ -23,8 +23,4 @@ public class Occupation extends BaseEntity {
     @Getter
     @NotNull
     private String occupation;
-
-    public Occupation(String occupation) {
-        this.occupation = occupation;
-    }
 }

@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.List;
 
 @NoArgsConstructor
@@ -32,10 +29,12 @@ public class CreateMemberRequest {
 
     private String introduction;
 
-    private List<Long> occupationIds;
-
     // TODO: 이미지 처리
     private String profileImageUrl;
 
     private List<Long> skillIds;
+
+    @NotNull(message = "직군 ID를 입력해주세요.")
+    @Size(min = 1, max = 1, message = "직군 ID는 1개의 값만 가져야 합니다.")
+    private Long occupationId;
 }
