@@ -11,6 +11,19 @@ import org.springframework.stereotype.Repository;
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     @Modifying
-    @Query("update Community q set q.views = q.views + 1 where q.id = :id")
+    @Query(
+        value = "UPDATE Community c " +
+                "SET c.views = c.views + 1 " +
+                "WHERE c.id = :id")
     void updateView(@Param("id") Long id);
+
+    @Modifying
+    @Query(
+        value = "UPDATE Community " +
+                "SET likeCount = :likes, dislikeCount = :dislikes " +
+                "WHERE id = :id")
+    void updateLikeDislike(
+        @Param("likes") Long likes,
+        @Param("dislikes") Long dislikes,
+        @Param("id") Long id);
 }

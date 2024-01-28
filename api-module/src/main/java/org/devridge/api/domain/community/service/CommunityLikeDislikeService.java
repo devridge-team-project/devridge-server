@@ -63,8 +63,10 @@ public class CommunityLikeDislikeService {
                 communityLikeDislikeRepository.save(communityLikeDislike);
             }
         );
+        updateLikeDislike(communityLikeDislikeId);
     }
 
+    @Transactional
     public void deleteCommunityLike(Long communityId) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
         Member member = getMemberById(accessMemberId);
@@ -93,6 +95,7 @@ public class CommunityLikeDislikeService {
                 throw new EntityNotFoundException("엔티티가 존재하지 않습니다.");
             }
         );
+        updateLikeDislike(communityLikeDislikeId);
     }
 
     @Transactional
@@ -132,8 +135,10 @@ public class CommunityLikeDislikeService {
                 communityLikeDislikeRepository.save(communityLikeDislike);
             }
         );
+        updateLikeDislike(communityLikeDislikeId);
     }
 
+    @Transactional
     public void deleteCommunityDislike(Long communityId) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
         Member member = getMemberById(accessMemberId);
@@ -162,6 +167,7 @@ public class CommunityLikeDislikeService {
                 throw new EntityNotFoundException("엔티티가 존재하지 않습니다.");
             }
         );
+        updateLikeDislike(communityLikeDislikeId);
     }
 
     private Member getMemberById(Long memberId) {
@@ -170,5 +176,11 @@ public class CommunityLikeDislikeService {
 
     private Community getCommunityById(Long communityId) {
         return communityRepository.findById(communityId).orElseThrow(() -> new EntityNotFoundException());
+    }
+
+    private void updateLikeDislike(CommunityLikeDislikeId id) {
+        Long likes = Long.valueOf(communityLikeDislikeRepository.countCommunityLikeDislikeById(id, LikeStatus.G));
+        Long disLikes = Long.valueOf(communityLikeDislikeRepository.countCommunityLikeDislikeById(id, LikeStatus.B));
+        communityRepository.updateLikeDislike(likes, disLikes, id.getCommunityId());
     }
 }

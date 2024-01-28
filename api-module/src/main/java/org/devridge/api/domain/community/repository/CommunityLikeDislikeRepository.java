@@ -26,4 +26,11 @@ public interface CommunityLikeDislikeRepository extends
                 "WHERE cl.id = :id"
     )
     void restoreById(@Param("id") CommunityLikeDislikeId id);
+
+    @Query(
+        value = "SELECT COUNT(cld) " +
+                "FROM CommunityLikeDislike cld " +
+                "WHERE cld.id = :id AND cld.status = :status AND cld.isDeleted = false"
+    )
+    int countCommunityLikeDislikeById(@Param("id") CommunityLikeDislikeId id, @Param("status") LikeStatus status);
 }
