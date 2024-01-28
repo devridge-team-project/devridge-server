@@ -6,6 +6,7 @@ import org.devridge.api.domain.qna.entity.id.QnAScrapId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface QnAScrapRepository extends JpaRepository<QnAScrap, QnAScrapId> {
 
@@ -16,5 +17,5 @@ public interface QnAScrapRepository extends JpaRepository<QnAScrap, QnAScrapId> 
                 "VALUES (:memberId, :qnaId) " +
                 "ON DUPLICATE KEY UPDATE is_deleted = IF(is_deleted, 0, 1)"
     )
-    void createOrUpdateQnAScrap(Long memberId, Long qnaId);
+    void createOrUpdateQnAScrap(@Param("memberId") Long memberId, @Param("qnaId") Long qnaId);
 }
