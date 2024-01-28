@@ -74,8 +74,11 @@ public class Member extends BaseEntity {
         this.password = encodePassword;
     }
 
-    public void updateProfile(String profileImageUrl, String introduction) {
-        this.profileImageUrl = profileImageUrl;
+    public void setIntroduction(String introduction) {
         this.introduction = introduction;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }

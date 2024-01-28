@@ -135,10 +135,8 @@ public class MemberService {
     public void updateMember(UpdateMemberProfileRequest updateMemberRequest) {
         Member member = getAuthenticatedMember();
 
-        member.updateProfile(
-                updateMemberRequest.getProfileImageUrl(),
-                updateMemberRequest.getIntroduction()
-        );
+        member.setProfileImageUrl(updateMemberRequest.getProfileImageUrl());
+        member.setIntroduction(updateMemberRequest.getIntroduction());
 
         updateMemberSkills(member, updateMemberRequest);
     }
@@ -155,7 +153,7 @@ public class MemberService {
 
     // TODO: DB 조회 -> 캐싱
     public List<Skill> areSkillsValid(List<Long> skillIds) {
-        List<Skill> skills = skillRepository.findAllById(skillIds);
+        List<Skill> skills = skillRepository.findSkillsByIds(skillIds);
 
         if (skills.size() != skillIds.size()) {
             throw new SkillsNotValidException();
@@ -210,7 +208,7 @@ public class MemberService {
 
     private void addMemberSkills(Member member, List<Long> skillIdsToAdd) {
         if (!skillIdsToAdd.isEmpty()) {
-            List<Skill> skillsToAdd = skillRepository.findAllById(skillIdsToAdd);
+            List<Skill> skillsToAdd = skillRepository.findSkillsByIds(skillIdsToAdd);
 
             List<MemberSkill> newMemberSkills = skillsToAdd.stream()
                     .map(skill -> new MemberSkill(
