@@ -1,7 +1,6 @@
 package org.devridge.api.domain.member.dto.response;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,11 +9,8 @@ import lombok.NoArgsConstructor;
 public class LoginResponse {
 
     private String accessToken;
-    private MemberResponse member;
 
-    @Builder
-    public LoginResponse(String accessToken, MemberResponse member) {
+    public LoginResponse(String accessToken) {
         this.accessToken = accessToken;
-        this.member = member;
     }
 }

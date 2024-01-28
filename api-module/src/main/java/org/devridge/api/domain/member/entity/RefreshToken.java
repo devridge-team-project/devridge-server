@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.devridge.api.domain.member.AbstractTimeEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,6 +19,7 @@ public class RefreshToken extends AbstractTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String refreshToken;
 
     @OneToOne(fetch = FetchType.LAZY)

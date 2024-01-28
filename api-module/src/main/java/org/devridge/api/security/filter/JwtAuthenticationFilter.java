@@ -2,7 +2,6 @@ package org.devridge.api.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.devridge.api.domain.member.dto.response.LoginResponse;
-import org.devridge.api.domain.member.dto.response.MemberResponse;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.entity.RefreshToken;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
@@ -68,17 +67,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 3. AccessToken 발급
         String accessToken = JwtUtil.createAccessToken(member, refreshTokenId);
 
-        List<Long> skillIdList = getSkillIdListFromMember(member);
-
-        MemberResponse memberResponse = MemberResponse.builder()
-                .id(member.getId())
-                .nickname(member.getNickname())
-                .imageUrl(member.getProfileImageUrl())
-                .introduction(member.getIntroduction())
-                .skillIds(skillIdList)
-                .build();
-
-        LoginResponse loginResponse = new LoginResponse(accessToken, memberResponse);
+        LoginResponse loginResponse = new LoginResponse(accessToken);
 
         ResponseUtil.createResponseBody(response, loginResponse, HttpStatus.OK);
     }
