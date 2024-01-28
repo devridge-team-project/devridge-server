@@ -54,7 +54,7 @@ public class MemberService {
         List<Long> skillIds = memberRequest.getSkillIds();
 
         if (!skillIds.isEmpty()) {
-            List skills = areSkillsValid(skillIds);
+            List<Skill> skills = areSkillsValid(skillIds);
             createMemberSkill(skills, member);
         }
 
@@ -73,8 +73,7 @@ public class MemberService {
                 .profileImageUrl(memberRequest.getProfileImageUrl())
                 .build();
 
-        memberRepository.save(member);
-        return member;
+        return memberRepository.save(member);
     }
 
     private void createMemberSkill(List<Skill> skills, Member member) {
@@ -91,22 +90,6 @@ public class MemberService {
                 .collect(Collectors.toList());
 
         memberSkillRepository.saveAll(memberSkills);
-    }
-
-    private void checkDuplEmail(CreateMemberRequest memberRequest) {
-        memberRepository.findByEmailAndProvider(
-                memberRequest.getEmail(), memberRequest.getProvider()
-        ).ifPresent(member -> {
-            throw new DuplEmailException();
-        });
-    }
-
-    private void checkDuplNickname(CreateMemberRequest memberRequest) {
-        Optional<Member> member = memberRepository.findByNickname(memberRequest.getNickname());
-
-        if (member.isPresent()) {
-            throw new DuplNicknameException();
-        }
     }
 
     @Transactional
@@ -148,25 +131,6 @@ public class MemberService {
         member.changePassword(encodedPassword);
     }
 
-    // TODO: DB 조회 -> 캐싱
-    public List<Skill> areSkillsValid(List<Long> skillIds) {
-        List<Skill> skills = skillRepository.findAllById(skillIds);
-
-        if (skills.size() != skillIds.size()) {
-            throw new SkillsNotValidException();
-        }
-
-        return skills;
-    }
-
-    public Occupation areOccupationValid(Long occupationId) {
-        Occupation occupation = occupationRepository.findById(occupationId).orElseThrow(
-                () -> new DataNotFoundException()
-        );
-
-        return occupation;
-    }
-
     @Transactional
     public void updateMember(UpdateMemberProfileRequest updateMemberRequest) {
         Member member = getAuthenticatedMember();
@@ -187,6 +151,38 @@ public class MemberService {
                 .collect(Collectors.toList());
 
         return buildMemberResponse(member, memberSkillIdList);
+    }
+
+    // TODO: DB 조회 -> 캐싱
+    public List<Skill> areSkillsValid(List<Long> skillIds) {
+        List<Skill> skills = skillRepository.findAllById(skillIds);
+
+        if (skills.size() != skillIds.size()) {
+            throw new SkillsNotValidException();
+        }
+        return skills;
+    }
+
+    public Occupation areOccupationValid(Long occupationId) {
+        return occupationRepository.findById(occupationId).orElseThrow(
+                () -> new DataNotFoundException()
+        );
+    }
+
+    private void checkDuplEmail(CreateMemberRequest memberRequest) {
+        memberRepository.findByEmailAndProvider(
+                memberRequest.getEmail(), memberRequest.getProvider()
+        ).ifPresent(member -> {
+            throw new DuplEmailException();
+        });
+    }
+
+    private void checkDuplNickname(CreateMemberRequest memberRequest) {
+        Optional<Member> member = memberRepository.findByNickname(memberRequest.getNickname());
+
+        if (member.isPresent()) {
+            throw new DuplNicknameException();
+        }
     }
 
     public void updateMemberSkills(Member member, UpdateMemberProfileRequest updateMemberRequest) {
@@ -245,7 +241,6 @@ public class MemberService {
 
     private Member getAuthenticatedMember() {
         Long memberId = SecurityContextHolderUtil.getMemberId();
-
         return memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException());
     }
 }
