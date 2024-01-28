@@ -190,11 +190,13 @@ public class MemberService {
         List<Long> skillsToAdd = newSkillIds.stream()
                 .filter(skillId -> !currentSkillIds.contains(skillId))
                 .collect(Collectors.toList());
+
         addMemberSkills(member, skillsToAdd);
 
         List<Long> skillsToRemove = currentSkillIds.stream()
                 .filter(skillId -> !newSkillIds.contains(skillId))
                 .collect(Collectors.toList());
+
         removeMemberSkills(member.getId(), skillsToRemove);
 
         return newSkillIds;
@@ -209,9 +211,13 @@ public class MemberService {
     private void addMemberSkills(Member member, List<Long> skillIdsToAdd) {
         if (!skillIdsToAdd.isEmpty()) {
             List<Skill> skillsToAdd = skillRepository.findAllById(skillIdsToAdd);
+
             List<MemberSkill> newMemberSkills = skillsToAdd.stream()
-                    .map(skill -> new MemberSkill(new MemberSkillId(member.getId(), skill.getId()), member, skill))
+                    .map(skill -> new MemberSkill(
+                            new MemberSkillId(member.getId(), skill.getId()), member, skill)
+                    )
                     .collect(Collectors.toList());
+
             memberSkillRepository.saveAll(newMemberSkills);
         }
     }
@@ -234,7 +240,7 @@ public class MemberService {
 
     private Member getAuthenticatedMember() {
         Long memberId = SecurityContextHolderUtil.getMemberId();
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberNotFoundException());
+
+        return memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException());
     }
 }
