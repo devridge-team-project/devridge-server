@@ -20,11 +20,12 @@ public class MemberResponse {
 
     @Builder
     public MemberResponse(Long id, String nickname, String imageUrl, String introduction, List<Long> skillIds, String occupation) {
-        this.id = id;
-        this.nickname = nickname;
-        this.imageUrl = imageUrl;
-        this.introduction = introduction;
-        this.skillIds = skillIds;
-        this.occupation = occupation;
+            this.id = id;
+            this.nickname = nickname;
+            this.imageUrl = imageUrl;
+            this.introduction = introduction;
+            this.skillIds = skillIds;
+            this.occupation = occupation;
+        }
     }
 }

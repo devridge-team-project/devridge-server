@@ -167,6 +167,7 @@ public class MemberService {
         );
     }
 
+<<<<<<< Updated upstream
     private void checkDuplEmail(CreateMemberRequest memberRequest) {
         memberRepository.findByEmailAndProvider(
                 memberRequest.getEmail(), memberRequest.getProvider()
@@ -183,6 +184,19 @@ public class MemberService {
         }
     }
 
+=======
+    @Transactional
+    public void updateMember(UpdateMemberProfileRequest updateMemberRequest) {
+        Member member = getAuthenticatedMember();
+
+        member.updateProfile(
+                updateMemberRequest.getProfileImageUrl(),
+                updateMemberRequest.getIntroduction()
+        );
+        updateMemberSkills(member, updateMemberRequest);
+    }
+
+>>>>>>> Stashed changes
     public void updateMemberSkills(Member member, UpdateMemberProfileRequest updateMemberRequest) {
         List<Long> currentSkillIds = getSkillIdListFromMember(member);
         List<Long> newSkillIds = updateMemberRequest.getSkillIds();
@@ -196,8 +210,23 @@ public class MemberService {
         List<Long> skillsToRemove = currentSkillIds.stream()
                 .filter(skillId -> !newSkillIds.contains(skillId))
                 .collect(Collectors.toList());
+<<<<<<< Updated upstream
 
         removeMemberSkills(member.getId(), skillsToRemove);
+=======
+        removeMemberSkills(member.getId(), skillsToRemove);
+    }
+
+    public MemberResponse getMemberDetails() {
+        Member member = getAuthenticatedMember();
+
+        List<Long> skillIds = member.getMemberSkills().stream()
+                .map(memberSkill -> memberSkill.getId().getSkillId())
+                .collect(Collectors.toList());
+
+        Long occupationId = member.getOccupation().getId();
+
+        return buildMemberResponse(member, skillIds, occupationId);
     }
 
     private List<Long> getSkillIdListFromMember(Member member) {
@@ -226,7 +255,7 @@ public class MemberService {
         }
     }
 
-    private MemberResponse buildMemberResponse(Member member, List<Long> SkillIds) {
+    private MemberResponse buildMemberResponse(Member member, List<Long> SkillIds, Long occupationId) {
         return MemberResponse.builder()
                 .id(member.getId())
                 .nickname(member.getNickname())
