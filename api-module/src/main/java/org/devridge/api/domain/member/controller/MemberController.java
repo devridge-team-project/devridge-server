@@ -37,7 +37,6 @@ public class MemberController {
 
     @PatchMapping("/password")
     public ResponseEntity<Void> updatePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
-        System.out.println("changePasswordRequest = " + changePasswordRequest);
         memberService.updatePassword(changePasswordRequest);
         return ResponseEntity.ok().build();
     }
