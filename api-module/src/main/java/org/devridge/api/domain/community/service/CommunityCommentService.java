@@ -37,11 +37,6 @@ public class CommunityCommentService {
 
     public List<CommunityCommentResponse> getAllComment(Long communityId) {
         List<CommunityComment> communityComments = communityCommentRepository.findByCommunityId(communityId);
-
-        if (communityComments.isEmpty()) {
-            throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
-        }
-
         return communityCommentMapper.toCommentResponses(communityComments);
     }
 
