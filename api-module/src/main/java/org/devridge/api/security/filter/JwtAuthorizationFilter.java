@@ -49,8 +49,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final List<RequestMatcher> excludedUrlPatterns = Arrays.asList(//이 필터 적용 안할 url 지정
             new AntPathRequestMatcher("/api/email-verifications"),
-            new AntPathRequestMatcher("/api/users/reset-password")
-            // 추가적인 URL 패턴을 필요에 따라 설정
+            new AntPathRequestMatcher("/api/users", "POST"),
+            new AntPathRequestMatcher("/api/login", "POST"),
+            new AntPathRequestMatcher("/api/users/reset-password", "PATCH")
     );
 
     @Override
