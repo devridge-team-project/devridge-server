@@ -2,7 +2,7 @@ package org.devridge.api.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.member.dto.request.*;
-import org.devridge.api.domain.member.dto.response.UpdateMemberResponse;
+import org.devridge.api.domain.member.dto.response.MemberResponse;
 import org.devridge.api.domain.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,8 +42,14 @@ public class MemberController {
     }
 
     @PatchMapping
-    public ResponseEntity<UpdateMemberResponse> updateMember(@Valid @RequestBody UpdateMemberProfileRequest updateMemberRequest) {
-        UpdateMemberResponse result = memberService.updateMember(updateMemberRequest);
+    public ResponseEntity<Void> updateMember(@Valid @RequestBody UpdateMemberProfileRequest updateMemberRequest) {
+        memberService.updateMember(updateMemberRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/details")
+    public ResponseEntity<MemberResponse> getMemberDetails(){
+        MemberResponse result = memberService.getMemberDetails();
         return ResponseEntity.ok().body(result);
     }
 }

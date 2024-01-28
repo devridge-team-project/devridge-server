@@ -6,7 +6,6 @@ import org.devridge.api.domain.emailverification.entity.EmailVerification;
 import org.devridge.api.domain.emailverification.repository.EmailVerificationRepository;
 import org.devridge.api.domain.member.dto.request.*;
 import org.devridge.api.domain.member.dto.response.MemberResponse;
-import org.devridge.api.domain.member.dto.response.UpdateMemberResponse;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.entity.Occupation;
 import org.devridge.api.domain.member.repository.MemberRepository;
@@ -169,21 +168,28 @@ public class MemberService {
     }
 
     @Transactional
-    public UpdateMemberResponse updateMember(UpdateMemberProfileRequest updateMemberRequest) {
+    public void updateMember(UpdateMemberProfileRequest updateMemberRequest) {
         Member member = getAuthenticatedMember();
 
         member.updateProfile(
                 updateMemberRequest.getProfileImageUrl(),
                 updateMemberRequest.getIntroduction()
         );
-        List<Long> newSkillIds = updateMemberSkills(member, updateMemberRequest);
 
-        MemberResponse memberResponse = buildMemberResponse(member, newSkillIds);
-
-        return new UpdateMemberResponse(memberResponse);
+        updateMemberSkills(member, updateMemberRequest);
     }
 
-    public List<Long> updateMemberSkills(Member member, UpdateMemberProfileRequest updateMemberRequest) {
+    public MemberResponse getMemberDetails() {
+        Member member = getAuthenticatedMember();
+
+        List<Long> memberSkillIdList = member.getMemberSkills().stream()
+                .map(memberSkill -> memberSkill.getId().getSkillId())
+                .collect(Collectors.toList());
+
+        return buildMemberResponse(member, memberSkillIdList);
+    }
+
+    public void updateMemberSkills(Member member, UpdateMemberProfileRequest updateMemberRequest) {
         List<Long> currentSkillIds = getSkillIdListFromMember(member);
         List<Long> newSkillIds = updateMemberRequest.getSkillIds();
 
@@ -198,8 +204,6 @@ public class MemberService {
                 .collect(Collectors.toList());
 
         removeMemberSkills(member.getId(), skillsToRemove);
-
-        return newSkillIds;
     }
 
     private List<Long> getSkillIdListFromMember(Member member) {
@@ -235,6 +239,7 @@ public class MemberService {
                 .imageUrl(member.getProfileImageUrl())
                 .introduction(member.getIntroduction())
                 .skillIds(SkillIds)
+                .occupation(member.getOccupation().getOccupation())
                 .build();
     }
 
