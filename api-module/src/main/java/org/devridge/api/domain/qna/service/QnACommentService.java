@@ -6,9 +6,13 @@ import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.qna.dto.request.CreateQnACommentRequest;
 import org.devridge.api.domain.qna.dto.request.UpdateQnACommentRequest;
+import org.devridge.api.domain.qna.dto.type.LikeStatus;
+import org.devridge.api.domain.qna.entity.QnACommentLikeDislike;
 import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnAComment;
+import org.devridge.api.domain.qna.entity.id.QnACommentLikeDislikeId;
 import org.devridge.api.domain.qna.mapper.QnACommentMapper;
+import org.devridge.api.domain.qna.repository.QnACommentLikeDislikeRepository;
 import org.devridge.api.domain.qna.repository.QnACommentRepository;
 import org.devridge.api.domain.qna.repository.QnARepository;
 import org.devridge.common.exception.DataNotFoundException;
@@ -26,12 +30,11 @@ public class QnACommentService {
     private final QnACommentRepository qnaCommentRepository;
     private final MemberRepository memberRepository;
     private final QnACommentMapper qnaCommentMapper;
+    private final QnACommentLikeDislikeRepository qnaCommentLikeDislikeRepository;
 
     public Long createQnAComment(Long qnaId, CreateQnACommentRequest commentRequest) {
-        QnA qna = checkQnAValidate(qnaId);
-
-        Long writerId = getMemberId();
-        Member member = findMemberById(writerId);
+        QnA qna = getQnA(qnaId);
+        Member member = getMember();
 
         QnAComment comment = qnaCommentMapper.toQnAComment(member, qna, commentRequest);
 
@@ -40,29 +43,109 @@ public class QnACommentService {
 
     @Transactional
     public void updateQnAComment(Long qnaId, Long commentId, UpdateQnACommentRequest commentRequest) {
-        checkQnAValidate(qnaId);
-        checkQnACommentValidate(commentId);
+        getQnA(qnaId);
+        getQnAComment(commentId);
 
         qnaCommentRepository.updateQnAComment(commentRequest.getContent(), commentId);
     }
 
     @Transactional
     public void deleteQnAComment(Long qnaId, Long commentId) {
-        checkQnAValidate(qnaId);
-        checkQnACommentValidate(commentId);
+        getQnA(qnaId);
+        getQnAComment(commentId);
 
         qnaCommentRepository.deleteById(commentId);
     }
 
-    private QnA checkQnAValidate(Long qnaId) {
+    @Transactional
+    public void createQnACommentLike(Long qnaId, Long commentId) {
+        Member member = this.getMember();
+        QnA qna = this.getQnA(qnaId);
+        QnAComment qnaComment = this.getQnAComment(commentId);
+        QnACommentLikeDislikeId id = new QnACommentLikeDislikeId(member, qnaComment);
+
+        qnaCommentLikeDislikeRepository.findById(id)
+            .ifPresentOrElse(
+                result -> {
+                    switch (result.getStatus()) {
+                        case G:
+                            qnaCommentLikeDislikeRepository.updateDeleteStatus(member, qnaComment);
+                            break;
+
+                        case B:
+                            qnaCommentLikeDislikeRepository.updateQnACommentLikeStatusToGoodOrBad(
+                                member,
+                                qnaComment,
+                                false,
+                                LikeStatus.G
+                            );
+                            break;
+                    }
+                },
+                () -> {
+                    QnACommentLikeDislike likeDislike = new QnACommentLikeDislike(id, LikeStatus.valueOf("G"));
+                    qnaCommentLikeDislikeRepository.save(likeDislike);
+                }
+            );
+
+        this.updateLikesAndDislikes(qnaComment);
+    }
+
+    @Transactional
+    public void createQnACommentDislike(Long qnaId, Long commentId) {
+        Member member = this.getMember();
+        QnA qna = this.getQnA(qnaId);
+        QnAComment qnaComment = this.getQnAComment(commentId);
+        QnACommentLikeDislikeId id = new QnACommentLikeDislikeId(member, qnaComment);
+
+        qnaCommentLikeDislikeRepository.findById(id)
+            .ifPresentOrElse(
+                result -> {
+                    switch (result.getStatus()) {
+                        case G:
+                            qnaCommentLikeDislikeRepository.updateQnACommentLikeStatusToGoodOrBad(
+                                member,
+                                qnaComment,
+                                false,
+                                LikeStatus.B
+                            );
+                            break;
+
+                        case B:
+                            qnaCommentLikeDislikeRepository.updateDeleteStatus(member, qnaComment);
+                            break;
+                    }
+                },
+                () -> {
+                    QnACommentLikeDislike likeDislike = new QnACommentLikeDislike(id, LikeStatus.valueOf("B"));
+                    qnaCommentLikeDislikeRepository.save(likeDislike);
+                }
+            );
+
+        this.updateLikesAndDislikes(qnaComment);
+    }
+
+    private QnA getQnA(Long qnaId) {
         return qnaRepository.findById(qnaId).orElseThrow(() -> new DataNotFoundException());
     }
 
-    private Member findMemberById(Long memberId) {
+    private Member getMember() {
+        Long memberId = getMemberId();
         return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
     }
 
-    private void checkQnACommentValidate(Long commentId) {
-        qnaCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
+    private QnAComment getQnAComment(Long commentId) {
+        return qnaCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
+    }
+
+    private void updateLikesAndDislikes(QnAComment qnaComment) {
+        // TODO: 추후 batch 혹은 Trigger 사용
+        int likes = qnaCommentLikeDislikeRepository.countQnACommentLikeOrDislikeByQnAId(
+            qnaComment,
+            LikeStatus.G,
+            false
+        );
+        int dislikes = qnaCommentLikeDislikeRepository.countQnACommentLikeOrDislikeByQnAId(qnaComment, LikeStatus.B, false);
+        qnaCommentRepository.updateLikeAndDiscount(likes, dislikes, qnaComment.getId());
     }
 }

@@ -6,7 +6,6 @@ import org.devridge.api.domain.qna.dto.request.*;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.dto.type.SortOption;
-import org.devridge.api.domain.qna.service.QnACommentService;
 import org.devridge.api.domain.qna.service.QnAService;
 import org.devridge.api.domain.qna.validator.ValidateSortOption;
 
@@ -24,10 +23,9 @@ import java.util.List;
 public class QnAController {
 
     private final QnAService qnaService;
-    private final QnACommentService qnaCommentService;
 
     @GetMapping
-    public ResponseEntity<List<GetAllQnAResponse>> getAllQnASortByViews(
+    public ResponseEntity<List<GetAllQnAResponse>> getAllQnA(
         @RequestParam(value = "sortOption", required = true)
         @ValidateSortOption(enumClass = SortOption.class) SortOption sortOption
     ) {
@@ -62,43 +60,21 @@ public class QnAController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{qnaId}/comments")
-    public ResponseEntity<Void> createQnAComment(
-        @PathVariable Long qnaId,
-        @RequestBody CreateQnACommentRequest commentRequest
-    ) {
-        Long commentId = qnaCommentService.createQnAComment(qnaId, commentRequest);
-        return ResponseEntity.created(URI.create("/api/qna/" + qnaId + "/comments/" + commentId)).build();
-    }
-
-    @PutMapping("/{qnaId}/comments/{commentId}")
-    public ResponseEntity<Void> updateQnAComment(
-        @PathVariable Long qnaId,
-        @PathVariable Long commentId,
-        @RequestBody UpdateQnACommentRequest commentRequest
-    ) {
-        qnaCommentService.updateQnAComment(qnaId, commentId, commentRequest);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/{qnaId}/comments/{commentId}")
-    public ResponseEntity<Void> deleteQnAComment(
-        @PathVariable Long qnaId,
-        @PathVariable Long commentId
-    ) {
-        qnaCommentService.deleteQnAComment(qnaId, commentId);
-        return ResponseEntity.ok().build();
-    }
-
     @PostMapping("/like/{qnaId}")
     public ResponseEntity<Void> createQnALike(@PathVariable Long qnaId) {
-        qnaService.createLike(qnaId);
+        qnaService.createQnALike(qnaId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/dislike/{qnaId}")
-    public ResponseEntity<Void> createDislike(@PathVariable Long qnaId) {
-        qnaService.createDislike(qnaId);
+    public ResponseEntity<Void> createQnADislike(@PathVariable Long qnaId) {
+        qnaService.createQnADislike(qnaId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/bookmarks/{qnaId}")
+    public ResponseEntity<Void> createQnAScrap(@PathVariable Long qnaId) {
+        qnaService.createQnAScrap(qnaId);
         return ResponseEntity.ok().build();
     }
 }

@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.community.entity.id.CommunityCommentLikeDislikeId;
 import org.devridge.api.domain.member.entity.Member;
-import org.devridge.common.dto.BaseTimeEntity;
+import org.devridge.common.entity.BaseTimeEntity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
