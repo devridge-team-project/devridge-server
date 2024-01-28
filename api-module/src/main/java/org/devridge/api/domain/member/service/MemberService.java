@@ -89,7 +89,7 @@ public class MemberService {
                 })
                 .collect(Collectors.toList());
 
-        memberSkillRepository.saveAll(memberSkills);
+        memberSkillRepository.bulkInsert(memberSkills);
     }
 
     @Transactional
@@ -216,7 +216,7 @@ public class MemberService {
                     )
                     .collect(Collectors.toList());
 
-            memberSkillRepository.saveAll(newMemberSkills);
+            memberSkillRepository.bulkInsert(newMemberSkills);
         }
     }
 

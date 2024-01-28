@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface MemberSkillRepository extends JpaRepository<MemberSkill, MemberSkillId> {
+public interface MemberSkillRepository extends JpaRepository<MemberSkill, MemberSkillId>, MemberSkillRepositoryCustom {
 
     @Query("select memberSkill.id.skillId FROM MemberSkill memberSkill " +
             "WHERE memberSkill.id.memberId = :memberId")
