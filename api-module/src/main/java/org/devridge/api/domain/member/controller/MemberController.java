@@ -1,8 +1,9 @@
 package org.devridge.api.domain.member.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.devridge.api.domain.member.dto.request.*;
-import org.devridge.api.domain.member.dto.response.MemberResponse;
+import org.devridge.api.domain.member.dto.request.ChangePasswordRequest;
+import org.devridge.api.domain.member.dto.request.CreateMemberRequest;
+import org.devridge.api.domain.member.dto.request.DeleteMemberRequest;
 import org.devridge.api.domain.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,32 +25,14 @@ public class MemberController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteMember(@Valid @RequestBody DeleteMemberRequest memberRequest) {
+    public ResponseEntity<Void> deleteMember(@RequestBody DeleteMemberRequest memberRequest) {
         memberService.deleteMember(memberRequest);
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/reset-password")
-    public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
-        memberService.resetPassword(resetPasswordRequest);
-        return ResponseEntity.ok().build();
-    }
-
     @PatchMapping("/password")
-    public ResponseEntity<Void> updatePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
-        memberService.updatePassword(changePasswordRequest);
+    public ResponseEntity<Void> resetPassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        memberService.changePassword(changePasswordRequest);
         return ResponseEntity.ok().build();
-    }
-
-    @PatchMapping
-    public ResponseEntity<Void> updateMember(@Valid @RequestBody UpdateMemberProfileRequest updateMemberRequest) {
-        memberService.updateMember(updateMemberRequest);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/details")
-    public ResponseEntity<MemberResponse> getMemberDetails(){
-        MemberResponse result = memberService.getMemberDetails();
-        return ResponseEntity.ok().body(result);
     }
 }

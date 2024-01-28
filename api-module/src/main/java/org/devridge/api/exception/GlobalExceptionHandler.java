@@ -1,6 +1,13 @@
 package org.devridge.api.exception;
 
-import org.devridge.api.exception.member.*;
+import java.util.NoSuchElementException;
+import javax.persistence.EntityNotFoundException;
+import org.devridge.api.exception.member.DuplEmailException;
+import org.devridge.api.exception.member.DuplNicknameException;
+import org.devridge.api.exception.member.MemberNotFoundException;
+import org.devridge.api.exception.member.PasswordNotMatchException;
+import org.devridge.api.exception.member.SkillsNotValidException;
+import org.devridge.api.exception.member.WeakPasswordException;
 import org.devridge.common.dto.BaseErrorResponse;
 import org.devridge.common.dto.BaseResponse;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -9,9 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.persistence.EntityNotFoundException;
-import java.util.NoSuchElementException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -71,7 +75,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<BaseErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
-        BaseErrorResponse response = new BaseErrorResponse(e.getMessage());
+        BaseErrorResponse response = new BaseErrorResponse("거부된 접근입니다.");
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 }

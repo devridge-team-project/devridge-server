@@ -2,13 +2,10 @@ package org.devridge.api.domain.skill.repository;
 
 import org.devridge.api.domain.skill.entity.Skill;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface SkillRepository extends JpaRepository<Skill, Long> {
 
-    @Query("SELECT s FROM Skill s WHERE s.id IN :ids")
-    List<Skill> findSkillsByIds(@Param("ids") List<Long> ids);
+    public Optional<Skill> findBySkill(String skill);
 }
