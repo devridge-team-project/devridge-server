@@ -1,14 +1,10 @@
 package org.devridge.api.domain.member.dto.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.*;
 import java.util.List;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class CreateMemberRequest {
 
