@@ -64,8 +64,10 @@ public class SecurityConfig {
             .authorizeRequests()
             .antMatchers(securityConstant().ALL_PERMIT_PATHS).permitAll()
             .antMatchers(HttpMethod.GET, "/api/qna/**").permitAll()
-            .antMatchers("/api/qna/**").authenticated()
+            .antMatchers(HttpMethod.GET, "/api/occupations").permitAll()
             .antMatchers(HttpMethod.GET, "/api/community/**").permitAll()
+
+            .antMatchers("/api/qna/**").authenticated()
             .antMatchers("/api/community/**").authenticated()
             .antMatchers(securityConstant().USER_ROLE_PERMIT_PATHS).hasRole(SecurityConstant.USER_ROLE)
             .anyRequest().denyAll();
