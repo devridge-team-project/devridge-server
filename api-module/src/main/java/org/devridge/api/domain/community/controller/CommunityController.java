@@ -6,6 +6,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
+import org.devridge.api.domain.community.dto.response.CommunityListResponse;
 import org.devridge.api.domain.community.service.CommunityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -52,9 +53,9 @@ public class CommunityController {
     }
 
     @GetMapping("/all") // 커뮤니티 글 전체 목록 보여주기
-    public ResponseEntity<List<CommunityDetailResponse>> getAllCommunity() {
-        List<CommunityDetailResponse> communityDetailResponses = communityService.getAllCommunity();
-        return ResponseEntity.ok().body(communityDetailResponses);
+    public ResponseEntity<List<CommunityListResponse>> getAllCommunity() {
+        List<CommunityListResponse> communityListResponses = communityService.getAllCommunity();
+        return ResponseEntity.ok().body(communityListResponses);
     }
 }
 

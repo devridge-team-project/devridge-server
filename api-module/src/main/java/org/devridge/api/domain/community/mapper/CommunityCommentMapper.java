@@ -19,6 +19,11 @@ public class CommunityCommentMapper {
             commentResponses.add(
                 CommunityCommentResponse.builder()
                     .nickName(member.getNickname())
+                    .introduction(member.getIntroduction())
+                    .profileImageUrl(member.getProfileImageUrl())
+                    .likeCount(comment.getLikeCount())
+                    .dislikeCount(comment.getDislikeCount())
+                    .createdAt(comment.getCreatedAt())
                     .updatedAt(comment.getUpdatedAt())
                     .content(comment.getContent())
                     .build()

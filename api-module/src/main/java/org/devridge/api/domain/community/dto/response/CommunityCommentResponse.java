@@ -11,7 +11,19 @@ public class CommunityCommentResponse {
 
     private String nickName;
 
+    private String content;
+
+    private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
 
-    private String content;
+    private String profileImageUrl;
+
+    private String introduction;
+
+    private Long likeCount;
+
+    private Long dislikeCount;
+
+
 }

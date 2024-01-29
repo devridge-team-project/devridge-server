@@ -1,13 +1,16 @@
 package org.devridge.api.domain.community.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
+import org.devridge.api.domain.community.dto.response.CommunityListResponse;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.mapper.CommunityMapper;
+import org.devridge.api.domain.community.repository.CommunityCommentRepository;
 import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
@@ -22,6 +25,7 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final CommunityMapper communityMapper;
     private final MemberRepository memberRepository;
+    private final CommunityCommentRepository communityCommentRepository;
 
 
     public Long createCommunity(CreateCommunityRequest communityRequest) {
@@ -62,14 +66,23 @@ public class CommunityService {
         communityRepository.deleteById(communityId);
     }
 
-    public List<CommunityDetailResponse> getAllCommunity() {
+    public List<CommunityListResponse> getAllCommunity() {
         List<Community> communities = communityRepository.findAll();
 
         if (communities.isEmpty()) {
             throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
         }
 
-        return communityMapper.toCommunityDetailResponses(communities);
+        List<CommunityListResponse> communityListResponses = new ArrayList<>();
+
+        communities.forEach(
+            result -> {
+                int count = communityCommentRepository.countByCommunityId(result.getId());
+                communityListResponses.add(communityMapper.toCommunityListResponse(result, count));
+            }
+        );
+
+        return communityListResponses;
     }
 
     private void updateView(Long id) {

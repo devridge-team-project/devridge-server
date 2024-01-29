@@ -1,9 +1,8 @@
 package org.devridge.api.domain.community.mapper;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
+import org.devridge.api.domain.community.dto.response.CommunityListResponse;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
@@ -12,25 +11,28 @@ import org.springframework.stereotype.Component;
 public class CommunityMapper {
 
     public CommunityDetailResponse toCommunityDetailResponse(Community community) {
-        String nickName = community.getMember().getNickname();
+        Member member = community.getMember();
         return CommunityDetailResponse.builder()
-            .nickName(nickName)
-            .title(community.getTitle())
-            .content(community.getContent())
-            .views(community.getViews())
-            .createdAt(community.getCreatedAt())
-            .updatedAt(community.getUpdatedAt())
-            .build();
+                .nickName(member.getNickname())
+                .introduction(member.getIntroduction())
+                .title(community.getTitle())
+                .content(community.getContent())
+                .likeCount(community.getLikeCount())
+                .dislikeCount(community.getDislikeCount())
+                .views(community.getViews())
+                .profileImageUrl(member.getProfileImageUrl())
+                .createdAt(community.getCreatedAt())
+                .updatedAt(community.getUpdatedAt())
+                .build();
     }
 
-    public List<CommunityDetailResponse> toCommunityDetailResponses(List<Community> communityList) {
-        List<CommunityDetailResponse> communityDetailResponses = new ArrayList<>();
-        for (Community community : communityList) {
-            communityDetailResponses.add(
-                toCommunityDetailResponse(community)
-            );
-        }
-        return communityDetailResponses;
+    public CommunityListResponse toCommunityListResponse(Community community, int count) {
+        return CommunityListResponse.builder()
+                .title(community.getTitle())
+                .commentCount(Long.valueOf(count))
+                .views(community.getViews())
+                .likeCount(community.getLikeCount())
+                .build();
     }
 
     public Community toCommunity(Member member, CreateCommunityRequest communityRequest) {
