@@ -13,7 +13,6 @@ import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -39,60 +38,23 @@ public class CommunityLikeDislikeService {
 
         communityLikeDislikeRepository.findById(communityLikeDislikeId).ifPresentOrElse(
             communityLikeDislike -> {
-                if (!communityLikeDislike.getIsDeleted()) {
-                    if (communityLikeDislike.getStatus() == LikeStatus.G) {
-                        throw new DataIntegrityViolationException("이미 Like상태입니다.");
-                    }
+                LikeStatus status = communityLikeDislike.getStatus();
 
-                    if (communityLikeDislike.getStatus() == LikeStatus.B) {
-                        communityLikeDislikeRepository.updateLikeDislike(communityLikeDislikeId, LikeStatus.G);
-                    }
+                if (status == LikeStatus.G) {
+                    changeIsDeletedStatus(communityLikeDislike);
                 }
 
-                if (communityLikeDislike.getIsDeleted()) {
-                    communityLikeDislikeRepository.restoreById(communityLikeDislikeId);
-
-                    if (communityLikeDislike.getStatus() == LikeStatus.B) {
-                        communityLikeDislikeRepository.updateLikeDislike(communityLikeDislikeId, LikeStatus.G);
+                if (status == LikeStatus.B) {
+                    if (communityLikeDislike.getIsDeleted()) {
+                        communityLikeDislikeRepository.restoreById(communityLikeDislikeId);
                     }
+                    communityLikeDislikeRepository.updateLikeDislike(communityLikeDislikeId, LikeStatus.G);
                 }
             },
             () -> {
                 CommunityLikeDislike communityLikeDislike
                     = communityLikeDislikeMapper.toCommunityLikeDislike(community, member, LikeStatus.G);
                 communityLikeDislikeRepository.save(communityLikeDislike);
-            }
-        );
-        updateLikeDislike(communityLikeDislikeId);
-    }
-
-    @Transactional
-    public void deleteCommunityLike(Long communityId) {
-        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(accessMemberId);
-        Community community = getCommunityById(communityId);
-        CommunityLikeDislikeId communityLikeDislikeId = new CommunityLikeDislikeId(member.getId(), community.getId());
-
-        if (!accessMemberId.equals(community.getMember().getId())) {
-            throw new AccessDeniedException("거부된 접근입니다.");
-        }
-
-        communityLikeDislikeRepository.findById(communityLikeDislikeId).ifPresentOrElse(
-            communityLikeDislike -> {
-                if (communityLikeDislike.getIsDeleted()) {
-                    throw new EntityNotFoundException("삭제할 Like가 없습니다.");
-                }
-
-                if (communityLikeDislike.getStatus() == LikeStatus.B) {
-                    throw new DataIntegrityViolationException("삭제할 Like가 없습니다.");
-                }
-
-                if (communityLikeDislike.getStatus() == LikeStatus.G) {
-                    communityLikeDislikeRepository.deleteById(communityLikeDislikeId);
-                }
-            },
-            () -> {
-                throw new EntityNotFoundException("엔티티가 존재하지 않습니다.");
             }
         );
         updateLikeDislike(communityLikeDislikeId);
@@ -111,22 +73,17 @@ public class CommunityLikeDislikeService {
 
         communityLikeDislikeRepository.findById(communityLikeDislikeId).ifPresentOrElse(
             communityLikeDislike -> {
-                if (!communityLikeDislike.getIsDeleted()) {
-                    if (communityLikeDislike.getStatus() == LikeStatus.B) {
-                        throw new DataIntegrityViolationException("이미 Dislike상태입니다.");
-                    }
+                LikeStatus status = communityLikeDislike.getStatus();
 
-                    if (communityLikeDislike.getStatus() == LikeStatus.G) {
-                        communityLikeDislikeRepository.updateLikeDislike(communityLikeDislikeId, LikeStatus.B);
+                if (status == LikeStatus.G) {
+                    if (communityLikeDislike.getIsDeleted()) {
+                        communityLikeDislikeRepository.restoreById(communityLikeDislikeId);
                     }
+                    communityLikeDislikeRepository.updateLikeDislike(communityLikeDislikeId, LikeStatus.B);
                 }
 
-                if (communityLikeDislike.getIsDeleted()) {
-                    communityLikeDislikeRepository.restoreById(communityLikeDislikeId);
-
-                    if (communityLikeDislike.getStatus() == LikeStatus.G) {
-                        communityLikeDislikeRepository.updateLikeDislike(communityLikeDislikeId, LikeStatus.B);
-                    }
+                if (status == LikeStatus.B) {
+                    changeIsDeletedStatus(communityLikeDislike);
                 }
             },
             () -> {
@@ -138,36 +95,13 @@ public class CommunityLikeDislikeService {
         updateLikeDislike(communityLikeDislikeId);
     }
 
-    @Transactional
-    public void deleteCommunityDislike(Long communityId) {
-        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(accessMemberId);
-        Community community = getCommunityById(communityId);
-        CommunityLikeDislikeId communityLikeDislikeId = new CommunityLikeDislikeId(member.getId(), community.getId());
-
-        if (!accessMemberId.equals(community.getMember().getId())) {
-            throw new AccessDeniedException("거부된 접근입니다.");
+    private void changeIsDeletedStatus(CommunityLikeDislike communityLikeDislike) {
+        if (communityLikeDislike.getIsDeleted()) {
+            communityLikeDislikeRepository.restoreById(communityLikeDislike.getId());
         }
-
-        communityLikeDislikeRepository.findById(communityLikeDislikeId).ifPresentOrElse(
-            communityLikeDislike -> {
-                if (communityLikeDislike.getIsDeleted()) {
-                    throw new EntityNotFoundException("삭제할 Dislike가 없습니다.");
-                }
-
-                if (communityLikeDislike.getStatus() == LikeStatus.G) {
-                    throw new DataIntegrityViolationException("삭제할 Dislike가 없습니다.");
-                }
-
-                if (communityLikeDislike.getStatus() == LikeStatus.B) {
-                    communityLikeDislikeRepository.deleteById(communityLikeDislikeId);
-                }
-            },
-            () -> {
-                throw new EntityNotFoundException("엔티티가 존재하지 않습니다.");
-            }
-        );
-        updateLikeDislike(communityLikeDislikeId);
+        if (!communityLikeDislike.getIsDeleted()) {
+            communityLikeDislikeRepository.deleteById(communityLikeDislike.getId());
+        }
     }
 
     private Member getMemberById(Long memberId) {
