@@ -34,6 +34,8 @@ public class CommunityComment extends BaseEntity {
 
     private Long likeCount;
 
+    private Long dislikeCount;
+
     @Builder
     public CommunityComment(Community community, Member member, String content) {
         this.community = community;
