@@ -1,9 +1,12 @@
 package org.devridge.api.domain.community.entity;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,6 +40,9 @@ public class Community extends BaseEntity {
     private Long likeCount;
 
     private Long dislikeCount;
+
+    @OneToMany(mappedBy = "community")
+    private List<CommunityComment> comments = new ArrayList<>();
 
     @Builder
     public Community(Member member, String title, String content) {

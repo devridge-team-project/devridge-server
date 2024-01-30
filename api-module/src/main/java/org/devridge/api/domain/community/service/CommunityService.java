@@ -1,6 +1,5 @@
 package org.devridge.api.domain.community.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -68,16 +67,7 @@ public class CommunityService {
 
     public List<CommunityListResponse> getAllCommunity() {
         List<Community> communities = communityRepository.findAll();
-        List<CommunityListResponse> communityListResponses = new ArrayList<>();
-
-        communities.forEach(
-            result -> {
-                int count = communityCommentRepository.countByCommunityId(result.getId());
-                communityListResponses.add(communityMapper.toCommunityListResponse(result, count));
-            }
-        );
-
-        return communityListResponses;
+        return communityMapper.toCommunityListResponses(communities);
     }
 
     private void updateView(Long id) {

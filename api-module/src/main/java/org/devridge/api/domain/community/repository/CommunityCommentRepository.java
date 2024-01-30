@@ -13,8 +13,6 @@ public interface CommunityCommentRepository extends JpaRepository<CommunityComme
 
     List<CommunityComment> findByCommunityId(Long communityId);
 
-    int countByCommunityId(Long id);
-
     @Modifying
     @Query(
         value = "UPDATE CommunityComment " +

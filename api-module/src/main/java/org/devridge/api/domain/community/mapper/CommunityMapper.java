@@ -1,5 +1,7 @@
 package org.devridge.api.domain.community.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
 import org.devridge.api.domain.community.dto.response.CommunityListResponse;
@@ -26,13 +28,23 @@ public class CommunityMapper {
                 .build();
     }
 
-    public CommunityListResponse toCommunityListResponse(Community community, int count) {
+    public CommunityListResponse toCommunityListResponse(Community community) {
         return CommunityListResponse.builder()
                 .title(community.getTitle())
-                .commentCount(Long.valueOf(count))
+                .commentCount(Long.valueOf(community.getComments().size()))
                 .views(community.getViews())
                 .likeCount(community.getLikeCount())
                 .build();
+    }
+
+    public List<CommunityListResponse> toCommunityListResponses(List<Community> communities) {
+        List<CommunityListResponse> communityListResponses = new ArrayList<>();
+        communities.forEach(
+            result -> {
+                communityListResponses.add(toCommunityListResponse(result));
+            }
+        );
+        return communityListResponses;
     }
 
     public Community toCommunity(Member member, CreateCommunityRequest communityRequest) {
@@ -42,6 +54,4 @@ public class CommunityMapper {
             .member(member)
             .build();
     }
-
-
 }
