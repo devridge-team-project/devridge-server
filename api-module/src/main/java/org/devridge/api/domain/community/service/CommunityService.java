@@ -68,11 +68,6 @@ public class CommunityService {
 
     public List<CommunityListResponse> getAllCommunity() {
         List<Community> communities = communityRepository.findAll();
-
-        if (communities.isEmpty()) {
-            throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
-        }
-
         List<CommunityListResponse> communityListResponses = new ArrayList<>();
 
         communities.forEach(
