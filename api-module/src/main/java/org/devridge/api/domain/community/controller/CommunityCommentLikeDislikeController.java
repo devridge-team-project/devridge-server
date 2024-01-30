@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/community/{communityId}/comment/{commentId}")
+@RequestMapping("/api/community/{communityId}/comments/{commentId}")
 @RestController
 public class CommunityCommentLikeDislikeController {
 

@@ -16,13 +16,13 @@ public class CommunityLikeDislikeController {
     private final CommunityLikeDislikeService communityLikeDislikeService;
 
     @PostMapping("/like")
-    public ResponseEntity createCommunityLike(@PathVariable Long communityId) {
+    public ResponseEntity<Void> createCommunityLike(@PathVariable Long communityId) {
         communityLikeDislikeService.createCommunityLike(communityId);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/dislike")
-    public ResponseEntity createCommunityDislike(@PathVariable Long communityId) {
+    public ResponseEntity<Void> createCommunityDislike(@PathVariable Long communityId) {
         communityLikeDislikeService.createCommunityDislike(communityId);
         return ResponseEntity.ok().build();
     }
