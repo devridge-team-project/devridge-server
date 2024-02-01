@@ -35,7 +35,7 @@ public class S3Service {
 
         s3Client.putObject(request);
 
-        return new UploadImageResponse(s3Client.getUrl(bucketName, fileName).toString());
+        return new UploadImageResponse(fileName);
     }
 
     public void deleteImage(String name) {
