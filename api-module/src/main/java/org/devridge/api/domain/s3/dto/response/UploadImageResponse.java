@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class UploadImageResponse {
 
-    private String imageUrl;
+    private String imagePath;
 
-    public UploadImageResponse(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public UploadImageResponse(String imagePath) {
+        this.imagePath = imagePath;
     }
 }
