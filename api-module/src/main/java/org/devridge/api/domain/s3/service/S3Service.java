@@ -24,9 +24,6 @@ public class S3Service {
     @Value("${devridge.s3.bucketName}")
     private String bucketName;
 
-    @Value("${devridge.s3.urlPrefix}")
-    private String urlPrefix;
-
     public UploadImageResponse uploadImage(MultipartFile image) throws IOException {
         String fileName = this.getFileName(image);
         ObjectMetadata objectMetadata = this.getObjectMetadata(image);
@@ -37,7 +34,7 @@ public class S3Service {
 
         s3Client.putObject(request);
 
-        return new UploadImageResponse(urlPrefix + "/" + fileName);
+        return new UploadImageResponse(s3Client.getUrl(bucketName, fileName).toString());
     }
 
     private String getFileName(MultipartFile image) {
