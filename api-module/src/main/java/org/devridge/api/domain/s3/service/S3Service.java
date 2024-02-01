@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.s3.dto.response.UploadImageResponse;
+import org.devridge.common.exception.DataNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +36,16 @@ public class S3Service {
         s3Client.putObject(request);
 
         return new UploadImageResponse(s3Client.getUrl(bucketName, fileName).toString());
+    }
+
+    public void deleteImage(String name) {
+        boolean isExist = s3Client.doesObjectExist(bucketName, name);
+
+        if (isExist) {
+            s3Client.deleteObject(bucketName, name);
+        } else {
+            throw new DataNotFoundException();
+        }
     }
 
     private String getFileName(MultipartFile image, String imagePath) {
