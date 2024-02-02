@@ -2,6 +2,7 @@ package org.devridge.api.domain.community.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -43,6 +44,9 @@ public class Community extends BaseEntity {
 
     @OneToMany(mappedBy = "community")
     private List<CommunityComment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommunityHashtag> hashtags = new ArrayList<>();
 
     @Builder
     public Community(Member member, String title, String content) {
