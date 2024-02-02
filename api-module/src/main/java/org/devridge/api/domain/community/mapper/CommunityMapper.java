@@ -15,6 +15,7 @@ public class CommunityMapper {
     public CommunityDetailResponse toCommunityDetailResponse(Community community) {
         Member member = community.getMember();
         return CommunityDetailResponse.builder()
+                .id(community.getId())
                 .nickName(member.getNickname())
                 .introduction(member.getIntroduction())
                 .title(community.getTitle())
@@ -30,6 +31,7 @@ public class CommunityMapper {
 
     public CommunityListResponse toCommunityListResponse(Community community) {
         return CommunityListResponse.builder()
+                .id(community.getId())
                 .title(community.getTitle())
                 .commentCount(Long.valueOf(community.getComments().size()))
                 .views(community.getViews())

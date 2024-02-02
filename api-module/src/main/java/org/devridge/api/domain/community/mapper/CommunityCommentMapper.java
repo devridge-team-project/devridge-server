@@ -15,21 +15,26 @@ public class CommunityCommentMapper {
     public List<CommunityCommentResponse> toCommentResponses(List<CommunityComment> communityComments) {
         List<CommunityCommentResponse> commentResponses = new ArrayList<>();
         for (CommunityComment comment : communityComments) {
-            Member member = comment.getMember();
             commentResponses.add(
-                CommunityCommentResponse.builder()
-                    .nickName(member.getNickname())
-                    .introduction(member.getIntroduction())
-                    .profileImageUrl(member.getProfileImageUrl())
-                    .likeCount(comment.getLikeCount())
-                    .dislikeCount(comment.getDislikeCount())
-                    .createdAt(comment.getCreatedAt())
-                    .updatedAt(comment.getUpdatedAt())
-                    .content(comment.getContent())
-                    .build()
+                toCommentResponse(comment)
             );
         }
         return commentResponses;
+    }
+
+    public CommunityCommentResponse toCommentResponse(CommunityComment comment) {
+        Member member = comment.getMember();
+        return CommunityCommentResponse.builder()
+                .id(comment.getId())
+                .nickName(member.getNickname())
+                .introduction(member.getIntroduction())
+                .profileImageUrl(member.getProfileImageUrl())
+                .likeCount(comment.getLikeCount())
+                .dislikeCount(comment.getDislikeCount())
+                .createdAt(comment.getCreatedAt())
+                .updatedAt(comment.getUpdatedAt())
+                .content(comment.getContent())
+                .build();
     }
 
     public CommunityComment toCommunityComment(Community community, Member member, CommunityCommentRequest Request) {
