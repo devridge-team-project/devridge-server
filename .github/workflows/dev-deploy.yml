@@ -47,7 +47,7 @@ jobs:
       - name: Build Docker & push
         run: |
           cd ./api-module
-          java -Djarmode=layertools -jar build/libs/${{ secrets.DOCKER_PASSWORD }} extract
+          java -Djarmode=layertools -jar build/libs/${{ secrets.JAR_NAME }} extract
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-blue .
           docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-green .
