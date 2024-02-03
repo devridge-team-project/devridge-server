@@ -88,6 +88,13 @@ public class CommunityService {
     }
 
     @Transactional
+    public Long createCommunityAndHashtag(CreateCommunityRequest communityRequest) {
+        Long communityId = createCommunity(communityRequest);
+        createHashtag(communityId, communityRequest.getHashtags());
+        return communityId;
+    }
+
+    @Transactional
     public void createHashtag(Long communityId, List<String> words) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
         Member member = getMemberById(accessMemberId);

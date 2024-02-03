@@ -26,8 +26,8 @@ public class CommunityController {
     private final CommunityService communityService;
 
     @PostMapping
-    public ResponseEntity<Void> createCommunity(@Valid @RequestBody CreateCommunityRequest communityRequest) {
-        Long communityId = communityService.createCommunity(communityRequest);
+    public ResponseEntity<Void> createCommunityAndHashtag(@Valid @RequestBody CreateCommunityRequest communityRequest) {
+        Long communityId = communityService.createCommunityAndHashtag(communityRequest);
         return ResponseEntity.created(URI.create("/api/community/" + communityId)).build();
     }
 
