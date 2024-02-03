@@ -18,16 +18,6 @@ public class CommunityHashtagController {
 
     private final CommunityHashtagService communityHashtagService;
 
-    @PostMapping("/api/community/{communityId}/hashtag")
-    public ResponseEntity<?> createHashtag
-        (
-            @PathVariable Long communityId,
-            @RequestBody hashtagRequest hashtagRequest
-        ) {
-        communityHashtagService.createHashtag(communityId, hashtagRequest.getHashtags());
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping("/api/community/{communityId}/hashtag/{hashtagId}")
     public ResponseEntity<List<CommunityListResponse>> getHashtagToCommunityList(
         @PathVariable Long communityId,

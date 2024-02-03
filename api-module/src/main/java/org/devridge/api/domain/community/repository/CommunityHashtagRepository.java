@@ -13,6 +13,8 @@ public interface CommunityHashtagRepository extends JpaRepository<CommunityHasht
 
     void deleteByCommunityId(Long communityId);
 
+    List<CommunityHashtag> findAllByCommunityId(Long communityID);
+
     @Modifying
     @Query(
         nativeQuery = true,
@@ -25,8 +27,8 @@ public interface CommunityHashtagRepository extends JpaRepository<CommunityHasht
     @Query(
         nativeQuery = true,
         value = "SELECT * " +
-            "FROM community_hashtag " +
-            "WHERE community_id = :CommunityId AND hashtag_id = :HashtagId"
+                "FROM community_hashtag " +
+                "WHERE community_id = :CommunityId AND hashtag_id = :HashtagId"
     )
     Optional<CommunityHashtag> findByCommunityIdAndHashtagId(@Param("CommunityId") Long CommunityId, @Param("HashtagId")Long HashtagId);
 
