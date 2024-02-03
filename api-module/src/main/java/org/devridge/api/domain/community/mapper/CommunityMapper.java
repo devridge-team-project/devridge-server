@@ -2,6 +2,7 @@ package org.devridge.api.domain.community.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
 import org.devridge.api.domain.community.dto.response.CommunityListResponse;
@@ -26,7 +27,14 @@ public class CommunityMapper {
                 .profileImageUrl(member.getProfileImageUrl())
                 .createdAt(community.getCreatedAt())
                 .updatedAt(community.getUpdatedAt())
+                .hashtags(toHashtags(community))
                 .build();
+    }
+
+    public List<String> toHashtags(Community community) {
+        return community.getHashtags().stream().map(
+            result -> result.getHashtag().getWord()
+        ).distinct().collect(Collectors.toList());
     }
 
     public CommunityListResponse toCommunityListResponse(Community community) {
@@ -51,9 +59,9 @@ public class CommunityMapper {
 
     public Community toCommunity(Member member, CreateCommunityRequest communityRequest) {
         return Community.builder()
-            .title(communityRequest.getTitle())
-            .content(communityRequest.getContent())
-            .member(member)
-            .build();
+                .title(communityRequest.getTitle())
+                .content(communityRequest.getContent())
+                .member(member)
+                .build();
     }
 }

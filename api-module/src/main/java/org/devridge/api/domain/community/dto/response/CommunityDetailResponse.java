@@ -1,6 +1,7 @@
 package org.devridge.api.domain.community.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -19,4 +20,5 @@ public class CommunityDetailResponse {
     private String introduction;
     private Long likeCount;
     private Long dislikeCount;
+    private List<String> hashtags;
 }
