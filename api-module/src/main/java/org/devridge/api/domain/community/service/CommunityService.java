@@ -33,8 +33,8 @@ public class CommunityService {
     private final HashtagRepository hashtagRepository;
 
     public Long createCommunity(CreateCommunityRequest communityRequest) {
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(writeMemberId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        Member member = getMemberById(accessMemberId);
         Community community = communityMapper.toCommunity(member, communityRequest);
         return communityRepository.save(community).getId();
     }
@@ -47,11 +47,11 @@ public class CommunityService {
     }
 
     public void updateCommunity(Long communityId, CreateCommunityRequest communityRequest) {
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        getMemberById(writeMemberId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
         Community community = getCommunityById(communityId);
 
-        if (!writeMemberId.equals(community.getMember().getId())) {
+        if (!accessMemberId.equals(community.getMember().getId())) {
             throw new AccessDeniedException("거부된 접근입니다.");
         }
 
@@ -60,10 +60,10 @@ public class CommunityService {
     }
 
     public void deleteCommunity(Long communityId) {
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
         Community community = getCommunityById(communityId);
 
-        if (!writeMemberId.equals(community.getMember().getId())) {
+        if (!accessMemberId.equals(community.getMember().getId())) {
             throw new AccessDeniedException("거부된 접근입니다.");
         }
 
