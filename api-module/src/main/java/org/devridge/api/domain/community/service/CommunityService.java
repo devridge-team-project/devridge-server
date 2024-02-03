@@ -67,6 +67,10 @@ public class CommunityService {
             throw new AccessDeniedException("거부된 접근입니다.");
         }
 
+        List<CommunityHashtag> communityHashtags = communityHashtagRepository.findAllByCommunityId(communityId); // 삭제전 communityHashtag
+        communityHashtagRepository.deleteByCommunityId(communityId);
+        updateByHashtagIds(communityHashtags);
+
         communityRepository.deleteById(communityId);
     }
 
@@ -95,6 +99,12 @@ public class CommunityService {
     }
 
     @Transactional
+    public void updateCommunityAndHashtag(Long communityId, CreateCommunityRequest communityRequest) {
+        updateCommunity(communityId, communityRequest);
+        createHashtag(communityId, communityRequest.getHashtags());
+    }
+
+    @Transactional
     public void createHashtag(Long communityId, List<String> words) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
         Member member = getMemberById(accessMemberId);
@@ -114,10 +124,14 @@ public class CommunityService {
             communityHashtags.add(communityHashtag);
         }
 
+        updateByHashtagIds(communityHashtags);
+    }
+
+    public void updateByHashtagIds(List<CommunityHashtag> communityHashtags) {
         List<Long> hashtagIds = deduplicationCommunityHashtags(communityHashtags);  // todo: hashtagId로 업데이트하면될듯  <- 변경된 부분에 대한 아이디임 생성 수정 삭제 모두 포함
 
         for (Long hashtagId : hashtagIds) {
-            hashtagRepository.updateHashtagCount(hashtagId);
+            hashtagRepository.updateCountByHashtagId(hashtagId);
         }
     }
 

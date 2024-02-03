@@ -17,5 +17,5 @@ public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
                 "SET h.count = h.hashtags.size " +
                 "WHERE h.id = :hashtagId"
     )
-    void updateHashtagCount(@Param("hashtagId") Long hashtagId);
+    void updateCountByHashtagId(@Param("hashtagId") Long hashtagId);
 }

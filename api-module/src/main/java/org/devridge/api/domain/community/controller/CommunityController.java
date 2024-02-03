@@ -42,7 +42,7 @@ public class CommunityController {
         @PathVariable Long communityId,
         @Valid @RequestBody CreateCommunityRequest communityRequest
     ) {
-        communityService.updateCommunity(communityId, communityRequest);
+        communityService.updateCommunityAndHashtag(communityId, communityRequest);
         return ResponseEntity.ok().build();
     }
 
