@@ -1,6 +1,6 @@
 package org.devridge.api.domain.sociallogin.strategy.member;
 
-import org.devridge.api.domain.sociallogin.dto.response.OAuth2TokenResponse;
+import org.devridge.api.domain.sociallogin.dto.response.oauth.OAuth2TokenResponse;
 
 import java.util.Map;
 

@@ -3,7 +3,7 @@ package org.devridge.api.domain.sociallogin.strategy.token;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.sociallogin.config.GoogleOAuth2Properties;
 import org.devridge.api.domain.sociallogin.dto.request.SocialLoginRequest;
-import org.devridge.api.domain.sociallogin.dto.response.OAuth2TokenResponse;
+import org.devridge.api.domain.sociallogin.dto.response.oauth.OAuth2TokenResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
