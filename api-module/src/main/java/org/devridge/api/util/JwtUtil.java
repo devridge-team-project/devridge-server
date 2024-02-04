@@ -6,6 +6,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.domain.sociallogin.entity.OAuth2Member;
 import org.devridge.api.security.auth.AuthProperties;
 
 import java.security.Key;
@@ -37,6 +38,16 @@ public class JwtUtil {
                 .setClaims(createRefreshTokenClaims(member))
                 .setExpiration(createTokenExpiration(REFRESH_TOKEN_VALIDITY_TIME))
                 .signWith(createSigningKey(AuthProperties.getRefreshSecret()), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public static String createTemporaryJwt(OAuth2Member oAuth2MemberInfo) {
+        return Jwts.builder()
+                .setSubject("temporaryJwt")
+                .claim("memberEmail", oAuth2MemberInfo.getEmail())
+                .claim("provider", oAuth2MemberInfo.getProvider())
+                .setExpiration(createTokenExpiration(TOKEN_VALIDITY_TIME_IN_HOURS))
+                .signWith(createSigningKey(AuthProperties.getAccessSecret()), SignatureAlgorithm.HS256)
                 .compact();
     }
 
