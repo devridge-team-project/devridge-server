@@ -74,4 +74,10 @@ public class GlobalExceptionHandler {
         BaseErrorResponse response = new BaseErrorResponse(e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
+
+    @ExceptionHandler(AccessTokenInvalidException.class)
+    public ResponseEntity<BaseErrorResponse> handleAccessDeniedException(AccessTokenInvalidException e) {
+        BaseErrorResponse response = new BaseErrorResponse(e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }
