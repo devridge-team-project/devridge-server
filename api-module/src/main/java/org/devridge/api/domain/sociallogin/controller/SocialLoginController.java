@@ -2,8 +2,12 @@ package org.devridge.api.domain.sociallogin.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.sociallogin.dto.request.SocialLoginRequest;
+import org.devridge.api.domain.sociallogin.dto.request.SocialLoginSignUp;
+import org.devridge.api.domain.sociallogin.dto.response.SocialLoginRedirect;
 import org.devridge.api.domain.sociallogin.dto.response.SocialLoginResponse;
 import org.devridge.api.domain.sociallogin.service.SocialLoginService;
+import org.devridge.api.security.dto.TokenResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,10 +24,24 @@ public class SocialLoginController {
     private final SocialLoginService socialLoginService;
 
     @PostMapping
-    public ResponseEntity<SocialLoginResponse> signIn(
-            @RequestBody @Valid SocialLoginRequest socialLoginRequest
+    public ResponseEntity<?> signIn(@RequestBody @Valid SocialLoginRequest socialLoginRequest) {
+       SocialLoginResponse data = socialLoginService.signIn(socialLoginRequest);
+
+       if (data.isRedirect()) {
+           SocialLoginRedirect result = new SocialLoginRedirect(data.getRedirectUri());
+           return ResponseEntity.status(HttpStatus.MULTIPLE_CHOICES).body(result);
+       }
+
+       return ResponseEntity.status(HttpStatus.OK).body(
+               new TokenResponse(data.getAccessToken())
+       );
+    }
+
+    @PostMapping("/signUp")
+    public ResponseEntity<TokenResponse> createMemberAndLogin(
+            @RequestBody @Valid SocialLoginSignUp socialLoginRequest
     ) {
-       SocialLoginResponse result = socialLoginService.signIn(socialLoginRequest);
-       return ResponseEntity.ok().body(result);
+        TokenResponse result = socialLoginService.signUpAndLogin(socialLoginRequest);
+        return ResponseEntity.ok().body(result);
     }
 }
