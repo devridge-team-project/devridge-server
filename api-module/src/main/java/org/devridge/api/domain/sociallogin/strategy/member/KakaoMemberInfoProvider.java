@@ -1,6 +1,6 @@
 package org.devridge.api.domain.sociallogin.strategy.member;
 
-import org.devridge.api.domain.sociallogin.dto.response.OAuth2TokenResponse;
+import org.devridge.api.domain.sociallogin.dto.response.oauth.OAuth2TokenResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;

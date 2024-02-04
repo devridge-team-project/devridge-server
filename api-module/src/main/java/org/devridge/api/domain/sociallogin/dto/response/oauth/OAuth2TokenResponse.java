@@ -1,4 +1,4 @@
-package org.devridge.api.domain.sociallogin.dto.response;
+package org.devridge.api.domain.sociallogin.dto.response.oauth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
