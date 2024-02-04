@@ -1,7 +1,7 @@
 package org.devridge.api.domain.sociallogin.context;
 
 import org.devridge.api.domain.sociallogin.dto.request.SocialLoginRequest;
-import org.devridge.api.domain.sociallogin.dto.response.OAuth2TokenResponse;
+import org.devridge.api.domain.sociallogin.dto.response.oauth.OAuth2TokenResponse;
 import org.devridge.api.domain.sociallogin.strategy.token.GoogleTokenProvider;
 import org.devridge.api.domain.sociallogin.strategy.token.KakaoTokenProvider;
 import org.devridge.api.domain.sociallogin.strategy.token.NaverTokenProvider;
