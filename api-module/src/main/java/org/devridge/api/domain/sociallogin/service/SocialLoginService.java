@@ -81,6 +81,7 @@ public class SocialLoginService {
         return refreshTokenRepository.save(newRefreshToken);
     }
 
+    // TODO : skillId, occupationId 검사 : 메모리
     public TokenResponse signUpAndLogin(SocialLoginSignUp socialLoginRequest) {
         checkDuplNickname(socialLoginRequest.getNickname());
 
