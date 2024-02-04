@@ -26,6 +26,5 @@ public class MemberResponse {
             this.introduction = introduction;
             this.skillIds = skillIds;
             this.occupation = occupation;
-        }
     }
 }
