@@ -47,7 +47,6 @@ public class NaverTokenProvider implements OAuth2TokenStrategy {
         formData.add("grant_type", "authorization_code");
         formData.add("client_id", clientRegistration.getClientId());
         formData.add("client_secret", clientRegistration.getClientSecret());
-        formData.add("redirect_uri", clientRegistration.getRedirectUri());
         formData.add("code", loginRequest.getCode());
 
         return formData;

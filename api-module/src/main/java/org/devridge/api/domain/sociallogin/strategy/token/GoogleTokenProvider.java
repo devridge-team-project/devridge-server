@@ -9,6 +9,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+
 @Component
 @RequiredArgsConstructor
 public class GoogleTokenProvider implements OAuth2TokenStrategy {
@@ -17,9 +20,7 @@ public class GoogleTokenProvider implements OAuth2TokenStrategy {
 
     @Override
     public OAuth2TokenResponse getToken(SocialLoginRequest loginRequest) {
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-
-        createFormData(loginRequest, formData);
+        MultiValueMap<String, String> formData = createFormData(loginRequest);
 
         return WebClient.create().
                 post()
@@ -30,11 +31,16 @@ public class GoogleTokenProvider implements OAuth2TokenStrategy {
                 .block();
     }
 
-    private void createFormData(SocialLoginRequest loginRequest, MultiValueMap<String, String> formData) {
-        formData.add("code", loginRequest.getCode());
+    private MultiValueMap<String, String> createFormData(SocialLoginRequest loginRequest) {
+        String code = URLDecoder.decode(loginRequest.getCode(), StandardCharsets.UTF_8);
+
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("code", code);
         formData.add("client_id", googleOAuth2Properties.getClientId());
         formData.add("client_secret", googleOAuth2Properties.getClientSecret());
         formData.add("redirect_uri", googleOAuth2Properties.getRedirectUri());
         formData.add("grant_type", googleOAuth2Properties.getGrantType());
+
+        return formData;
     }
 }
