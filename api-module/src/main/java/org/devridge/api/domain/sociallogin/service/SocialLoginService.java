@@ -17,6 +17,7 @@ import org.devridge.api.domain.sociallogin.dto.response.oauth.OAuth2TokenRespons
 import org.devridge.api.domain.sociallogin.dto.response.SocialLoginResponse;
 import org.devridge.api.domain.sociallogin.entity.OAuth2Member;
 import org.devridge.api.exception.member.AccessTokenInvalidException;
+import org.devridge.api.exception.member.DuplNicknameException;
 import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.AccessTokenUtil;
 import org.devridge.api.util.JwtUtil;
@@ -81,6 +82,8 @@ public class SocialLoginService {
     }
 
     public TokenResponse signUpAndLogin(SocialLoginSignUp socialLoginRequest) {
+        checkDuplNickname(socialLoginRequest.getNickname());
+
         Claims claims = checkTempJwt(socialLoginRequest);
 
         String memberEmail = (String) claims.get("memberEmail");
@@ -92,6 +95,12 @@ public class SocialLoginService {
         String accessToken = JwtUtil.createAccessToken(member, refreshToken.getId());
 
         return new TokenResponse(accessToken);
+    }
+
+    private void checkDuplNickname(String nickname) {
+        if (memberRepository.findByNickname(nickname).isPresent()) {
+            throw new DuplNicknameException();
+        }
     }
 
     private static Claims checkTempJwt(SocialLoginSignUp socialLoginRequest) {
