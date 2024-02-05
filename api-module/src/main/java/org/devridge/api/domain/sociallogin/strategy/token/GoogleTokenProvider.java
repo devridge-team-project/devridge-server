@@ -22,8 +22,8 @@ public class GoogleTokenProvider implements OAuth2TokenStrategy {
     public OAuth2TokenResponse getToken(SocialLoginRequest loginRequest) {
         MultiValueMap<String, String> formData = createFormData(loginRequest);
 
-        return WebClient.create().
-                post()
+        return WebClient.create()
+                .post()
                 .uri(googleOAuth2Properties.getTokenUri())
                 .bodyValue(formData)
                 .retrieve()

@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PasswordNotMatchException.class)
     public ResponseEntity<BaseErrorResponse> handleException(PasswordNotMatchException e) {
         BaseErrorResponse response = new BaseErrorResponse("password does not match.");
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(SkillsNotValidException.class)
@@ -42,13 +42,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DuplEmailException.class)
     public ResponseEntity<BaseErrorResponse> handleException(DuplEmailException e) {
         BaseErrorResponse response = new BaseErrorResponse("email already exists.");
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(DuplNicknameException.class)
     public ResponseEntity<BaseErrorResponse> handleException(DuplNicknameException e) {
         BaseErrorResponse response = new BaseErrorResponse("nickname already exists.");
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(MemberNotFoundException.class)
@@ -78,6 +78,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessTokenInvalidException.class)
     public ResponseEntity<BaseErrorResponse> handleAccessDeniedException(AccessTokenInvalidException e) {
         BaseErrorResponse response = new BaseErrorResponse(e.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 }
