@@ -115,12 +115,12 @@ public class CommunityService {
             throw new AccessDeniedException("거부된 접근입니다.");
         }
 
-        List<CommunityHashtag> communityHashtags = communityHashtagRepository.findAllByCommunityId(communityId); // 삭제전 communityHashtag
+        List<CommunityHashtag> communityHashtags = communityHashtagRepository.findAllByCommunityId(communityId);
 
-        communityHashtagRepository.deleteByCommunityId(communityId); // 수정을 위해 softDelete
+        communityHashtagRepository.deleteByCommunityId(communityId);
 
         for (String word : words) {
-            Hashtag hashtag = validateHashtagAndSave(word);  // hashtag 있는지 확인후 반환, 없으면 저장 후 반환
+            Hashtag hashtag = validateHashtagAndSave(word);
             CommunityHashtag communityHashtag = saveOrRestoreCommunityHashtag(community, hashtag);
             communityHashtags.add(communityHashtag);
         }
@@ -129,7 +129,7 @@ public class CommunityService {
     }
 
     public void updateByHashtagIds(List<CommunityHashtag> communityHashtags) {
-        List<Long> hashtagIds = deduplicationCommunityHashtags(communityHashtags);  // todo: hashtagId로 업데이트하면될듯  <- 변경된 부분에 대한 아이디임 생성 수정 삭제 모두 포함
+        List<Long> hashtagIds = deduplicationCommunityHashtags(communityHashtags);
 
         for (Long hashtagId : hashtagIds) {
             hashtagRepository.updateCountByHashtagId(hashtagId);
@@ -153,7 +153,7 @@ public class CommunityService {
             .orElseGet(() -> communityHashtagRepository.save(new CommunityHashtag(community, hashtag)));
     }
 
-    private Hashtag validateHashtagAndSave(String word) { // hashtag 검증 및 저장
+    private Hashtag validateHashtagAndSave(String word) {
         return hashtagRepository.findByWord(word).orElseGet(() -> hashtagRepository.save(new Hashtag(word)));
     }
 }

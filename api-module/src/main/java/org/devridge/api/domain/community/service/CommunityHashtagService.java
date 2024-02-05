@@ -17,14 +17,13 @@ public class CommunityHashtagService {
     private final CommunityHashtagRepository communityHashtagRepository;
     private final CommunityMapper communityMapper;
 
-    public List<CommunityListResponse> getHashtagToCommunityList(Long hashtagId) { // 태그 이름을 받아서 or 나중에 id를 받아서?
-        List<CommunityHashtag> communityHashtags = communityHashtagRepository.findAllByHashtagId(
-            hashtagId); // 관련 커뮤니티 구하기
+    public List<CommunityListResponse> getHashtagToCommunityList(Long hashtagId) {
+        List<CommunityHashtag> communityHashtags = communityHashtagRepository.findAllByHashtagId(hashtagId);
 
-        List<Community> communities = communityHashtags.stream() // 커뮤니티로 변환
+        List<Community> communities = communityHashtags.stream()
             .map(CommunityHashtag::getCommunity)
             .collect(Collectors.toList());
 
-        return communityMapper.toCommunityListResponses(communities); // 커뮤니티 목록 dto 반환
+        return communityMapper.toCommunityListResponses(communities);
     }
 }

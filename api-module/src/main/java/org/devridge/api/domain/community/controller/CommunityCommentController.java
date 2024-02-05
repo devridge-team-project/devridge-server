@@ -24,7 +24,7 @@ public class CommunityCommentController {
 
     private final CommunityCommentService communityCommentService;
 
-    @PostMapping//todo: memberId 검증방법
+    @PostMapping
     public ResponseEntity<Void> createComment(
         @Valid @RequestBody CommunityCommentRequest commentRequest,
         @PathVariable Long communityId
