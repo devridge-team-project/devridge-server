@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.entity.BaseEntity;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -32,8 +33,10 @@ public class CommunityComment extends BaseEntity {
 
     private String content;
 
+    @ColumnDefault("0")
     private Long likeCount;
 
+    @ColumnDefault("0")
     private Long dislikeCount;
 
     @Builder
