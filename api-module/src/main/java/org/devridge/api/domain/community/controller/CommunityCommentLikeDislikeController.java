@@ -28,7 +28,7 @@ public class CommunityCommentLikeDislikeController {
     public ResponseEntity<Void> createCommunityCommentDislike(
         @PathVariable Long communityId,
         @PathVariable Long commentId
-        ) {
+    ) {
         communityCommentLikeDislikeService.createCommunityCommentDislike(communityId, commentId);
         return ResponseEntity.ok().build();
     }

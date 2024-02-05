@@ -13,7 +13,7 @@ public interface CommunityHashtagRepository extends JpaRepository<CommunityHasht
 
     void deleteByCommunityId(Long communityId);
 
-    List<CommunityHashtag> findAllByCommunityId(Long communityID);
+    List<CommunityHashtag> findAllByCommunityId(Long communityId);
 
     @Modifying
     @Query(
