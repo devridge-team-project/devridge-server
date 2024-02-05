@@ -10,7 +10,6 @@ import org.devridge.api.exception.sociallogin.SocialLoginException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -24,10 +23,11 @@ public class OAuth2TokenContext {
             GoogleTokenProvider googleTokenProvider,
             KakaoTokenProvider kakaoTokenProvider)
     {
-        this.strategies = new HashMap<>();
-        strategies.put("naver", naverTokenProvider);
-        strategies.put("google", googleTokenProvider);
-        strategies.put("kakao", kakaoTokenProvider);
+        this.strategies = Map.of(
+                "naver", naverTokenProvider,
+                "google", googleTokenProvider,
+                "kakao", kakaoTokenProvider
+        );
     }
 
     public OAuth2TokenResponse getTokenFromAuthServer(SocialLoginRequest loginRequest) {

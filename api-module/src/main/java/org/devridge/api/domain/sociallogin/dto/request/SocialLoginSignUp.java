@@ -1,6 +1,5 @@
 package org.devridge.api.domain.sociallogin.dto.request;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +10,7 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class SocialLoginSignUp {
 
     @NotBlank(message = "빈 닉네임을 입력할 수 없습니다.")

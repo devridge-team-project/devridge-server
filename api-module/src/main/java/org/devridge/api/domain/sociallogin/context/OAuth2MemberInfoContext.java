@@ -30,11 +30,11 @@ public class OAuth2MemberInfoContext {
             KakaoMemberInfoProvider kakaoMemberInfoProvider
     )
     {
-        this.strategies = new HashMap<>();
-
-        strategies.put("naver", naverMemberInfoProvider);
-        strategies.put("google", googleMemberInfoProvider);
-        strategies.put("kakao", kakaoMemberInfoProvider);
+        this.strategies = Map.of(
+                "naver", naverMemberInfoProvider,
+                "google", googleMemberInfoProvider,
+                "kakao", kakaoMemberInfoProvider
+        );
 
         memberInfoProviderMap.put("naver", NaverMember::new);
         memberInfoProviderMap.put("google", GoogleMember::new);
