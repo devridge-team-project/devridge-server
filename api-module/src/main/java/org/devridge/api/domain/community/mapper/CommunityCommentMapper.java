@@ -25,7 +25,8 @@ public class CommunityCommentMapper {
     public CommunityCommentResponse toCommentResponse(CommunityComment comment) {
         Member member = comment.getMember();
         return CommunityCommentResponse.builder()
-                .id(comment.getId())
+                .commentId(comment.getId())
+                .memberId(member.getId())
                 .nickName(member.getNickname())
                 .introduction(member.getIntroduction())
                 .profileImageUrl(member.getProfileImageUrl())
