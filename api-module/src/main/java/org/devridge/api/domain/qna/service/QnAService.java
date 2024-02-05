@@ -20,6 +20,7 @@ import org.devridge.api.domain.qna.repository.QnAScrapRepository;
 import org.devridge.common.exception.DataNotFoundException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -48,9 +49,11 @@ public class QnAService {
         return qnaQuerydslRepository.findAllQnASortByLatest();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public GetQnADetailResponse getQnADetail(Long qnaId) {
+        qnaRepository.increaseQnAView(qnaId);
         QnA qna = this.getQnA(qnaId);
+
         return qnaMapper.toGetQnADetailResponse(qna);
     }
 

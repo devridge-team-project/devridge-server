@@ -24,4 +24,12 @@ public interface QnARepository extends JpaRepository<QnA, Long> {
                 "WHERE id = :qnaId"
     )
     void updateLikeAndDiscount(@Param("likes") int likes, @Param("dislikes") int dislikes, @Param("qnaId") Long qnaId);
+
+    @Modifying
+    @Query(
+        value = "UPDATE QnA " +
+                "SET views = views + 1 " +
+                "WHERE id = :qnaId"
+    )
+    void increaseQnAView(@Param("qnaId") Long qnaId);
 }
