@@ -51,8 +51,8 @@ public class QnAService {
 
     @Transactional
     public GetQnADetailResponse getQnADetail(Long qnaId) {
-        qnaRepository.increaseQnAView(qnaId);
         QnA qna = this.getQnA(qnaId);
+        qnaRepository.increaseQnAView(qnaId);
 
         return qnaMapper.toGetQnADetailResponse(qna);
     }

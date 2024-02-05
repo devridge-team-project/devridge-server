@@ -27,7 +27,7 @@ public class QnAMapper {
             .content(result.getContent())
             .likes(result.getLikes())
             .dislikes(result.getDislikes())
-            .views(result.getViews())
+            .views(result.getViews() + 1)
             .createdAt(result.getCreatedAt())
             .commentCount(result.getComments().size())
             .comments(this.toComments(result.getComments()))
