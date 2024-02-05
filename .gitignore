@@ -5,6 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 .env
+generated/
 
 ### STS ###
 .apt_generated
@@ -19,6 +20,11 @@ bin/
 !**/src/test/**/bin/
 **/src/main/resources/application-dev.yml
 **/src/main/resources/application-prod.yml
+
+/api-module/application/
+/api-module/dependencies/
+/api-module/spring-boot-loader/
+/api-module/snapshot-dependencies/
 
 ### IntelliJ IDEA ###
 .idea
