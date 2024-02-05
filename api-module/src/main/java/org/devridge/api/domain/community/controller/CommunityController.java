@@ -52,7 +52,7 @@ public class CommunityController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/all") // 커뮤니티 글 전체 목록 보여주기
+    @GetMapping
     public ResponseEntity<List<CommunityListResponse>> getAllCommunity() {
         List<CommunityListResponse> communityListResponses = communityService.getAllCommunity();
         return ResponseEntity.ok().body(communityListResponses);
