@@ -59,6 +59,7 @@ public class CommunityService {
         communityRepository.save(community);
     }
 
+    @Transactional
     public void deleteCommunity(Long communityId) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
         Community community = getCommunityById(communityId);
