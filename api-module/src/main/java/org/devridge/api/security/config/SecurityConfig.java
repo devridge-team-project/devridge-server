@@ -63,6 +63,7 @@ public class SecurityConfig {
         http
             .authorizeRequests()
             .antMatchers(securityConstant().ALL_PERMIT_PATHS).permitAll()
+            .antMatchers(HttpMethod.GET, "/api/hashtags/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/qna/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/occupations").permitAll()
             .antMatchers(HttpMethod.GET, "/api/community/**").permitAll()
