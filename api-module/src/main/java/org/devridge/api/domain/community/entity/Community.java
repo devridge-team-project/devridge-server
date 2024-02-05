@@ -46,7 +46,7 @@ public class Community extends BaseEntity {
     @ColumnDefault("0")
     private Long dislikeCount;
 
-    @OneToMany(mappedBy = "community")
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
     private List<CommunityComment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
