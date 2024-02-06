@@ -27,8 +27,8 @@ public class CommunityCommentService {
 
     public Long createComment(Long communityId, CommunityCommentRequest commentRequest) {
         Community community = getCommunityById(communityId);
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(writeMemberId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        Member member = getMemberById(accessMemberId);
 
         CommunityComment communityComment =
             communityCommentMapper.toCommunityComment(community, member, commentRequest);
@@ -37,21 +37,16 @@ public class CommunityCommentService {
 
     public List<CommunityCommentResponse> getAllComment(Long communityId) {
         List<CommunityComment> communityComments = communityCommentRepository.findByCommunityId(communityId);
-
-        if (communityComments.isEmpty()) {
-            throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
-        }
-
         return communityCommentMapper.toCommentResponses(communityComments);
     }
 
     public void updateComment(Long communityId, Long commentId, CommunityCommentRequest commentRequest) {
         getCommunityById(communityId);
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        getMemberById(writeMemberId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
         CommunityComment comment = getCommunityComment(commentId);
 
-        if (!comment.getMember().getId().equals(writeMemberId)) {
+        if (!comment.getMember().getId().equals(accessMemberId)) {
             throw new AccessDeniedException("거부된 접근입니다.");
         }
 
@@ -61,11 +56,11 @@ public class CommunityCommentService {
 
     public void deleteComment(Long communityId, Long commentId) {
         getCommunityById(communityId);
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        getMemberById(writeMemberId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
         CommunityComment comment = getCommunityComment(commentId);
 
-        if (!comment.getMember().getId().equals(writeMemberId)) {
+        if (!comment.getMember().getId().equals(accessMemberId)) {
             throw new AccessDeniedException("거부된 접근입니다.");
         }
 

@@ -1,20 +1,21 @@
 package org.devridge.api.domain.community.service;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.entity.CommunityCommentLikeDislike;
 import org.devridge.api.domain.community.entity.LikeStatus;
 import org.devridge.api.domain.community.entity.id.CommunityCommentLikeDislikeId;
+import org.devridge.api.domain.community.mapper.CommunityCommentLikeDislikeMapper;
 import org.devridge.api.domain.community.repository.CommunityCommentLikeDislikeRepository;
 import org.devridge.api.domain.community.repository.CommunityCommentRepository;
-import org.devridge.api.domain.community.repository.CommunityQuerydslRepository;
 import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -25,44 +26,97 @@ public class CommunityCommentLikeDislikeService {
     private final CommunityCommentRepository communityCommentRepository;
     private final MemberRepository memberRepository;
     private final CommunityRepository communityRepository;
-    private final CommunityQuerydslRepository communityQuerydslRepository;
+    private final CommunityCommentLikeDislikeMapper communityCommentLikeDislikeMapper;
 
-    public void createLikeDisLike(Long communityId, Long commentId, LikeStatus status) {
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(writeMemberId);
-        getCommunityById(communityId);
+    @Transactional
+    public void createCommunityCommentLike(Long communityId, Long commentId) {
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        Member member = getMemberById(accessMemberId);
+        Community community = getCommunityById(communityId);
         CommunityComment comment = getCommentById(commentId);
+        CommunityCommentLikeDislikeId communityCommentLikeDislikeId =
+            new CommunityCommentLikeDislikeId(member.getId(), comment.getId());
 
-        if (communityCommentLikeDislikeRepository.findById(
-            new CommunityCommentLikeDislikeId(member.getId(), comment.getId())).isPresent()) {
-            throw new DataIntegrityViolationException("이미 존재하는 데이터입니다.");
+        if (!accessMemberId.equals(community.getMember().getId())) {
+            throw new AccessDeniedException("거부된 접근입니다.");
         }
 
-        CommunityCommentLikeDislike commentLikeDislike = CommunityCommentLikeDislike.builder()
-            .communityComment(comment)
-            .member(member)
-            .status(status)
-            .build();
-        communityCommentLikeDislikeRepository.save(commentLikeDislike);
+        communityCommentLikeDislikeRepository.findById(communityCommentLikeDislikeId).ifPresentOrElse(
+            CommunityCommentLikeDislike -> {
+                LikeStatus status = CommunityCommentLikeDislike.getStatus();
+
+                if (status == LikeStatus.G) {
+                    changeIsDeletedStatus(CommunityCommentLikeDislike);
+                }
+
+                if (status == LikeStatus.B) {
+                    if (CommunityCommentLikeDislike.getIsDeleted()) {
+                        communityCommentLikeDislikeRepository.restoreById(communityCommentLikeDislikeId);
+                    }
+                    communityCommentLikeDislikeRepository.updateLikeDislike(communityCommentLikeDislikeId,
+                        LikeStatus.G);
+                }
+            },
+            () -> {
+                CommunityCommentLikeDislike commentLikeDislike =
+                    communityCommentLikeDislikeMapper.toCommunityCommentLikeDislike(member, comment, LikeStatus.G);
+                communityCommentLikeDislikeRepository.save(commentLikeDislike);
+            }
+        );
+        updateLikeDislike(communityCommentLikeDislikeId);
     }
 
-    public void changeCommunityCommentLikeDislike(Long communityId, Long commentId, LikeStatus status) {
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(writeMemberId);
-        getCommunityById(communityId);
+    @Transactional
+    public void createCommunityCommentDislike(Long communityId, Long commentId) {
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        Member member = getMemberById(accessMemberId);
+        Community community = getCommunityById(communityId);
         CommunityComment comment = getCommentById(commentId);
+        CommunityCommentLikeDislikeId communityCommentLikeDislikeId =
+            new CommunityCommentLikeDislikeId(member.getId(), comment.getId());
 
-        CommunityCommentLikeDislike CommentLikeDislike = communityCommentLikeDislikeRepository.findById(
-                new CommunityCommentLikeDislikeId(member.getId(), comment.getId()))
-            .orElseThrow(() -> new EntityNotFoundException());
+        if (!accessMemberId.equals(community.getMember().getId())) {
+            throw new AccessDeniedException("거부된 접근입니다.");
+        }
 
-        CommentLikeDislike.changeStatus(status);
-        communityCommentLikeDislikeRepository.save(CommentLikeDislike);
+        communityCommentLikeDislikeRepository.findById(communityCommentLikeDislikeId).ifPresentOrElse(
+            CommunityCommentLikeDislike -> {
+                LikeStatus status = CommunityCommentLikeDislike.getStatus();
+
+                if (status == LikeStatus.B) {
+                    changeIsDeletedStatus(CommunityCommentLikeDislike);
+                }
+
+                if (status == LikeStatus.G) {
+                    if (CommunityCommentLikeDislike.getIsDeleted()) {
+                        communityCommentLikeDislikeRepository.restoreById(communityCommentLikeDislikeId);
+                    }
+                    communityCommentLikeDislikeRepository.updateLikeDislike(communityCommentLikeDislikeId,
+                        LikeStatus.B);
+                }
+            },
+            () -> {
+                CommunityCommentLikeDislike commentLikeDislike =
+                    communityCommentLikeDislikeMapper.toCommunityCommentLikeDislike(member, comment, LikeStatus.B);
+                communityCommentLikeDislikeRepository.save(commentLikeDislike);
+            }
+        );
+        updateLikeDislike(communityCommentLikeDislikeId);
     }
 
-    public void updateLikeDislike(Long commentId) {
-        getCommentById(commentId);
-        communityQuerydslRepository.updateLikeCountByCommentId(commentId);
+    private void updateLikeDislike(CommunityCommentLikeDislikeId id) {
+        Long likes = Long.valueOf(communityCommentLikeDislikeRepository.countCommunityLikeDislikeById(id, LikeStatus.G));
+        Long disLikes = Long.valueOf(communityCommentLikeDislikeRepository.countCommunityLikeDislikeById(id, LikeStatus.B));
+        communityCommentRepository.updateLikeDislike(likes, disLikes, id.getCommentId());
+    }
+
+    private void changeIsDeletedStatus(CommunityCommentLikeDislike communitycommentLikeDislike) {
+        if (communitycommentLikeDislike.getIsDeleted()) {
+            communityCommentLikeDislikeRepository.restoreById(communitycommentLikeDislike.getId());
+        }
+        if (!communitycommentLikeDislike.getIsDeleted()) {
+            communityCommentLikeDislikeRepository.deleteById(communitycommentLikeDislike.getId());
+        }
     }
 
     private Member getMemberById(Long memberId) {
