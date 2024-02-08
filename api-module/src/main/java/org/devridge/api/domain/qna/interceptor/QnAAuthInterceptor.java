@@ -7,6 +7,7 @@ import org.devridge.common.exception.DataNotFoundException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 
@@ -45,6 +46,26 @@ public class QnAAuthInterceptor implements HandlerInterceptor {
                     response, new InterceptorErrorMessage("해당 게시글에 대한 권한이 없습니다."), HttpStatus.FORBIDDEN
                 );
                 return false;
+            }
+        } else {
+            AntPathMatcher pathMatcher = new AntPathMatcher();
+            String requestUri = request.getRequestURI();
+
+            if (pathMatcher.match("/api/qna/like/*", requestUri) || pathMatcher.match("/api/qna/dislike/*", requestUri)) {
+                Map<?, ?> pathVariables = (Map<?, ?>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+                Long memberId = getMemberId();
+                Long qnaId = Long.parseLong((String) pathVariables.get("qnaId"));
+                Long writerId = qnaRepository.findById(qnaId)
+                        .orElseThrow(() -> new DataNotFoundException())
+                        .getMember()
+                        .getId();
+
+                if (Objects.equals(memberId, writerId)) {
+                    createResponseBody(
+                            response, new InterceptorErrorMessage("내가 작성한 글은 추천/비추천을 누를 수 없습니다."), HttpStatus.FORBIDDEN
+                    );
+                    return false;
+                }
             }
         }
 
