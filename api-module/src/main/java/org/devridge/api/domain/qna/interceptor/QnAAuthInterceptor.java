@@ -49,12 +49,13 @@ public class QnAAuthInterceptor implements HandlerInterceptor {
             if (
                 pathMatcher.match("/api/qna/like/*", requestUri)
                 || pathMatcher.match("/api/qna/dislike/*", requestUri)
+                || pathMatcher.match("/api/qna/bookmarks/*", requestUri)
             ) {
                Long[] memberIdAndWriterId = this.getPathVariables(request);
 
                 if (Objects.equals(memberIdAndWriterId[0], memberIdAndWriterId[1])) {
                     createResponseBody(
-                        response, new InterceptorErrorMessage("내가 작성한 글은 추천/비추천을 누를 수 없습니다."), HttpStatus.FORBIDDEN
+                        response, new InterceptorErrorMessage("내가 작성한 글은 추천/비추천 및 스크랩을 할 수 없습니다."), HttpStatus.FORBIDDEN
                     );
 
                     return false;
