@@ -46,7 +46,10 @@ public class QnACommentAuthInterceptor implements HandlerInterceptor {
             AntPathMatcher pathMatcher = new AntPathMatcher();
             String requestUri = request.getRequestURI();
 
-            if (pathMatcher.match("/api/qna/*/comments/like/*", requestUri) || pathMatcher.match("/api/qna/*/comments/dislike/*", requestUri)) {
+            if (
+                pathMatcher.match("/api/qna/*/comments/like/*", requestUri)
+                || pathMatcher.match("/api/qna/*/comments/dislike/*", requestUri)
+            ) {
                 Long[] memberIdAndWriterId = this.getPathVariables(request);
 
                 if (Objects.equals(memberIdAndWriterId[0], memberIdAndWriterId[1])) {

@@ -46,7 +46,10 @@ public class QnAAuthInterceptor implements HandlerInterceptor {
             AntPathMatcher pathMatcher = new AntPathMatcher();
             String requestUri = request.getRequestURI();
 
-            if (pathMatcher.match("/api/qna/like/*", requestUri) || pathMatcher.match("/api/qna/dislike/*", requestUri)) {
+            if (
+                pathMatcher.match("/api/qna/like/*", requestUri)
+                || pathMatcher.match("/api/qna/dislike/*", requestUri)
+            ) {
                Long[] memberIdAndWriterId = this.getPathVariables(request);
 
                 if (Objects.equals(memberIdAndWriterId[0], memberIdAndWriterId[1])) {
