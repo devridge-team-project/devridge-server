@@ -27,7 +27,7 @@ public class QnACommentController {
         return ResponseEntity.created(URI.create("/api/qna/" + qnaId + "/comments/" + commentId)).build();
     }
 
-    @PutMapping("/{commentId}")
+    @PatchMapping("/{commentId}")
     public ResponseEntity<Void> updateQnAComment(
         @PathVariable Long qnaId,
         @PathVariable Long commentId,

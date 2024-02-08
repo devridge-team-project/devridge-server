@@ -45,7 +45,7 @@ public class QnAController {
         return ResponseEntity.created(URI.create("/api/qna/" + qnaId)).build();
     }
 
-    @PutMapping("/{qnaId}")
+    @PatchMapping("/{qnaId}")
     public ResponseEntity<Void> updateQnA(
         @PathVariable Long qnaId,
         @Valid @RequestBody UpdateQnARequest qnaRequest
