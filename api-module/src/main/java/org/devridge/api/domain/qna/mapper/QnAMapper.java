@@ -36,11 +36,12 @@ public class QnAMapper {
 
     public QnA toQnA(CreateQnARequest qnaRequest, Member member) {
         if (qnaRequest.getImageUrl() != null && !qnaRequest.getImageUrl().isEmpty()) {
+            String imageUrl = qnaRequest.getImageUrl().toString();
             return QnA.builder()
                 .member(member)
                 .title(qnaRequest.getTitle())
                 .content(qnaRequest.getContent())
-                .imageUrl(qnaRequest.getImageUrl().toString())
+                .imageUrl(imageUrl.substring(1, imageUrl.length() - 1))
                 .build();
         }
 
