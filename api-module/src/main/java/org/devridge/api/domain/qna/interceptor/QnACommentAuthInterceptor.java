@@ -33,7 +33,7 @@ public class QnACommentAuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         String requestMethod = request.getMethod();
 
-        if (requestMethod.equals("PUT") || requestMethod.equals("DELETE")) {
+        if (requestMethod.equals("PATCH") || requestMethod.equals("DELETE")) {
             Map<?, ?> pathVariables = (Map<?, ?>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
             Long memberId = getMemberId();
             Long qnaCommentId = Long.parseLong((String) pathVariables.get("commentId"));
