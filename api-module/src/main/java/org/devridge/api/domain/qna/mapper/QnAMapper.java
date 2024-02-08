@@ -35,6 +35,15 @@ public class QnAMapper {
     }
 
     public QnA toQnA(CreateQnARequest qnaRequest, Member member) {
+        if (qnaRequest.getImageUrl() != null && !qnaRequest.getImageUrl().isEmpty()) {
+            return QnA.builder()
+                .member(member)
+                .title(qnaRequest.getTitle())
+                .content(qnaRequest.getContent())
+                .imageUrl(qnaRequest.getImageUrl().toString())
+                .build();
+        }
+
         return QnA.builder()
             .member(member)
             .title(qnaRequest.getTitle())
