@@ -15,4 +15,11 @@ public class GlobalExceptionHandler {
             .status(exception.getCode())
             .body(new BaseErrorResponse(exception.getMessage()));
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<BaseErrorResponse> handleRuntimeException(RuntimeException exception) {
+        return ResponseEntity
+            .internalServerError()
+            .body(new BaseErrorResponse("서버에서 알 수 없는 오류가 발생했습니다."));
+    }
 }

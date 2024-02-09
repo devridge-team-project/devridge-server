@@ -1,7 +1,7 @@
 package org.devridge.api.domain.community.service;
 
-import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityScrap;
 import org.devridge.api.domain.community.entity.id.CommunityScrapId;
@@ -9,8 +9,10 @@ import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.community.repository.CommunityScrapRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.exception.common.ConflictException;
+import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.springframework.dao.DataIntegrityViolationException;
+
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -28,9 +30,7 @@ public class CommunityScrapService {
         CommunityScrapId communityScrapId = new CommunityScrapId(writeMemberId, communityId);
 
         communityScrapRepository.findById(communityScrapId)
-            .ifPresent(cs -> {
-                throw new DataIntegrityViolationException("이미 존재");
-            });
+            .ifPresent(cs -> { throw new ConflictException(); });
 
         if (communityScrapRepository.findById(communityScrapId).isEmpty()) { // 없나확인
             Long countResult = communityScrapRepository.checkSoftDelete(communityId, writeMemberId); // 0이외의 값은 가짜없음
@@ -61,16 +61,15 @@ public class CommunityScrapService {
 
         CommunityScrapId communityScrapId = new CommunityScrapId(writeMemberId, communityId);
         communityScrapRepository.findById(communityScrapId)
-            .orElseThrow(() -> new EntityNotFoundException("스크랩이 존재하지 않습니다."));
+            .orElseThrow(() -> new DataNotFoundException());
         communityScrapRepository.deleteById(communityScrapId);
     }
 
     private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException());
+        return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
     }
 
     private Community getCommunityById(Long communityId) {
-        return communityRepository.findById(communityId).orElseThrow(() -> new EntityNotFoundException());
+        return communityRepository.findById(communityId).orElseThrow(() -> new DataNotFoundException());
     }
-
 }

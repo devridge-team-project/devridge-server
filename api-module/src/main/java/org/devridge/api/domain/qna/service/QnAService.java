@@ -17,7 +17,7 @@ import org.devridge.api.domain.qna.repository.QnARepository;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.repository.QnAScrapRepository;
-import org.devridge.api.exception.DataNotFoundException;
+import org.devridge.api.exception.common.DataNotFoundException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

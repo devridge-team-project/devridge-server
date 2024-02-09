@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.qna.repository.QnARepository;
-import org.devridge.api.exception.DataNotFoundException;
+import org.devridge.api.exception.common.DataNotFoundException;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;

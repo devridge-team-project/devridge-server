@@ -1,7 +1,7 @@
 package org.devridge.api.domain.community.service;
 
-import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.entity.CommunityCommentLikeDislike;
@@ -13,8 +13,10 @@ import org.devridge.api.domain.community.repository.CommunityQuerydslRepository;
 import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.exception.common.ConflictException;
+import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.springframework.dao.DataIntegrityViolationException;
+
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class CommunityCommentLikeDislikeService {
 
         if (communityCommentLikeDislikeRepository.findById(
             new CommunityCommentLikeDislikeId(member.getId(), comment.getId())).isPresent()) {
-            throw new DataIntegrityViolationException("이미 존재하는 데이터입니다.");
+            throw new ConflictException();
         }
 
         CommunityCommentLikeDislike commentLikeDislike = CommunityCommentLikeDislike.builder()
@@ -54,7 +56,7 @@ public class CommunityCommentLikeDislikeService {
 
         CommunityCommentLikeDislike CommentLikeDislike = communityCommentLikeDislikeRepository.findById(
                 new CommunityCommentLikeDislikeId(member.getId(), comment.getId()))
-            .orElseThrow(() -> new EntityNotFoundException());
+            .orElseThrow(() -> new DataNotFoundException());
 
         CommentLikeDislike.changeStatus(status);
         communityCommentLikeDislikeRepository.save(CommentLikeDislike);
@@ -66,14 +68,14 @@ public class CommunityCommentLikeDislikeService {
     }
 
     private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException());
+        return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
     }
 
     private CommunityComment getCommentById(Long commentId) {
-        return communityCommentRepository.findById(commentId).orElseThrow(() -> new EntityNotFoundException());
+        return communityCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
     }
 
     private Community getCommunityById(Long communityId) {
-        return communityRepository.findById(communityId).orElseThrow(() -> new EntityNotFoundException());
+        return communityRepository.findById(communityId).orElseThrow(() -> new DataNotFoundException());
     }
 }

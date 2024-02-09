@@ -21,7 +21,7 @@ import org.devridge.api.domain.member.exception.DuplNicknameException;
 import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.AccessTokenUtil;
 import org.devridge.api.util.JwtUtil;
-import org.devridge.api.exception.DataNotFoundException;
+import org.devridge.api.exception.common.DataNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 

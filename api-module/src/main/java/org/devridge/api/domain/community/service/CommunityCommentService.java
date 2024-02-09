@@ -1,8 +1,9 @@
 package org.devridge.api.domain.community.service;
 
 import java.util.List;
-import javax.persistence.EntityNotFoundException;
+
 import lombok.RequiredArgsConstructor;
+
 import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
 import org.devridge.api.domain.community.entity.Community;
@@ -12,8 +13,10 @@ import org.devridge.api.domain.community.repository.CommunityCommentRepository;
 import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.exception.common.DataNotFoundException;
+import org.devridge.api.exception.common.PutOrDeleteForbiddenException;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.springframework.security.access.AccessDeniedException;
+
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -39,7 +42,7 @@ public class CommunityCommentService {
         List<CommunityComment> communityComments = communityCommentRepository.findByCommunityId(communityId);
 
         if (communityComments.isEmpty()) {
-            throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
+            throw new DataNotFoundException();
         }
 
         return communityCommentMapper.toCommentResponses(communityComments);
@@ -52,7 +55,7 @@ public class CommunityCommentService {
         CommunityComment comment = getCommunityComment(commentId);
 
         if (!comment.getMember().getId().equals(writeMemberId)) {
-            throw new AccessDeniedException("거부된 접근입니다.");
+            throw new PutOrDeleteForbiddenException();
         }
 
         comment.updateComment(commentRequest.getContent());
@@ -66,22 +69,21 @@ public class CommunityCommentService {
         CommunityComment comment = getCommunityComment(commentId);
 
         if (!comment.getMember().getId().equals(writeMemberId)) {
-            throw new AccessDeniedException("거부된 접근입니다.");
+            throw new PutOrDeleteForbiddenException();
         }
 
         communityCommentRepository.deleteById(commentId);
     }
 
     private CommunityComment getCommunityComment(Long commentId) {
-        return communityCommentRepository.findById(commentId).orElseThrow(() -> new EntityNotFoundException());
+        return communityCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
     }
 
     private Community getCommunityById(Long communityId) {
-        return communityRepository.findById(communityId).orElseThrow(() -> new EntityNotFoundException());
+        return communityRepository.findById(communityId).orElseThrow(() -> new DataNotFoundException());
     }
 
     private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException());
+        return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
     }
-
 }

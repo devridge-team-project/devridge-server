@@ -15,7 +15,7 @@ import org.devridge.api.domain.qna.mapper.QnACommentMapper;
 import org.devridge.api.domain.qna.repository.QnACommentLikeDislikeRepository;
 import org.devridge.api.domain.qna.repository.QnACommentRepository;
 import org.devridge.api.domain.qna.repository.QnARepository;
-import org.devridge.api.exception.DataNotFoundException;
+import org.devridge.api.exception.common.DataNotFoundException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
