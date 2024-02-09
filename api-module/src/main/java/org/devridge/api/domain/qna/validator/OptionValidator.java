@@ -19,8 +19,8 @@ public class OptionValidator implements ConstraintValidator<ValidateSortOption, 
         if (enumValues != null) {
             for (Object enumValue : enumValues) {
                 if (
-                    value.equals(enumValue.toString())
-                    || this.validateSortOption.ignoreCase() && value.equalsIgnoreCase(enumValue.toString())
+                        value.equals(enumValue.toString())
+                                || this.validateSortOption.ignoreCase() && value.equalsIgnoreCase(enumValue.toString())
                 ) {
                     return true;
                 }
