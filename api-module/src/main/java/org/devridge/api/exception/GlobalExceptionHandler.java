@@ -3,6 +3,7 @@ package org.devridge.api.exception;
 import org.devridge.api.exception.common.BaseException;
 import org.devridge.common.dto.BaseErrorResponse;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -31,15 +32,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<BaseErrorResponse> handleRequestValidException(MethodArgumentNotValidException exception) {
         List<String> errors = exception.getBindingResult()
-                .getFieldErrors()
-                .stream()
-                .map(FieldError::getDefaultMessage)
-                .collect(Collectors.toList());
+            .getFieldErrors()
+            .stream()
+            .map(FieldError::getDefaultMessage)
+            .collect(Collectors.toList());
 
         String errorMessage = String.join(" ", errors);
 
         return ResponseEntity
-            .status(400)
+            .status(HttpStatus.BAD_REQUEST)
             .body(new BaseErrorResponse(errorMessage));
     }
 
@@ -49,7 +50,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<BaseErrorResponse> handleIllegalArgumentException(IllegalArgumentException exception) {
         return ResponseEntity
-            .status(400)
+            .status(HttpStatus.BAD_REQUEST)
             .body(new BaseErrorResponse(exception.getMessage()));
     }
 }
