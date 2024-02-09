@@ -4,9 +4,13 @@ import org.devridge.api.exception.common.BaseException;
 import org.devridge.common.dto.BaseErrorResponse;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -26,9 +30,17 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<BaseErrorResponse> handleRequestValidException(MethodArgumentNotValidException exception) {
+        List<String> errors = exception.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.toList());
+
+        String errorMessage = String.join(" ", errors);
+
         return ResponseEntity
             .status(400)
-            .body(new BaseErrorResponse(exception.getMessage()));
+            .body(new BaseErrorResponse(errorMessage));
     }
 
     /**
