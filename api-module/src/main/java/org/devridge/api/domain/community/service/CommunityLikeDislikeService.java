@@ -7,6 +7,7 @@ import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityLikeDislike;
 import org.devridge.api.domain.community.entity.LikeStatus;
 import org.devridge.api.domain.community.entity.id.CommunityLikeDislikeId;
+import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.community.mapper.CommunityLikeDislikeMapper;
 import org.devridge.api.domain.community.repository.CommunityLikeDislikeRepository;
 import org.devridge.api.domain.community.repository.CommunityRepository;
@@ -32,8 +33,8 @@ public class CommunityLikeDislikeService {
         Community community = getCommunityById(communityId);
         CommunityLikeDislikeId communityLikeDislikeId = new CommunityLikeDislikeId(member.getId(), community.getId());
 
-        if (!accessMemberId.equals(community.getMember().getId())) {
-            throw new AccessDeniedException("거부된 접근입니다.");
+        if (accessMemberId.equals(community.getMember().getId())) {
+            throw new MyCommunityForbiddenException(403, "내가 작성한 글은 추천할 수 없습니다.");
         }
 
         communityLikeDislikeRepository.findById(communityLikeDislikeId).ifPresentOrElse(
@@ -67,8 +68,8 @@ public class CommunityLikeDislikeService {
         Community community = getCommunityById(communityId);
         CommunityLikeDislikeId communityLikeDislikeId = new CommunityLikeDislikeId(member.getId(), community.getId());
 
-        if (!accessMemberId.equals(community.getMember().getId())) {
-            throw new AccessDeniedException("거부된 접근입니다.");
+        if (accessMemberId.equals(community.getMember().getId())) {
+            throw new MyCommunityForbiddenException(403, "내가 작성한 글은 비추천할 수 없습니다.");
         }
 
         communityLikeDislikeRepository.findById(communityLikeDislikeId).ifPresentOrElse(
