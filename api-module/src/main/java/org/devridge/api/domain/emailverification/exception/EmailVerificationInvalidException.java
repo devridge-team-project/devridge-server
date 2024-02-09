@@ -1,4 +1,4 @@
-package org.devridge.api.exception.email;
+package org.devridge.api.domain.emailverification.exception;
 
 import org.devridge.api.exception.common.BaseException;
 

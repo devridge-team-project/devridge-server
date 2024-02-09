@@ -8,6 +8,7 @@ import org.devridge.api.domain.member.dto.request.*;
 import org.devridge.api.domain.member.dto.response.MemberResponse;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.entity.Occupation;
+import org.devridge.api.domain.member.exception.*;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.repository.OccupationRepository;
 import org.devridge.api.domain.skill.entity.MemberSkill;
@@ -15,8 +16,7 @@ import org.devridge.api.domain.skill.entity.Skill;
 import org.devridge.api.domain.skill.entity.key.MemberSkillId;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.domain.skill.repository.SkillRepository;
-import org.devridge.api.exception.email.EmailVerificationInvalidException;
-import org.devridge.api.exception.member.*;
+import org.devridge.api.domain.emailverification.exception.EmailVerificationInvalidException;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.devridge.api.exception.DataNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -97,7 +97,7 @@ public class MemberService {
         Member member = getAuthenticatedMember();
 
         if (!passwordEncoder.matches(memberRequest.getPassword(), member.getPassword())) {
-            throw new PasswordNotMatchException();
+            throw new PasswordNotMatchException(400, "비밀번호가 틀렸습니다. 다시 입력해주세요.");
         }
 
         memberRepository.delete(member);
@@ -107,7 +107,7 @@ public class MemberService {
     public void resetPassword(ResetPasswordRequest passwordRequest) {
         EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailOrderByCreatedAtDesc(
                 passwordRequest.getEmail()
-        ).orElseThrow(() -> new EmailVerificationInvalidException());
+        ).orElseThrow(() -> new EmailVerificationInvalidException(404, "해당 데이터를 찾을 수 없습니다."));
 
         LocalDateTime current = LocalDateTime.now();
 
@@ -116,7 +116,7 @@ public class MemberService {
         }
 
         Member member = memberRepository.findByEmailAndProvider(passwordRequest.getEmail(), "normal").orElseThrow(
-                () -> new MemberNotFoundException()
+                () -> new MemberNotFoundException(404, "해당 사용자를 찾을 수 없습니다.")
         );
 
         String encodedPassword = passwordEncoder.encode(passwordRequest.getPassword());
@@ -156,7 +156,7 @@ public class MemberService {
         List<Skill> skills = skillRepository.findSkillsByIds(skillIds);
 
         if (skills.size() != skillIds.size()) {
-            throw new SkillsNotValidException();
+            throw new SkillsNotValidException(404, "해당하는 스킬 데이터를 찾을 수 없습니다.");
         }
         return skills;
     }
@@ -171,7 +171,7 @@ public class MemberService {
         memberRepository.findByEmailAndProvider(
                 memberRequest.getEmail(), memberRequest.getProvider()
         ).ifPresent(member -> {
-            throw new DuplEmailException();
+            throw new DuplEmailException(409, "이미 존재하는 이메일입니다. 다른 이메일을 사용해주세요.");
         });
     }
 
@@ -179,7 +179,7 @@ public class MemberService {
         Optional<Member> member = memberRepository.findByNickname(memberRequest.getNickname());
 
         if (member.isPresent()) {
-            throw new DuplNicknameException();
+            throw new DuplNicknameException(409, "이미 존재하는 닉네임입니다. 다른 닉네임을 사용해주세요.");
         }
     }
 
@@ -239,6 +239,6 @@ public class MemberService {
 
     private Member getAuthenticatedMember() {
         Long memberId = SecurityContextHolderUtil.getMemberId();
-        return memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException());
+        return memberRepository.findById(memberId).orElseThrow(() -> new MemberNotFoundException(404, "해당하는 사용자를 찾을 수 없습니다."));
     }
 }

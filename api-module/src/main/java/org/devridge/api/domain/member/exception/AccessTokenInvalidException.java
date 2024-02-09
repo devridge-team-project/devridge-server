@@ -1,4 +1,4 @@
-package org.devridge.api.exception.member;
+package org.devridge.api.domain.member.exception;
 
 import org.devridge.api.exception.common.BaseException;
 
