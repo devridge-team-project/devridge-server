@@ -1,14 +1,10 @@
 package org.devridge.api.exception.email;
 
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.devridge.api.exception.common.BaseException;
 
-@Getter
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class EmailVerificationInvalidException extends RuntimeException {
+public class EmailVerificationInvalidException extends BaseException {
 
-    public EmailVerificationInvalidException() {
-        super();
+    public EmailVerificationInvalidException(int code, String message) {
+        super(code, message);
     }
 }

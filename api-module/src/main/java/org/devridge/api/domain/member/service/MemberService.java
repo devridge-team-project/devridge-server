@@ -18,7 +18,7 @@ import org.devridge.api.domain.skill.repository.SkillRepository;
 import org.devridge.api.exception.email.EmailVerificationInvalidException;
 import org.devridge.api.exception.member.*;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.devridge.common.exception.DataNotFoundException;
+import org.devridge.api.exception.DataNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

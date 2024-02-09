@@ -1,16 +1,10 @@
 package org.devridge.api.exception.member;
 
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.devridge.api.exception.common.BaseException;
 
-@Getter
-@ResponseStatus(HttpStatus.UNAUTHORIZED)
-public class WrongLoginException extends RuntimeException{
-    private String message;
+public class WrongLoginException extends BaseException {
 
-    public WrongLoginException(String message) {
-        super(message);
-        this.message = message;
+    public WrongLoginException(int code, String message) {
+        super(code, message);
     }
 }

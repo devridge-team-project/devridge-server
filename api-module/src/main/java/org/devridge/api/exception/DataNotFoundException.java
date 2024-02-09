@@ -1,4 +1,4 @@
-package org.devridge.common.exception;
+package org.devridge.api.exception;
 
 import org.springframework.http.HttpStatus;
 

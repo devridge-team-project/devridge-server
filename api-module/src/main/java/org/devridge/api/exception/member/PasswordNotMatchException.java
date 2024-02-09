@@ -1,15 +1,10 @@
 package org.devridge.api.exception.member;
 
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.devridge.api.exception.common.BaseException;
 
-@Getter
-@ResponseStatus(HttpStatus.UNAUTHORIZED)
-public class PasswordNotMatchException extends RuntimeException {
+public class PasswordNotMatchException extends BaseException {
 
-    public PasswordNotMatchException() {
-        super();
+    public PasswordNotMatchException(int code, String message) {
+        super(code, message);
     }
-
 }

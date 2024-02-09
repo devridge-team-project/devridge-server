@@ -1,14 +1,10 @@
 package org.devridge.api.exception.member;
 
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.devridge.api.exception.common.BaseException;
 
-@Getter
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class MemberNotFoundException extends RuntimeException {
+public class MemberNotFoundException extends BaseException {
 
-    public MemberNotFoundException() {
-        super();
+    public MemberNotFoundException(int code, String message) {
+        super(code, message);
     }
 }

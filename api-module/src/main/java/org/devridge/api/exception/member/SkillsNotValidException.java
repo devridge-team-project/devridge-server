@@ -1,12 +1,10 @@
 package org.devridge.api.exception.member;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.devridge.api.exception.common.BaseException;
 
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class SkillsNotValidException extends RuntimeException {
+public class SkillsNotValidException extends BaseException {
 
-    public SkillsNotValidException() {
-        super();
+    public SkillsNotValidException(int code, String message) {
+        super(code, message);
     }
 }
