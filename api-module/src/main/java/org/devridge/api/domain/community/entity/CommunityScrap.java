@@ -15,14 +15,12 @@ import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.entity.BaseTimeEntity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @DynamicInsert
 @SQLDelete(sql = "UPDATE community_scrap SET is_deleted = true WHERE community_id = ? AND member_id = ?")
-@Where(clause = "is_deleted = false")
 public class CommunityScrap extends BaseTimeEntity {
 
     @EmbeddedId

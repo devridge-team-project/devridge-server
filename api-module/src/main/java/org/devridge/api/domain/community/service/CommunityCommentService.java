@@ -1,9 +1,8 @@
 package org.devridge.api.domain.community.service;
 
 import java.util.List;
-
+import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-
 import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
 import org.devridge.api.domain.community.entity.Community;
@@ -13,10 +12,8 @@ import org.devridge.api.domain.community.repository.CommunityCommentRepository;
 import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
-import org.devridge.api.exception.common.DataNotFoundException;
-import org.devridge.api.exception.common.PutOrDeleteForbiddenException;
 import org.devridge.api.util.SecurityContextHolderUtil;
-
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -30,8 +27,8 @@ public class CommunityCommentService {
 
     public Long createComment(Long communityId, CommunityCommentRequest commentRequest) {
         Community community = getCommunityById(communityId);
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(writeMemberId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        Member member = getMemberById(accessMemberId);
 
         CommunityComment communityComment =
             communityCommentMapper.toCommunityComment(community, member, commentRequest);
@@ -40,22 +37,17 @@ public class CommunityCommentService {
 
     public List<CommunityCommentResponse> getAllComment(Long communityId) {
         List<CommunityComment> communityComments = communityCommentRepository.findByCommunityId(communityId);
-
-        if (communityComments.isEmpty()) {
-            throw new DataNotFoundException();
-        }
-
         return communityCommentMapper.toCommentResponses(communityComments);
     }
 
     public void updateComment(Long communityId, Long commentId, CommunityCommentRequest commentRequest) {
         getCommunityById(communityId);
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        getMemberById(writeMemberId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
         CommunityComment comment = getCommunityComment(commentId);
 
-        if (!comment.getMember().getId().equals(writeMemberId)) {
-            throw new PutOrDeleteForbiddenException();
+        if (!comment.getMember().getId().equals(accessMemberId)) {
+            throw new AccessDeniedException("거부된 접근입니다.");
         }
 
         comment.updateComment(commentRequest.getContent());
@@ -64,26 +56,27 @@ public class CommunityCommentService {
 
     public void deleteComment(Long communityId, Long commentId) {
         getCommunityById(communityId);
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        getMemberById(writeMemberId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
         CommunityComment comment = getCommunityComment(commentId);
 
-        if (!comment.getMember().getId().equals(writeMemberId)) {
-            throw new PutOrDeleteForbiddenException();
+        if (!comment.getMember().getId().equals(accessMemberId)) {
+            throw new AccessDeniedException("거부된 접근입니다.");
         }
 
         communityCommentRepository.deleteById(commentId);
     }
 
     private CommunityComment getCommunityComment(Long commentId) {
-        return communityCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
+        return communityCommentRepository.findById(commentId).orElseThrow(() -> new EntityNotFoundException());
     }
 
     private Community getCommunityById(Long communityId) {
-        return communityRepository.findById(communityId).orElseThrow(() -> new DataNotFoundException());
+        return communityRepository.findById(communityId).orElseThrow(() -> new EntityNotFoundException());
     }
 
     private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
+        return memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException());
     }
+
 }

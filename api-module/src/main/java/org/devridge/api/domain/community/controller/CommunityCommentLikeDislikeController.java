@@ -1,9 +1,6 @@
 package org.devridge.api.domain.community.controller;
 
-import java.net.URI;
-import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.devridge.api.domain.community.entity.LikeStatus;
 import org.devridge.api.domain.community.service.CommunityCommentLikeDislikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,27 +9,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/community/{communityId}/comment/{commentId}/like-dislike/{status}")
+@RequestMapping("/api/community/{communityId}/comments/{commentId}")
 @RestController
 public class CommunityCommentLikeDislikeController {
 
     private final CommunityCommentLikeDislikeService communityCommentLikeDislikeService;
 
-    @PostMapping
-    public ResponseEntity<Void> likeDislikeCreate(
+    @PostMapping("/like")
+    public ResponseEntity<Void> createCommunityCommentLike(
         @PathVariable Long communityId,
-        @PathVariable Long commentId,
-        @PathVariable LikeStatus status
+        @PathVariable Long commentId
     ) {
-        try {
-            communityCommentLikeDislikeService.changeCommunityCommentLikeDislike(communityId, commentId, status);
-            communityCommentLikeDislikeService.updateLikeDislike(commentId);
-        } catch (EntityNotFoundException e) {
-            communityCommentLikeDislikeService.createLikeDisLike(communityId, commentId, status);
-            communityCommentLikeDislikeService.updateLikeDislike(commentId);
-        }
-        return ResponseEntity.created(
-            URI.create("/api/community/" + communityId + "/comment/" + commentId + "/like-dislike/" + status)).build();
+        communityCommentLikeDislikeService.createCommunityCommentLike(communityId, commentId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/dislike")
+    public ResponseEntity<Void> createCommunityCommentDislike(
+        @PathVariable Long communityId,
+        @PathVariable Long commentId
+    ) {
+        communityCommentLikeDislikeService.createCommunityCommentDislike(communityId, commentId);
+        return ResponseEntity.ok().build();
     }
 
 

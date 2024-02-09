@@ -1,9 +1,13 @@
 package org.devridge.api.domain.community.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.entity.BaseEntity;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -32,7 +37,20 @@ public class Community extends BaseEntity {
 
     private String content;
 
+    @ColumnDefault("0")
     private Long views;
+
+    @ColumnDefault("0")
+    private Long likeCount;
+
+    @ColumnDefault("0")
+    private Long dislikeCount;
+
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
+    private List<CommunityComment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommunityHashtag> hashtags = new ArrayList<>();
 
     @Builder
     public Community(Member member, String title, String content) {
