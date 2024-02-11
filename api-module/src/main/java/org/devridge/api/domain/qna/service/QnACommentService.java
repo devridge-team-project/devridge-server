@@ -6,6 +6,7 @@ import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.qna.dto.request.CreateQnACommentRequest;
 import org.devridge.api.domain.qna.dto.request.UpdateQnACommentRequest;
+import org.devridge.api.domain.qna.dto.response.GetAllCommentByQnAId;
 import org.devridge.api.domain.qna.dto.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.QnACommentLikeDislike;
 import org.devridge.api.domain.qna.entity.QnA;
@@ -14,11 +15,14 @@ import org.devridge.api.domain.qna.entity.id.QnACommentLikeDislikeId;
 import org.devridge.api.domain.qna.mapper.QnACommentMapper;
 import org.devridge.api.domain.qna.repository.QnACommentLikeDislikeRepository;
 import org.devridge.api.domain.qna.repository.QnACommentRepository;
+import org.devridge.api.domain.qna.repository.QnAQuerydslRepository;
 import org.devridge.api.domain.qna.repository.QnARepository;
 import org.devridge.common.exception.DataNotFoundException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
 
@@ -31,6 +35,20 @@ public class QnACommentService {
     private final MemberRepository memberRepository;
     private final QnACommentMapper qnaCommentMapper;
     private final QnACommentLikeDislikeRepository qnaCommentLikeDislikeRepository;
+    private final QnAQuerydslRepository qnaQuerydslRepository;
+
+    public List<GetAllCommentByQnAId> getAllQnACommentByQnAId(Long lastIndex, Long qnaId) {
+        QnA qna = getQnA(qnaId);
+
+        if (lastIndex == null) {
+            // TODO: 해당 게시글에 댓글이 없는 경우 확인
+            Long lastIndexByQnAId = qnaCommentRepository.findMaxIdByQnAId(qnaId);
+            return qnaQuerydslRepository.findAllQnAComment(lastIndexByQnAId, qnaId);
+        }
+
+        // TODO: 탈퇴된 멤버 처리 확인
+        return qnaQuerydslRepository.findAllQnAComment(lastIndex, qnaId);
+    }
 
     public Long createQnAComment(Long qnaId, CreateQnACommentRequest commentRequest) {
         QnA qna = getQnA(qnaId);

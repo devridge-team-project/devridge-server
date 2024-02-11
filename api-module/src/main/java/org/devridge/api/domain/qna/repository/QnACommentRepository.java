@@ -28,4 +28,11 @@ public interface QnACommentRepository extends JpaRepository<QnAComment, Long> {
         @Param("dislikes") int dislikes,
         @Param("qnaCommentId") Long qnaCommentId
     );
+
+    @Query(
+        value = "SELECT MAX(id) " +
+                "FROM QnAComment " +
+                "WHERE qna.id = :qnaId"
+    )
+    Long findMaxIdByQnAId(@Param("qnaId") Long qnaId);
 }

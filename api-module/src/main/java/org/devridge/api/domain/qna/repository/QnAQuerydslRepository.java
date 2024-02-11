@@ -5,9 +5,13 @@ import com.querydsl.core.types.Projections;
 
 import lombok.RequiredArgsConstructor;
 
+import org.devridge.api.domain.qna.dto.response.FindWriterInformation;
+import org.devridge.api.domain.qna.dto.response.GetAllCommentByQnAId;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
+import org.devridge.api.domain.qna.dto.response.QFindWriterInformation;
 import org.devridge.api.domain.qna.entity.QQnA;
 
+import org.devridge.api.domain.qna.entity.QQnAComment;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,8 +21,10 @@ import java.util.List;
 public class QnAQuerydslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+    private final int PAGE_SIZE = 10;
 
     private QQnA qQnA = QQnA.qnA;
+    private QQnAComment qQnAComment = QQnAComment.qnAComment;
 
     /**
      * 조회수 기준 상위 5개 반환, 리스트 반환이므로 id, 제목, 답변수, 추천수, 조회수만 반환
@@ -61,7 +67,32 @@ public class QnAQuerydslRepository {
             .from(qQnA)
             .where(qQnA.id.loe(lastIndex))
             .orderBy(qQnA.id.desc())
-            .limit(10)
+            .limit(PAGE_SIZE)
+            .fetch();
+    }
+
+    public List<GetAllCommentByQnAId> findAllQnAComment(Long lastIndex, Long qnaId) {
+        return jpaQueryFactory
+            .select(
+                Projections.constructor(
+                    GetAllCommentByQnAId.class,
+                    qQnAComment.id,
+                    new QFindWriterInformation(
+                        qQnAComment.member.id,
+                        qQnAComment.member.nickname,
+                        qQnAComment.member.profileImageUrl,
+                        qQnAComment.member.introduction
+                    ),
+                    qQnAComment.content,
+                    qQnAComment.likes,
+                    qQnAComment.dislikes,
+                    qQnAComment.createdAt
+                )
+            )
+            .from(qQnAComment)
+            .where(qQnAComment.id.loe(lastIndex), qQnAComment.qna.id.eq(qnaId))
+            .orderBy(qQnAComment.id.desc())
+            .limit(PAGE_SIZE)
             .fetch();
     }
 }
