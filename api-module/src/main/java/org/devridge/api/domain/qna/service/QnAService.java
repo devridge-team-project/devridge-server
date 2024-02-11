@@ -50,7 +50,8 @@ public class QnAService {
         }
 
         if (lastIndex == null) {
-            throw new LastIndexNotFoundException();
+            Long maxId = qnaRepository.findMaxId().orElse(0L);
+            return qnaQuerydslRepository.findAllQnASortByLatest(maxId);
         }
 
         return qnaQuerydslRepository.findAllQnASortByLatest(lastIndex);
