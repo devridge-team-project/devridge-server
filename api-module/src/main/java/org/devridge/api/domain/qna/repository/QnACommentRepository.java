@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface QnACommentRepository extends JpaRepository<QnAComment, Long> {
 
     @Modifying(clearAutomatically = true)
@@ -34,5 +36,5 @@ public interface QnACommentRepository extends JpaRepository<QnAComment, Long> {
                 "FROM QnAComment " +
                 "WHERE qna.id = :qnaId"
     )
-    Long findMaxIdByQnAId(@Param("qnaId") Long qnaId);
+    Optional<Long> findMaxIdByQnAId(@Param("qnaId") Long qnaId);
 }

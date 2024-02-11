@@ -41,8 +41,7 @@ public class QnACommentService {
         QnA qna = getQnA(qnaId);
 
         if (lastIndex == null) {
-            // TODO: 해당 게시글에 댓글이 없는 경우 확인
-            Long lastIndexByQnAId = qnaCommentRepository.findMaxIdByQnAId(qnaId);
+            Long lastIndexByQnAId = qnaCommentRepository.findMaxIdByQnAId(qnaId).orElse(0L);
             return qnaQuerydslRepository.findAllQnAComment(lastIndexByQnAId, qnaId);
         }
 
