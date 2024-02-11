@@ -12,6 +12,7 @@ import org.devridge.api.domain.qna.dto.response.QFindWriterInformation;
 import org.devridge.api.domain.qna.entity.QQnA;
 
 import org.devridge.api.domain.qna.entity.QQnAComment;
+import org.devridge.api.domain.qna.entity.QnAComment;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -71,25 +72,9 @@ public class QnAQuerydslRepository {
             .fetch();
     }
 
-    public List<GetAllCommentByQnAId> findAllQnAComment(Long lastIndex, Long qnaId) {
+    public List<QnAComment> findAllQnAComment(Long lastIndex, Long qnaId) {
         return jpaQueryFactory
-            .select(
-                Projections.constructor(
-                    GetAllCommentByQnAId.class,
-                    qQnAComment.id,
-                    new QFindWriterInformation(
-                        qQnAComment.member.id,
-                        qQnAComment.member.nickname,
-                        qQnAComment.member.profileImageUrl,
-                        qQnAComment.member.introduction
-                    ),
-                    qQnAComment.content,
-                    qQnAComment.likes,
-                    qQnAComment.dislikes,
-                    qQnAComment.createdAt
-                )
-            )
-            .from(qQnAComment)
+            .selectFrom(qQnAComment)
             .where(qQnAComment.id.loe(lastIndex), qQnAComment.qna.id.eq(qnaId))
             .orderBy(qQnAComment.id.desc())
             .limit(PAGE_SIZE)

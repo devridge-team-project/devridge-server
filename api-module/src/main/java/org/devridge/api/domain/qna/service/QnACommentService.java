@@ -42,11 +42,12 @@ public class QnACommentService {
 
         if (lastIndex == null) {
             Long lastIndexByQnAId = qnaCommentRepository.findMaxIdByQnAId(qnaId).orElse(0L);
-            return qnaQuerydslRepository.findAllQnAComment(lastIndexByQnAId, qnaId);
+            List<QnAComment> comments = qnaQuerydslRepository.findAllQnAComment(lastIndexByQnAId, qnaId);
+            return qnaCommentMapper.toQnAComments(comments);
         }
 
-        // TODO: 탈퇴된 멤버 처리 확인
-        return qnaQuerydslRepository.findAllQnAComment(lastIndex, qnaId);
+        List<QnAComment> comments = qnaQuerydslRepository.findAllQnAComment(lastIndex, qnaId);
+        return qnaCommentMapper.toQnAComments(comments);
     }
 
     public Long createQnAComment(Long qnaId, CreateQnACommentRequest commentRequest) {
