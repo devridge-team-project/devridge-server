@@ -27,9 +27,10 @@ public class QnAController {
     @GetMapping
     public ResponseEntity<List<GetAllQnAResponse>> getAllQnA(
         @RequestParam(value = "sortOption", required = true)
-        @ValidateSortOption(enumClass = SortOption.class) SortOption sortOption
+        @ValidateSortOption(enumClass = SortOption.class) SortOption sortOption,
+        @RequestParam(value = "lastIndex", required = false) Long lastIndex
     ) {
-        List<GetAllQnAResponse> result = qnaService.getAllQnASortByViews(sortOption.toString());
+        List<GetAllQnAResponse> result = qnaService.getAllQnASort(sortOption.toString(), lastIndex);
         return ResponseEntity.ok().body(result);
     }
 

@@ -10,6 +10,7 @@ import org.devridge.api.domain.qna.dto.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnALikeDislike;
 import org.devridge.api.domain.qna.entity.id.QnALikeDislikeId;
+import org.devridge.api.domain.qna.exception.LastIndexNotFoundException;
 import org.devridge.api.domain.qna.mapper.QnAMapper;
 import org.devridge.api.domain.qna.repository.QnALikeDislikeRepository;
 import org.devridge.api.domain.qna.repository.QnAQuerydslRepository;
@@ -42,14 +43,17 @@ public class QnAService {
     private final S3Service s3Service;
 
     @Transactional(readOnly = true)
-    public List<GetAllQnAResponse> getAllQnASortByViews(String sortOption) {
+    public List<GetAllQnAResponse> getAllQnASort(String sortOption, Long lastIndex) {
         // TODO: 추후 24시 기준으로 업데이트
         if (sortOption.equals("views")) {
             return qnaQuerydslRepository.findAllQnASortByViews();
         }
 
-        // TODO: 무한 스크롤 변경 예정
-        return qnaQuerydslRepository.findAllQnASortByLatest();
+        if (lastIndex == null) {
+            throw new LastIndexNotFoundException();
+        }
+
+        return qnaQuerydslRepository.findAllQnASortByLatest(lastIndex);
     }
 
     @Transactional

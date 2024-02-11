@@ -43,9 +43,9 @@ public class QnAQuerydslRepository {
     }
 
     /**
-     * TODO: 추후 무한 스크롤 변경 예정
+     * 최신순 무한 스크롤
      */
-    public List<GetAllQnAResponse> findAllQnASortByLatest() {
+    public List<GetAllQnAResponse> findAllQnASortByLatest(Long lastIndex) {
         return jpaQueryFactory
             .select(
                 Projections.constructor(
@@ -54,11 +54,14 @@ public class QnAQuerydslRepository {
                     qQnA.title,
                     qQnA.likes,
                     qQnA.views,
-                    qQnA.comments.size()
+                    qQnA.comments.size(),
+                    qQnA.createdAt
                 )
             )
             .from(qQnA)
-            .orderBy(qQnA.createdAt.desc())
+            .where(qQnA.id.loe(lastIndex))
+            .orderBy(qQnA.id.desc())
+            .limit(10)
             .fetch();
     }
 }
