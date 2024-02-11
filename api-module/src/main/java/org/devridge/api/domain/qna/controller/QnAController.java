@@ -30,7 +30,7 @@ public class QnAController {
         @ValidateSortOption(enumClass = SortOption.class) SortOption sortOption,
         @RequestParam(value = "lastIndex", required = false) Long lastIndex
     ) {
-        List<GetAllQnAResponse> result = qnaService.getAllQnASort(sortOption.toString(), lastIndex);
+        List<GetAllQnAResponse> result = qnaService.getAllQnA(sortOption.toString(), lastIndex);
         return ResponseEntity.ok().body(result);
     }
 
