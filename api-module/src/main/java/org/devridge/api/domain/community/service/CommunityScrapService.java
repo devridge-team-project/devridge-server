@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityScrap;
 import org.devridge.api.domain.community.entity.id.CommunityScrapId;
+import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.community.mapper.CommunityScrapMapper;
 import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.community.repository.CommunityScrapRepository;
@@ -31,8 +32,8 @@ public class CommunityScrapService {
         Community community = getCommunityById(communityId);
         CommunityScrapId communityScrapId = new CommunityScrapId(accessMemberId, communityId);
 
-        if (!accessMemberId.equals(community.getMember().getId())) {
-            throw new AccessDeniedException("거부된 접근입니다.");
+        if (accessMemberId.equals(community.getMember().getId())) {
+            throw new MyCommunityForbiddenException(403, "내가 작성한 글은 스크랩할 수 없습니다.");
         }
 
         communityScrapRepository.findById(communityScrapId).ifPresentOrElse(

@@ -11,6 +11,7 @@ import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityHashtag;
 import org.devridge.api.domain.community.entity.Hashtag;
 import org.devridge.api.domain.community.entity.id.CommunityHashtagId;
+import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.community.mapper.CommunityMapper;
 import org.devridge.api.domain.community.repository.CommunityHashtagRepository;
 import org.devridge.api.domain.community.repository.CommunityRepository;
@@ -52,7 +53,7 @@ public class CommunityService {
         Community community = getCommunityById(communityId);
 
         if (!accessMemberId.equals(community.getMember().getId())) {
-            throw new AccessDeniedException("거부된 접근입니다.");
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 수정할 수 없습니다.");
         }
 
         community.updateCommunity(communityRequest.getTitle(), communityRequest.getContent());
@@ -65,7 +66,7 @@ public class CommunityService {
         Community community = getCommunityById(communityId);
 
         if (!accessMemberId.equals(community.getMember().getId())) {
-            throw new AccessDeniedException("거부된 접근입니다.");
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 삭제할 수 없습니다.");
         }
 
         List<CommunityHashtag> communityHashtags = communityHashtagRepository.findAllByCommunityId(communityId); // 삭제전 communityHashtag
@@ -112,7 +113,7 @@ public class CommunityService {
         Community community = getCommunityById(communityId);
 
         if (!accessMemberId.equals(community.getMember().getId())) {
-            throw new AccessDeniedException("거부된 접근입니다.");
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 수정할 수 없습니다.");
         }
 
         List<CommunityHashtag> communityHashtags = communityHashtagRepository.findAllByCommunityId(communityId);

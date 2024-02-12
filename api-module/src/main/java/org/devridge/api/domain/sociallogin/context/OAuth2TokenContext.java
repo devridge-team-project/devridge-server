@@ -6,7 +6,7 @@ import org.devridge.api.domain.sociallogin.strategy.token.GoogleTokenProvider;
 import org.devridge.api.domain.sociallogin.strategy.token.KakaoTokenProvider;
 import org.devridge.api.domain.sociallogin.strategy.token.NaverTokenProvider;
 import org.devridge.api.domain.sociallogin.strategy.token.OAuth2TokenStrategy;
-import org.devridge.api.exception.sociallogin.SocialLoginException;
+import org.devridge.api.domain.sociallogin.exception.SocialLoginException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +35,7 @@ public class OAuth2TokenContext {
         OAuth2TokenStrategy strategy = strategies.get(provider);
 
         if (strategy == null) {
-            throw new SocialLoginException("Unknown Provider: " + loginRequest.getProvider());
+            throw new SocialLoginException(400, "Unknown Provider: " + loginRequest.getProvider());
         }
 
         return strategy.getToken(loginRequest);
