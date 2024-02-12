@@ -2,7 +2,6 @@ package org.devridge.api.domain.qna.repository;
 
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.dto.type.LikeStatus;
-import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnACommentLikeDislike;
 import org.devridge.api.domain.qna.entity.QnAComment;
 import org.devridge.api.domain.qna.entity.id.QnACommentLikeDislikeId;

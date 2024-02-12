@@ -5,14 +5,11 @@ import com.querydsl.core.types.Projections;
 
 import lombok.RequiredArgsConstructor;
 
-import org.devridge.api.domain.qna.dto.response.FindWriterInformation;
-import org.devridge.api.domain.qna.dto.response.GetAllCommentByQnAId;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
-import org.devridge.api.domain.qna.dto.response.QFindWriterInformation;
 import org.devridge.api.domain.qna.entity.QQnA;
-
 import org.devridge.api.domain.qna.entity.QQnAComment;
 import org.devridge.api.domain.qna.entity.QnAComment;
+
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
