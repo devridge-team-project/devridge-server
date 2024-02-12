@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
+import org.devridge.api.domain.community.dto.response.MemberInfoResponse;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.member.entity.Member;
@@ -26,15 +27,21 @@ public class CommunityCommentMapper {
         Member member = comment.getMember();
         return CommunityCommentResponse.builder()
                 .commentId(comment.getId())
-                .memberId(member.getId())
-                .nickName(member.getNickname())
-                .introduction(member.getIntroduction())
-                .profileImageUrl(member.getProfileImageUrl())
+                .memberInfoResponse(toMemberInfoResponse(member))
                 .likeCount(comment.getLikeCount())
                 .dislikeCount(comment.getDislikeCount())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
                 .content(comment.getContent())
+                .build();
+    }
+
+    public MemberInfoResponse toMemberInfoResponse(Member member) {
+        return MemberInfoResponse.builder()
+                .memberId(member.getId())
+                .nickName(member.getNickname())
+                .profileImageUrl(member.getProfileImageUrl())
+                .introduction(member.getIntroduction())
                 .build();
     }
 
