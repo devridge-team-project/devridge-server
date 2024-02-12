@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
 import org.devridge.api.domain.community.dto.response.CommunityListResponse;
+import org.devridge.api.domain.community.dto.response.MemberInfoResponse;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
@@ -16,19 +17,26 @@ public class CommunityMapper {
     public CommunityDetailResponse toCommunityDetailResponse(Community community) {
         Member member = community.getMember();
         return CommunityDetailResponse.builder()
-                .id(community.getId())
-                .nickName(member.getNickname())
-                .introduction(member.getIntroduction())
+                .communityId(community.getId())
+                .memberInfoResponse(toMemberInfoResponse(member))
                 .title(community.getTitle())
                 .content(community.getContent())
                 .likeCount(community.getLikeCount())
                 .dislikeCount(community.getDislikeCount())
                 .views(community.getViews())
-                .profileImageUrl(member.getProfileImageUrl())
                 .createdAt(community.getCreatedAt())
                 .updatedAt(community.getUpdatedAt())
                 .hashtags(toHashtags(community))
                 .build();
+    }
+
+    public MemberInfoResponse toMemberInfoResponse(Member member) {
+        return MemberInfoResponse.builder()
+            .memberId(member.getId())
+            .nickName(member.getNickname())
+            .profileImageUrl(member.getProfileImageUrl())
+            .introduction(member.getIntroduction())
+            .build();
     }
 
     public List<String> toHashtags(Community community) {
