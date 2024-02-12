@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.qna.dto.request.CreateQnACommentRequest;
 import org.devridge.api.domain.qna.dto.request.UpdateQnACommentRequest;
+import org.devridge.api.domain.qna.dto.response.GetAllCommentByQnAId;
 import org.devridge.api.domain.qna.service.QnACommentService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RequestMapping("/api/qna/{qnaId}/comments")
 @RequiredArgsConstructor
@@ -17,6 +19,15 @@ import java.net.URI;
 public class QnACommentController {
 
     private final QnACommentService qnaCommentService;
+
+    @GetMapping
+    public ResponseEntity<List<GetAllCommentByQnAId>> getAllQnAComment(
+        @PathVariable Long qnaId,
+        @RequestParam(value = "lastIndex", required = false) Long lastIndex
+    ) {
+        List<GetAllCommentByQnAId> comments = qnaCommentService.getAllQnACommentByQnAId(lastIndex, qnaId);
+        return ResponseEntity.ok().body(comments);
+    }
 
     @PostMapping
     public ResponseEntity<Void> createQnAComment(
@@ -27,7 +38,7 @@ public class QnACommentController {
         return ResponseEntity.created(URI.create("/api/qna/" + qnaId + "/comments/" + commentId)).build();
     }
 
-    @PutMapping("/{commentId}")
+    @PatchMapping("/{commentId}")
     public ResponseEntity<Void> updateQnAComment(
         @PathVariable Long qnaId,
         @PathVariable Long commentId,

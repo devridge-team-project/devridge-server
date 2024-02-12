@@ -17,11 +17,14 @@ import org.devridge.api.domain.qna.repository.QnARepository;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.repository.QnAScrapRepository;
+import org.devridge.api.domain.s3.service.S3Service;
 import org.devridge.api.exception.common.DataNotFoundException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
@@ -36,21 +39,28 @@ public class QnAService {
     private final MemberRepository memberRepository;
     private final QnALikeDislikeRepository qnaLikeDislikeRepository;
     private final QnAScrapRepository qnaScrapRepository;
+    private final S3Service s3Service;
 
     @Transactional(readOnly = true)
-    public List<GetAllQnAResponse> getAllQnASortByViews(String sortOption) {
+    public List<GetAllQnAResponse> getAllQnA(String sortOption, Long lastIndex) {
         // TODO: 추후 24시 기준으로 업데이트
         if (sortOption.equals("views")) {
             return qnaQuerydslRepository.findAllQnASortByViews();
         }
 
-        // TODO: 무한 스크롤 변경 예정
-        return qnaQuerydslRepository.findAllQnASortByLatest();
+        if (lastIndex == null) {
+            Long maxId = qnaRepository.findMaxId().orElse(0L);
+            return qnaQuerydslRepository.findAllQnASortByLatest(maxId);
+        }
+
+        return qnaQuerydslRepository.findAllQnASortByLatest(lastIndex);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public GetQnADetailResponse getQnADetail(Long qnaId) {
         QnA qna = this.getQnA(qnaId);
+        qnaRepository.increaseQnAView(qnaId);
+
         return qnaMapper.toGetQnADetailResponse(qna);
     }
 
@@ -68,8 +78,11 @@ public class QnAService {
     }
 
     public void deleteQnA(Long qnaId) {
-        getQnA(qnaId);
+        QnA qna = getQnA(qnaId);
+        List<String> images = new ArrayList<>(Arrays.asList(qna.getImageUrl().split(", ")));
+
         qnaRepository.deleteById(qnaId);
+        s3Service.deleteAllImage(images);
     }
 
     @Transactional

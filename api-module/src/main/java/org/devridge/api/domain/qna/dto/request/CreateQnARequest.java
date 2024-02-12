@@ -5,6 +5,8 @@ import lombok.Getter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import java.util.List;
+
 @Getter
 public class CreateQnARequest {
 
@@ -15,4 +17,6 @@ public class CreateQnARequest {
 
     @NotBlank(message = "내용을 입력해주세요.")
     private String content;
+
+    private List<String> imageUrl;
 }

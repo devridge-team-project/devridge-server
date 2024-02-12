@@ -27,9 +27,10 @@ public class QnAController {
     @GetMapping
     public ResponseEntity<List<GetAllQnAResponse>> getAllQnA(
         @RequestParam(value = "sortOption", required = true)
-        @ValidateSortOption(enumClass = SortOption.class) SortOption sortOption
+        @ValidateSortOption(enumClass = SortOption.class) SortOption sortOption,
+        @RequestParam(value = "lastIndex", required = false) Long lastIndex
     ) {
-        List<GetAllQnAResponse> result = qnaService.getAllQnASortByViews(sortOption.toString());
+        List<GetAllQnAResponse> result = qnaService.getAllQnA(sortOption.toString(), lastIndex);
         return ResponseEntity.ok().body(result);
     }
 
@@ -45,7 +46,7 @@ public class QnAController {
         return ResponseEntity.created(URI.create("/api/qna/" + qnaId)).build();
     }
 
-    @PutMapping("/{qnaId}")
+    @PatchMapping("/{qnaId}")
     public ResponseEntity<Void> updateQnA(
         @PathVariable Long qnaId,
         @Valid @RequestBody UpdateQnARequest qnaRequest
