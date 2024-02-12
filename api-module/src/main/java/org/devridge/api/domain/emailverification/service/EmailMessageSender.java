@@ -1,5 +1,6 @@
 package org.devridge.api.domain.emailverification.service;
 
+import org.devridge.api.exception.common.InternalServerErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class EmailMessageSender {
 
             emailSender.send(message);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 발송에 실패했습니다.", e);
+            throw new InternalServerErrorException();
         }
     }
 }
