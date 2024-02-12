@@ -3,7 +3,7 @@ package org.devridge.common.dto;
 import lombok.Getter;
 
 @Getter
-public class BaseErrorResponse<T> {
+public class BaseErrorResponse {
 
     private String error;
 

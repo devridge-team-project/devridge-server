@@ -6,7 +6,7 @@ import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.entity.RefreshToken;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
-import org.devridge.api.exception.member.WrongLoginException;
+import org.devridge.api.domain.member.exception.WrongLoginException;
 import org.devridge.api.security.auth.CustomMemberDetails;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;

@@ -16,12 +16,12 @@ import org.devridge.api.domain.sociallogin.dto.request.SocialLoginSignUp;
 import org.devridge.api.domain.sociallogin.dto.response.oauth.OAuth2TokenResponse;
 import org.devridge.api.domain.sociallogin.dto.response.SocialLoginResponse;
 import org.devridge.api.domain.sociallogin.entity.OAuth2Member;
-import org.devridge.api.exception.member.AccessTokenInvalidException;
-import org.devridge.api.exception.member.DuplNicknameException;
+import org.devridge.api.domain.member.exception.AccessTokenInvalidException;
+import org.devridge.api.domain.member.exception.DuplNicknameException;
 import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.AccessTokenUtil;
 import org.devridge.api.util.JwtUtil;
-import org.devridge.common.exception.DataNotFoundException;
+import org.devridge.api.exception.common.DataNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -100,7 +100,7 @@ public class SocialLoginService {
 
     private void checkDuplNickname(String nickname) {
         if (memberRepository.findByNickname(nickname).isPresent()) {
-            throw new DuplNicknameException();
+            throw new DuplNicknameException(409, "이미 존재하는 닉네임입니다. 다른 닉네임을 사용해주세요.");
         }
     }
 
@@ -110,7 +110,7 @@ public class SocialLoginService {
         try {
             return AccessTokenUtil.getClaimsFromAccessToken(tempJwt);
         } catch (Exception e) {
-            throw new AccessTokenInvalidException();
+            throw new AccessTokenInvalidException(401, "로그아웃 되었습니다. 다시 로그인해주세요.");
         }
     }
 

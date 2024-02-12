@@ -6,6 +6,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
+import org.devridge.api.domain.community.dto.response.CommunityListResponse;
 import org.devridge.api.domain.community.service.CommunityService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,8 +26,8 @@ public class CommunityController {
     private final CommunityService communityService;
 
     @PostMapping
-    public ResponseEntity<Void> createCommunity(@Valid @RequestBody CreateCommunityRequest communityRequest) {
-        Long communityId = communityService.createCommunity(communityRequest);
+    public ResponseEntity<Void> createCommunityAndHashtag(@Valid @RequestBody CreateCommunityRequest communityRequest) {
+        Long communityId = communityService.createCommunityAndHashtag(communityRequest);
         return ResponseEntity.created(URI.create("/api/community/" + communityId)).build();
     }
 
@@ -41,7 +42,7 @@ public class CommunityController {
         @PathVariable Long communityId,
         @Valid @RequestBody CreateCommunityRequest communityRequest
     ) {
-        communityService.updateCommunity(communityId, communityRequest);
+        communityService.updateCommunityAndHashtag(communityId, communityRequest);
         return ResponseEntity.ok().build();
     }
 
@@ -51,10 +52,10 @@ public class CommunityController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/all") // 커뮤니티 글 전체 목록 보여주기
-    public ResponseEntity<List<CommunityDetailResponse>> getAllCommunity() {
-        List<CommunityDetailResponse> communityDetailResponses = communityService.getAllCommunity();
-        return ResponseEntity.ok().body(communityDetailResponses);
+    @GetMapping
+    public ResponseEntity<List<CommunityListResponse>> getAllCommunity() {
+        List<CommunityListResponse> communityListResponses = communityService.getAllCommunity();
+        return ResponseEntity.ok().body(communityListResponses);
     }
 }
 

@@ -9,9 +9,14 @@ import lombok.Getter;
 @Getter
 public class CommunityCommentResponse {
 
+    private Long commentId;
+    private Long memberId;
     private String nickName;
-
-    private LocalDateTime updatedAt;
-
     private String content;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String profileImageUrl;
+    private String introduction;
+    private Long likeCount;
+    private Long dislikeCount;
 }

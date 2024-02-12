@@ -7,6 +7,7 @@ import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityComment;
+import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.community.mapper.CommunityCommentMapper;
 import org.devridge.api.domain.community.repository.CommunityCommentRepository;
 import org.devridge.api.domain.community.repository.CommunityRepository;
@@ -27,8 +28,8 @@ public class CommunityCommentService {
 
     public Long createComment(Long communityId, CommunityCommentRequest commentRequest) {
         Community community = getCommunityById(communityId);
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        Member member = getMemberById(writeMemberId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        Member member = getMemberById(accessMemberId);
 
         CommunityComment communityComment =
             communityCommentMapper.toCommunityComment(community, member, commentRequest);
@@ -37,22 +38,17 @@ public class CommunityCommentService {
 
     public List<CommunityCommentResponse> getAllComment(Long communityId) {
         List<CommunityComment> communityComments = communityCommentRepository.findByCommunityId(communityId);
-
-        if (communityComments.isEmpty()) {
-            throw new EntityNotFoundException("해당 엔티티를 찾을 수 없습니다.");
-        }
-
         return communityCommentMapper.toCommentResponses(communityComments);
     }
 
     public void updateComment(Long communityId, Long commentId, CommunityCommentRequest commentRequest) {
         getCommunityById(communityId);
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        getMemberById(writeMemberId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
         CommunityComment comment = getCommunityComment(commentId);
 
-        if (!comment.getMember().getId().equals(writeMemberId)) {
-            throw new AccessDeniedException("거부된 접근입니다.");
+        if (!comment.getMember().getId().equals(accessMemberId)) {
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 수정할 수 없습니다.");
         }
 
         comment.updateComment(commentRequest.getContent());
@@ -61,12 +57,12 @@ public class CommunityCommentService {
 
     public void deleteComment(Long communityId, Long commentId) {
         getCommunityById(communityId);
-        Long writeMemberId = SecurityContextHolderUtil.getMemberId();
-        getMemberById(writeMemberId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
         CommunityComment comment = getCommunityComment(commentId);
 
-        if (!comment.getMember().getId().equals(writeMemberId)) {
-            throw new AccessDeniedException("거부된 접근입니다.");
+        if (!comment.getMember().getId().equals(accessMemberId)) {
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 삭제할 수 없습니다.");
         }
 
         communityCommentRepository.deleteById(commentId);

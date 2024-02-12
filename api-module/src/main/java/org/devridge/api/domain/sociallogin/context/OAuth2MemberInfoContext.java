@@ -9,7 +9,7 @@ import org.devridge.api.domain.sociallogin.strategy.member.GoogleMemberInfoProvi
 import org.devridge.api.domain.sociallogin.strategy.member.KakaoMemberInfoProvider;
 import org.devridge.api.domain.sociallogin.strategy.member.NaverMemberInfoProvider;
 import org.devridge.api.domain.sociallogin.strategy.member.OAuth2MemberInfoStrategy;
-import org.devridge.api.exception.sociallogin.SocialLoginException;
+import org.devridge.api.domain.sociallogin.exception.SocialLoginException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +45,7 @@ public class OAuth2MemberInfoContext {
         OAuth2MemberInfoStrategy strategy = strategies.get(provider);
 
         if(strategy == null) {
-            throw new SocialLoginException("Unknown Provider: " + provider);
+            throw new SocialLoginException(400, "Unknown Provider: " + provider);
         }
         return strategy.getMemberInfo(tokenResponse);
     }
@@ -54,7 +54,7 @@ public class OAuth2MemberInfoContext {
         Function<Map<String, Object>, OAuth2Member> memberInfoProvider = memberInfoProviderMap.get(provider);
 
         if (memberInfoProvider == null) {
-            throw new SocialLoginException("Unknown Provider: " + provider);
+            throw new SocialLoginException(400, "Unknown Provider: " + provider);
         }
         return memberInfoProvider.apply(userAttributes);
     }
