@@ -40,7 +40,8 @@ public class QnAQuerydslRepository {
                     qQnA.title,
                     qQnA.likes,
                     qQnA.views,
-                    qQnA.comments.size()
+                    qQnA.comments.size(),
+                    qQnA.createdAt
                 )
             )
             .from(qQnA)
