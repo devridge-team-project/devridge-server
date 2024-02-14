@@ -1,25 +1,10 @@
 spring:
-  profiles:
-    include:
-      - dev
-      # - prod
-
----
-
-server:
-  port: 8080
-  tomcat:
-    uri-encoding: UTF-8
-
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql: info
-
-spring:
   config:
     activate:
       on-profile: dev
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
