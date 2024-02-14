@@ -18,3 +18,15 @@ logging:
         type:
           descriptor:
             sql: info
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
