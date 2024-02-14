@@ -2,7 +2,7 @@ spring:
   profiles:
     include:
       - dev
-      # - prod
+      - prod
 
 ---
 
@@ -18,8 +18,3 @@ logging:
         type:
           descriptor:
             sql: info
-
-spring:
-  config:
-    activate:
-      on-profile: dev
