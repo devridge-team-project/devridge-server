@@ -59,7 +59,7 @@ jobs:
         with:
           host: ${{ secrets.PROD_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.DEV_KEY }}
+          key: ${{ secrets.PROD_KEY }}
           envs: GITHUB_SHA
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-prod-blue
