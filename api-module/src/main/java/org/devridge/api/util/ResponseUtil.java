@@ -1,9 +1,11 @@
 package org.devridge.api.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 public class ResponseUtil {
@@ -19,8 +21,6 @@ public class ResponseUtil {
     }
 
     public static void createResponseBody(HttpServletResponse response, HttpStatus status) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setStatus(status.value());

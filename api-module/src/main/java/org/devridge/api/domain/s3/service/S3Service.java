@@ -7,13 +7,14 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.s3.dto.response.UploadImageResponse;
-import org.devridge.common.exception.DataNotFoundException;
+import org.devridge.api.exception.common.DataNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -45,6 +46,18 @@ public class S3Service {
             s3Client.deleteObject(bucketName, name);
         } else {
             throw new DataNotFoundException();
+        }
+    }
+
+    public void deleteAllImage(List<String> names) {
+        for (String name : names) {
+            boolean isExist = s3Client.doesObjectExist(bucketName, name);
+
+            if (isExist) {
+                s3Client.deleteObject(bucketName, name);
+            } else {
+                throw new DataNotFoundException();
+            }
         }
     }
 

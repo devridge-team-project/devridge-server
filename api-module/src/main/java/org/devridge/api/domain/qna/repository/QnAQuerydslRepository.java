@@ -5,9 +5,14 @@ import com.querydsl.core.types.Projections;
 
 import lombok.RequiredArgsConstructor;
 
+import org.devridge.api.domain.qna.dto.response.FindWriterInformation;
+import org.devridge.api.domain.qna.dto.response.GetAllCommentByQnAId;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
+import org.devridge.api.domain.qna.dto.response.QFindWriterInformation;
 import org.devridge.api.domain.qna.entity.QQnA;
 
+import org.devridge.api.domain.qna.entity.QQnAComment;
+import org.devridge.api.domain.qna.entity.QnAComment;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,8 +22,10 @@ import java.util.List;
 public class QnAQuerydslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
+    private final int PAGE_SIZE = 10;
 
     private QQnA qQnA = QQnA.qnA;
+    private QQnAComment qQnAComment = QQnAComment.qnAComment;
 
     /**
      * 조회수 기준 상위 5개 반환, 리스트 반환이므로 id, 제목, 답변수, 추천수, 조회수만 반환
@@ -33,7 +40,8 @@ public class QnAQuerydslRepository {
                     qQnA.title,
                     qQnA.likes,
                     qQnA.views,
-                    qQnA.comments.size()
+                    qQnA.comments.size(),
+                    qQnA.createdAt
                 )
             )
             .from(qQnA)
@@ -43,9 +51,9 @@ public class QnAQuerydslRepository {
     }
 
     /**
-     * TODO: 추후 무한 스크롤 변경 예정
+     * 최신순 무한 스크롤
      */
-    public List<GetAllQnAResponse> findAllQnASortByLatest() {
+    public List<GetAllQnAResponse> findAllQnASortByLatest(Long lastIndex) {
         return jpaQueryFactory
             .select(
                 Projections.constructor(
@@ -54,11 +62,23 @@ public class QnAQuerydslRepository {
                     qQnA.title,
                     qQnA.likes,
                     qQnA.views,
-                    qQnA.comments.size()
+                    qQnA.comments.size(),
+                    qQnA.createdAt
                 )
             )
             .from(qQnA)
-            .orderBy(qQnA.createdAt.desc())
+            .where(qQnA.id.loe(lastIndex))
+            .orderBy(qQnA.id.desc())
+            .limit(PAGE_SIZE)
+            .fetch();
+    }
+
+    public List<QnAComment> findAllQnAComment(Long lastIndex, Long qnaId) {
+        return jpaQueryFactory
+            .selectFrom(qQnAComment)
+            .where(qQnAComment.id.loe(lastIndex), qQnAComment.qna.id.eq(qnaId))
+            .orderBy(qQnAComment.id.desc())
+            .limit(PAGE_SIZE)
             .fetch();
     }
 }

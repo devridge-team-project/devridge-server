@@ -1,6 +1,8 @@
 package org.devridge.api.domain.community.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,16 +10,19 @@ import lombok.Getter;
 @Getter
 public class CommunityDetailResponse {
 
-    // 작성자 닉네임, 글제목, 내용, 뷰, 생성시간, 수정시간
-    private String nickName;
+    @JsonProperty("id")
+    private Long communityId;
 
     private String title;
-
     private String content;
-
     private Long views;
-
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
+    private Long likeCount;
+    private Long dislikeCount;
+
+    @JsonProperty("member")
+    private MemberInfoResponse memberInfoResponse;
+
+    private List<String> hashtags;
 }

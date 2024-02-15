@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 public interface QnARepository extends JpaRepository<QnA, Long> {
 
     @Modifying(clearAutomatically = true)
@@ -24,4 +26,18 @@ public interface QnARepository extends JpaRepository<QnA, Long> {
                 "WHERE id = :qnaId"
     )
     void updateLikeAndDiscount(@Param("likes") int likes, @Param("dislikes") int dislikes, @Param("qnaId") Long qnaId);
+
+    @Modifying
+    @Query(
+        value = "UPDATE QnA " +
+                "SET views = views + 1 " +
+                "WHERE id = :qnaId"
+    )
+    void increaseQnAView(@Param("qnaId") Long qnaId);
+
+    @Query(
+        value = "SELECT MAX(id) " +
+                "FROM QnA"
+    )
+    Optional<Long> findMaxId();
 }

@@ -19,6 +19,4 @@ public class GetQnADetailResponse {
     private Integer dislikes;
     private LocalDateTime createdAt;
     private Integer commentCount;
-    // TODO: 댓글 무한 스크롤이 필요한지 확인
-    private List<GetAllCommentByQnAId> comments;
 }
