@@ -19,7 +19,6 @@ import org.devridge.api.domain.community.repository.HashtagRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +41,8 @@ public class CommunityService {
 
     @Transactional
     public CommunityDetailResponse getCommunity(Long communityId) {
-        updateView(communityId);
         Community community = getCommunityById(communityId);
+        communityRepository.updateView(communityId);
         return communityMapper.toCommunityDetailResponse(community);
     }
 
@@ -79,10 +78,6 @@ public class CommunityService {
     public List<CommunityListResponse> getAllCommunity() {
         List<Community> communities = communityRepository.findAll();
         return communityMapper.toCommunityListResponses(communities);
-    }
-
-    private void updateView(Long id) {
-        communityRepository.updateView(id);
     }
 
     private Community getCommunityById(Long communityId) {
@@ -145,7 +140,7 @@ public class CommunityService {
             .collect(Collectors.toList());
     }
 
-    private CommunityHashtag saveOrRestoreCommunityHashtag(Community community, Hashtag hashtag) {
+    private CommunityHashtag saveOrRestoreCommunityHashtag(Community community, Hashtag hashtag) {  // 소프트 딜리트 포함 가져오기  -> 다 지워진상태or 없는상태 위에서 다지움
         return communityHashtagRepository.findByCommunityIdAndHashtagId(community.getId(), hashtag.getId())
             .map(result -> {
                 communityHashtagRepository.restoreByCommunityIdAndHashtagId(community.getId(), hashtag.getId());

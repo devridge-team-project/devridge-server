@@ -28,7 +28,7 @@ public class CommunityMapper {
                 .content(community.getContent())
                 .likeCount(community.getLikeCount())
                 .dislikeCount(community.getDislikeCount())
-                .views(community.getViews())
+                .views(community.getViews() + 1)
                 .createdAt(community.getCreatedAt())
                 .updatedAt(community.getUpdatedAt())
                 .hashtags(toHashtags(community))
