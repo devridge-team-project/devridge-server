@@ -2,6 +2,7 @@ package org.devridge.api.domain.community.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
 import org.devridge.api.domain.community.dto.response.MemberInfoResponse;
@@ -11,7 +12,10 @@ import org.devridge.api.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class CommunityCommentMapper {
+
+    private final MemberInfoMapper memberInfoMapper;
 
     public List<CommunityCommentResponse> toCommentResponses(List<CommunityComment> communityComments) {
         List<CommunityCommentResponse> commentResponses = new ArrayList<>();
@@ -25,9 +29,10 @@ public class CommunityCommentMapper {
 
     public CommunityCommentResponse toCommentResponse(CommunityComment comment) {
         Member member = comment.getMember();
+        MemberInfoResponse memberInfoResponse = memberInfoMapper.toMemberInfoResponse(member);
         return CommunityCommentResponse.builder()
                 .commentId(comment.getId())
-                .memberInfoResponse(toMemberInfoResponse(member))
+                .memberInfoResponse(memberInfoResponse)
                 .likeCount(comment.getLikeCount())
                 .dislikeCount(comment.getDislikeCount())
                 .createdAt(comment.getCreatedAt())
@@ -36,20 +41,11 @@ public class CommunityCommentMapper {
                 .build();
     }
 
-    public MemberInfoResponse toMemberInfoResponse(Member member) {
-        return MemberInfoResponse.builder()
-                .memberId(member.getId())
-                .nickName(member.getNickname())
-                .profileImageUrl(member.getProfileImageUrl())
-                .introduction(member.getIntroduction())
-                .build();
-    }
-
     public CommunityComment toCommunityComment(Community community, Member member, CommunityCommentRequest Request) {
         return CommunityComment.builder()
-            .community(community)
-            .content(Request.getContent())
-            .member(member)
-            .build();
+                .community(community)
+                .content(Request.getContent())
+                .member(member)
+                .build();
     }
 }
