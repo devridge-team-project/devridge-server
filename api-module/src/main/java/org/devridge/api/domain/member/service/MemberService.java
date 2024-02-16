@@ -3,6 +3,7 @@ package org.devridge.api.domain.member.service;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.constant.Role;
 import org.devridge.api.domain.emailverification.entity.EmailVerification;
+import org.devridge.api.domain.emailverification.exception.EmailVerificationInvalidException;
 import org.devridge.api.domain.emailverification.repository.EmailVerificationRepository;
 import org.devridge.api.domain.member.dto.request.*;
 import org.devridge.api.domain.member.dto.response.MemberResponse;
@@ -11,20 +12,23 @@ import org.devridge.api.domain.member.entity.Occupation;
 import org.devridge.api.domain.member.exception.*;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.repository.OccupationRepository;
+import org.devridge.api.domain.s3.dto.response.UploadImageResponse;
+import org.devridge.api.domain.s3.service.S3Service;
 import org.devridge.api.domain.skill.entity.MemberSkill;
 import org.devridge.api.domain.skill.entity.Skill;
 import org.devridge.api.domain.skill.entity.key.MemberSkillId;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.domain.skill.repository.SkillRepository;
-import org.devridge.api.domain.emailverification.exception.EmailVerificationInvalidException;
-import org.devridge.api.util.SecurityContextHolderUtil;
 import org.devridge.api.exception.common.DataNotFoundException;
+import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -40,25 +44,39 @@ public class MemberService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailVerificationRepository emailVerificationRepository;
     private final OccupationRepository occupationRepository;
+    private final S3Service s3Service;
 
     @Transactional
-    public Long createMember(CreateMemberRequest memberRequest){
-        checkDuplEmail(memberRequest);
+    public Long createMember(CreateMemberRequest memberRequest, MultipartFile image) throws IOException {
+        checkDuplEmailAndProvider(memberRequest);
         checkDuplNickname(memberRequest);
 
-        Occupation occupation = areOccupationValid(memberRequest.getOccupationId());
+        Occupation occupation = isOccupationValid(memberRequest.getOccupationId());
 
         String encodedPassword = passwordEncoder.encode(memberRequest.getPassword());
         Member member = buildAndSaveMember(memberRequest, occupation, encodedPassword);
 
+        createMemberSkills(memberRequest, member);
+        createMemberProfileImage(image, member);
+
+        return member.getId();
+    }
+
+    private void createMemberProfileImage(MultipartFile image, Member member) throws IOException {
+        if (!image.isEmpty()) {
+            UploadImageResponse imageResponse = s3Service.uploadImage(image, "member");
+            System.out.println(imageResponse.getImagePath());
+            member.setProfileImageUrl(imageResponse.getImagePath());
+        }
+    }
+
+    private void createMemberSkills(CreateMemberRequest memberRequest, Member member) {
         List<Long> skillIds = memberRequest.getSkillIds();
 
         if (!skillIds.isEmpty()) {
             List<Skill> skills = areSkillsValid(skillIds);
             createMemberSkill(skills, member);
         }
-
-        return member.getId();
     }
 
     private Member buildAndSaveMember(CreateMemberRequest memberRequest, Occupation occupation, String encodedPassword) {
@@ -70,7 +88,6 @@ public class MemberService {
                 .nickname(memberRequest.getNickname())
                 .introduction(memberRequest.getIntroduction())
                 .occupation(occupation)
-                .profileImageUrl(memberRequest.getProfileImageUrl())
                 .build();
 
         return memberRepository.save(member);
@@ -161,13 +178,13 @@ public class MemberService {
         return skills;
     }
 
-    public Occupation areOccupationValid(Long occupationId) {
+    public Occupation isOccupationValid(Long occupationId) {
         return occupationRepository.findById(occupationId).orElseThrow(
                 () -> new DataNotFoundException()
         );
     }
 
-    private void checkDuplEmail(CreateMemberRequest memberRequest) {
+    private void checkDuplEmailAndProvider(CreateMemberRequest memberRequest) {
         memberRepository.findByEmailAndProvider(
                 memberRequest.getEmail(), memberRequest.getProvider()
         ).ifPresent(member -> {
