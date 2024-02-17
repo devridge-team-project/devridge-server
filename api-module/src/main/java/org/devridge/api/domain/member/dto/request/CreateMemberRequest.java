@@ -27,7 +27,7 @@ public class CreateMemberRequest {
 
     @NotBlank(message = "자기소개를 입력해주세요.")
     @Size(min = 5, max = 25, message = "자기소개는 5 ~ 25자내로 입력해주세요.")
-    @Pattern(regexp = "^[a-zA-Z가-힣 ]*$", message = "자기소개 입력 형식이 올바르지 않습니다.")
+    @Pattern(regexp = "^[a-zA-Z가-힣0-9,.! ]*$", message = "자기소개는 영어, 한글, 숫자, 그리고 특수문자(, . ! ?)만 입력 가능합니다.")
     private String introduction;
 
     @Size(max = 5, message = "스킬셋은 최대 5개까지만 입력할 수 있습니다.")
