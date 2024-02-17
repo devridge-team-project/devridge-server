@@ -21,6 +21,7 @@ import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.domain.skill.repository.SkillRepository;
 import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,67 +47,26 @@ public class MemberService {
     private final OccupationRepository occupationRepository;
     private final S3Service s3Service;
 
+    @Value("${devridge.s3.defaultImagePath}")
+    private String defaultProfileImagePath;
+
     @Transactional
     public Long createMember(CreateMemberRequest memberRequest, MultipartFile image) throws IOException {
-        checkDuplEmailAndProvider(memberRequest);
-        checkDuplNickname(memberRequest);
+        checkDuplMembers(memberRequest);
 
-        Occupation occupation = isOccupationValid(memberRequest.getOccupationId());
+        List<Skill> skills = fetchValidSkills(memberRequest.getSkillIds());
+        Occupation occupation = validateOccupation(memberRequest.getOccupationId());
+
+        UploadImageResponse imageResponse = uploadImageIfNeeded(new UploadImageResponse(defaultProfileImagePath), image);
 
         String encodedPassword = passwordEncoder.encode(memberRequest.getPassword());
-        Member member = buildAndSaveMember(memberRequest, occupation, encodedPassword);
+        Member member = buildAndSaveMember(memberRequest, occupation, imageResponse, encodedPassword);
 
-        createMemberSkills(memberRequest, member);
-        createMemberProfileImage(image, member);
-
-        return member.getId();
-    }
-
-    private void createMemberProfileImage(MultipartFile image, Member member) throws IOException {
-        if (!image.isEmpty()) {
-            UploadImageResponse imageResponse = s3Service.uploadImage(image, "member");
-            System.out.println(imageResponse.getImagePath());
-            member.setProfileImageUrl(imageResponse.getImagePath());
-        }
-    }
-
-    private void createMemberSkills(CreateMemberRequest memberRequest, Member member) {
-        List<Long> skillIds = memberRequest.getSkillIds();
-
-        if (!skillIds.isEmpty()) {
-            List<Skill> skills = areSkillsValid(skillIds);
+        if (skills != null) {
             createMemberSkill(skills, member);
         }
-    }
 
-    private Member buildAndSaveMember(CreateMemberRequest memberRequest, Occupation occupation, String encodedPassword) {
-        Member member = Member.builder()
-                .email(memberRequest.getEmail())
-                .password(encodedPassword)
-                .provider(memberRequest.getProvider())
-                .roles(Role.valueOf("ROLE_USER"))
-                .nickname(memberRequest.getNickname())
-                .introduction(memberRequest.getIntroduction())
-                .occupation(occupation)
-                .build();
-
-        return memberRepository.save(member);
-    }
-
-    private void createMemberSkill(List<Skill> skills, Member member) {
-        List<MemberSkill> memberSkills = skills.stream()
-                .map(skill -> {
-                    MemberSkillId memberSkillId = new MemberSkillId(member.getId(), skill.getId());
-
-                    return MemberSkill.builder()
-                            .id(memberSkillId)
-                            .member(member)
-                            .skill(skill)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        memberSkillRepository.bulkInsert(memberSkills);
+        return member.getId();
     }
 
     @Transactional
@@ -168,26 +128,18 @@ public class MemberService {
         return buildMemberResponse(member, memberSkillIdList);
     }
 
-    // TODO: DB 조회 -> 캐싱
-    public List<Skill> areSkillsValid(List<Long> skillIds) {
-        List<Skill> skills = skillRepository.findSkillsByIds(skillIds);
-
-        if (skills.size() != skillIds.size()) {
-            throw new SkillsNotValidException(404, "해당하는 스킬 데이터를 찾을 수 없습니다.");
-        }
-        return skills;
-    }
-
-    public Occupation isOccupationValid(Long occupationId) {
-        return occupationRepository.findById(occupationId).orElseThrow(
-                () -> new DataNotFoundException()
-        );
+    private void checkDuplMembers(CreateMemberRequest memberRequest) {
+        checkDuplEmailAndProvider(memberRequest);
+        checkDuplNickname(memberRequest);
     }
 
     private void checkDuplEmailAndProvider(CreateMemberRequest memberRequest) {
+        Optional<Member> memberOpt = memberRepository.findByEmailAndProvider(memberRequest.getEmail(), memberRequest.getProvider());
+
         memberRepository.findByEmailAndProvider(
                 memberRequest.getEmail(), memberRequest.getProvider()
         ).ifPresent(member -> {
+            System.out.println("member.getEmail() = " + member.getEmail());
             throw new DuplEmailException(409, "이미 존재하는 이메일입니다. 다른 이메일을 사용해주세요.");
         });
     }
@@ -198,6 +150,66 @@ public class MemberService {
         if (member.isPresent()) {
             throw new DuplNicknameException(409, "이미 존재하는 닉네임입니다. 다른 닉네임을 사용해주세요.");
         }
+    }
+
+    // TODO: DB 조회 -> 캐싱
+    private List<Skill> fetchValidSkills(List<Long> skillIds) {
+        if (skillIds.isEmpty()) {
+            return null;
+        }
+        List<Skill> skills = skillRepository.findSkillsByIds(skillIds);
+
+        if (skills.size() != skillIds.size()) {
+            throw new SkillsNotValidException(404, "스킬 데이터를 찾을 수 없습니다.");
+        }
+
+        return skills;
+    }
+
+    public Occupation validateOccupation(Long occupationId) {
+        return occupationRepository.findById(occupationId).orElseThrow(
+                () -> new DataNotFoundException()
+        );
+    }
+
+    private UploadImageResponse uploadImageIfNeeded(UploadImageResponse defaultProfileImagePath, MultipartFile image) throws IOException {
+        UploadImageResponse imageResponse = defaultProfileImagePath;
+
+        if (!image.isEmpty()) {
+            imageResponse = s3Service.uploadImage(image, "member");
+        }
+        return imageResponse;
+    }
+
+    private Member buildAndSaveMember(CreateMemberRequest memberRequest, Occupation occupation, UploadImageResponse imageResponse, String encodedPassword) {
+        Member member = Member.builder()
+                .email(memberRequest.getEmail())
+                .password(encodedPassword)
+                .provider(memberRequest.getProvider())
+                .roles(Role.valueOf("ROLE_USER"))
+                .nickname(memberRequest.getNickname())
+                .introduction(memberRequest.getIntroduction())
+                .profileImageUrl(imageResponse.getImagePath())
+                .occupation(occupation)
+                .build();
+        memberRepository.save(member);
+        return member;
+    }
+
+    private void createMemberSkill(List<Skill> skills, Member member) {
+        List<MemberSkill> memberSkills = skills.stream()
+                .map(skill -> {
+                    MemberSkillId memberSkillId = new MemberSkillId(member.getId(), skill.getId());
+
+                    return MemberSkill.builder()
+                            .id(memberSkillId)
+                            .member(member)
+                            .skill(skill)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        memberSkillRepository.bulkInsert(memberSkills);
     }
 
     public void updateMemberSkills(Member member, UpdateMemberProfileRequest updateMemberRequest) {
