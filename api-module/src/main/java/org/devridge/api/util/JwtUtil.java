@@ -62,6 +62,16 @@ public class JwtUtil {
                 .build();
     }
 
+    public static ResponseCookie generateRefreshTokenCookie(String refreshToken, long time) {
+        return ResponseCookie.from("devridge", refreshToken)
+                .httpOnly(true)
+                .sameSite("None")
+                .secure(true)
+                .path("/")
+                .maxAge(time)
+                .build();
+    }
+
     private static Date createTokenExpiration(long expirationTime) {
         Date expiration = new Date(System.currentTimeMillis() + expirationTime);
         return expiration;

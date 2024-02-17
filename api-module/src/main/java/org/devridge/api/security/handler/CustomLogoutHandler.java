@@ -1,12 +1,14 @@
 package org.devridge.api.security.handler;
 
 import io.jsonwebtoken.Claims;
-import org.devridge.api.domain.member.entity.RefreshToken;
 import org.devridge.api.domain.member.repository.RefreshTokenRepository;
 import org.devridge.api.util.AccessTokenUtil;
+import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.RefreshTokenUtil;
 import org.devridge.api.util.ResponseUtil;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
@@ -14,7 +16,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Optional;
 
 public class CustomLogoutHandler implements LogoutSuccessHandler {
 
@@ -31,11 +32,10 @@ public class CustomLogoutHandler implements LogoutSuccessHandler {
         Claims claims = AccessTokenUtil.getClaimsFromAccessToken(accessToken);
         Long refreshTokenId = RefreshTokenUtil.getRefreshTokenIdFromClaims(claims);
 
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findById(refreshTokenId);
-        if (refreshToken.isPresent()) {
-            refreshTokenRepository.delete(refreshToken.get());
-        }
+        refreshTokenRepository.findById(refreshTokenId).ifPresent(refreshToken -> refreshTokenRepository.delete(refreshToken));
+        ResponseCookie responseCookie = JwtUtil.generateRefreshTokenCookie(null, 0);
 
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
         ResponseUtil.createResponseBody(response, HttpStatus.OK);
     }
 
