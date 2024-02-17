@@ -32,7 +32,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -137,21 +136,17 @@ public class MemberService {
     }
 
     private void checkDuplEmailAndProvider(CreateMemberRequest memberRequest) {
-        Optional<Member> memberOpt = memberRepository.findByEmailAndProvider(memberRequest.getEmail(), memberRequest.getProvider());
-
-        memberRepository.findByEmailAndProvider(
-                memberRequest.getEmail(), memberRequest.getProvider()
-        ).ifPresent(member -> {
-            throw new DuplEmailException(409, "이미 존재하는 이메일입니다. 다른 이메일을 사용해주세요.");
-        });
+        memberRepository.findByEmailAndProvider(memberRequest.getEmail(), memberRequest.getProvider())
+                .ifPresent(member -> {
+                    throw new DuplEmailException(409, "이미 존재하는 이메일입니다. 다른 이메일을 사용해주세요.");}
+                );
     }
 
     private void checkDuplNickname(CreateMemberRequest memberRequest) {
-        Optional<Member> member = memberRepository.findByNickname(memberRequest.getNickname());
-
-        if (member.isPresent()) {
-            throw new DuplNicknameException(409, "이미 존재하는 닉네임입니다. 다른 닉네임을 사용해주세요.");
-        }
+        memberRepository.findByNickname(memberRequest.getNickname())
+                .ifPresent(member -> {
+                    throw new DuplNicknameException(409, "이미 존재하는 닉네임입니다. 다른 닉네임을 사용해주세요.");}
+                );
     }
 
     // TODO: DB 조회 -> 캐싱

@@ -22,7 +22,7 @@ public class MemberController {
     @PostMapping
     public ResponseEntity<Void> signUp(
             @RequestPart(value = "image") MultipartFile image,
-            @RequestPart(value = "info") @Valid CreateMemberRequest memberRequest
+            @RequestPart(value = "member") @Valid CreateMemberRequest memberRequest
     ) throws IOException {
         Long userId = memberService.createMember(memberRequest, image);
         return ResponseEntity.created(URI.create("/api/users/" + userId)).build();
