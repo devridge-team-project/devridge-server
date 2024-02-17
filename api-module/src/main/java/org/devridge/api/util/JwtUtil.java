@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.sociallogin.entity.OAuth2Member;
 import org.devridge.api.security.auth.AuthProperties;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 
 import java.security.Key;
 import java.util.Date;
@@ -22,6 +24,9 @@ public class JwtUtil {
 
     private static long ACCESS_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_TIME_IN_MINUTES * 15; // 15분
     private static long REFRESH_TOKEN_VALIDITY_TIME = TOKEN_VALIDITY_TIME_IN_MINUTES * 60 * 12;  // 12시간
+
+    @Value("${devridge.cookie-name}")
+    private static String cookieName;
 
     public static String createAccessToken(Member member, Long refreshTokenId) {
         return Jwts.builder()
@@ -49,6 +54,16 @@ public class JwtUtil {
                 .setExpiration(createTokenExpiration(TOKEN_VALIDITY_TIME_IN_HOURS))
                 .signWith(createSigningKey(AuthProperties.getAccessSecret()), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public static ResponseCookie generateRefreshTokenCookie(String refreshToken) {
+        return ResponseCookie.from(cookieName, refreshToken)
+                .httpOnly(true)
+                .sameSite("None")
+                .secure(true)
+                .path("/")
+                .maxAge(REFRESH_TOKEN_VALIDITY_TIME)
+                .build();
     }
 
     private static Date createTokenExpiration(long expirationTime) {
