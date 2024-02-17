@@ -109,13 +109,16 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMember(UpdateMemberProfileRequest updateMemberRequest) {
+    public void updateMember(UpdateProfileRequest updateProfileRequest, MultipartFile image) throws IOException {
         Member member = getAuthenticatedMember();
 
-        member.setProfileImageUrl(updateMemberRequest.getProfileImageUrl());
-        member.setIntroduction(updateMemberRequest.getIntroduction());
+        fetchValidSkills(updateProfileRequest.getSkillIds());
+        UploadImageResponse imageResponse = uploadImageIfNeeded(new UploadImageResponse(defaultProfileImagePath), image);
 
-        updateMemberSkills(member, updateMemberRequest);
+        member.setProfileImageUrl(imageResponse.getImagePath());
+        member.setIntroduction(updateProfileRequest.getIntroduction());
+
+        updateMemberSkills(member, updateProfileRequest);
     }
 
     public MemberResponse getMemberDetails() {
@@ -139,7 +142,6 @@ public class MemberService {
         memberRepository.findByEmailAndProvider(
                 memberRequest.getEmail(), memberRequest.getProvider()
         ).ifPresent(member -> {
-            System.out.println("member.getEmail() = " + member.getEmail());
             throw new DuplEmailException(409, "이미 존재하는 이메일입니다. 다른 이메일을 사용해주세요.");
         });
     }
@@ -212,7 +214,7 @@ public class MemberService {
         memberSkillRepository.bulkInsert(memberSkills);
     }
 
-    public void updateMemberSkills(Member member, UpdateMemberProfileRequest updateMemberRequest) {
+    public void updateMemberSkills(Member member, UpdateProfileRequest updateMemberRequest) {
         List<Long> currentSkillIds = getSkillIdListFromMember(member);
         List<Long> newSkillIds = updateMemberRequest.getSkillIds();
 

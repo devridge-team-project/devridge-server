@@ -47,8 +47,11 @@ public class MemberController {
     }
 
     @PatchMapping
-    public ResponseEntity<Void> updateMember(@Valid @RequestBody UpdateMemberProfileRequest updateMemberRequest) {
-        memberService.updateMember(updateMemberRequest);
+    public ResponseEntity<Void> updateMember(
+            @RequestPart(value = "image") MultipartFile image,
+            @RequestPart(value = "info") @Valid UpdateProfileRequest updateMemberRequest
+    ) throws IOException {
+        memberService.updateMember(updateMemberRequest, image);
         return ResponseEntity.ok().build();
     }
 
