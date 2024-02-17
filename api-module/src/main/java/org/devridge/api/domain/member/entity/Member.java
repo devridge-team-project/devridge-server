@@ -1,18 +1,14 @@
 package org.devridge.api.domain.member.entity;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.devridge.api.constant.Role;
 import org.devridge.api.domain.skill.entity.MemberSkill;
 import org.devridge.common.entity.BaseEntity;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +17,7 @@ import java.util.List;
 @Table(name = "member")
 @Getter
 @DynamicInsert
+@DynamicUpdate
 @SQLDelete(sql = "UPDATE member SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

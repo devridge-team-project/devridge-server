@@ -3,6 +3,7 @@ package org.devridge.api.domain.member.service;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.constant.Role;
 import org.devridge.api.domain.emailverification.entity.EmailVerification;
+import org.devridge.api.domain.emailverification.exception.EmailVerificationInvalidException;
 import org.devridge.api.domain.emailverification.repository.EmailVerificationRepository;
 import org.devridge.api.domain.member.dto.request.*;
 import org.devridge.api.domain.member.dto.response.MemberResponse;
@@ -11,23 +12,26 @@ import org.devridge.api.domain.member.entity.Occupation;
 import org.devridge.api.domain.member.exception.*;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.repository.OccupationRepository;
+import org.devridge.api.domain.s3.dto.response.UploadImageResponse;
+import org.devridge.api.domain.s3.service.S3Service;
 import org.devridge.api.domain.skill.entity.MemberSkill;
 import org.devridge.api.domain.skill.entity.Skill;
 import org.devridge.api.domain.skill.entity.key.MemberSkillId;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.domain.skill.repository.SkillRepository;
-import org.devridge.api.domain.emailverification.exception.EmailVerificationInvalidException;
-import org.devridge.api.util.SecurityContextHolderUtil;
 import org.devridge.api.exception.common.DataNotFoundException;
+import org.devridge.api.util.SecurityContextHolderUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,56 +44,28 @@ public class MemberService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final EmailVerificationRepository emailVerificationRepository;
     private final OccupationRepository occupationRepository;
+    private final S3Service s3Service;
+
+    @Value("${devridge.s3.defaultImagePath}")
+    private String defaultProfileImagePath;
 
     @Transactional
-    public Long createMember(CreateMemberRequest memberRequest){
-        checkDuplEmail(memberRequest);
-        checkDuplNickname(memberRequest);
+    public Long createMember(CreateMemberRequest memberRequest, MultipartFile image) throws IOException {
+        checkDuplMembers(memberRequest);
 
-        Occupation occupation = areOccupationValid(memberRequest.getOccupationId());
+        List<Skill> skills = fetchValidSkills(memberRequest.getSkillIds());
+        Occupation occupation = validateOccupation(memberRequest.getOccupationId());
+
+        UploadImageResponse imageResponse = uploadImageIfNeeded(new UploadImageResponse(defaultProfileImagePath), image);
 
         String encodedPassword = passwordEncoder.encode(memberRequest.getPassword());
-        Member member = buildAndSaveMember(memberRequest, occupation, encodedPassword);
+        Member member = buildAndSaveMember(memberRequest, occupation, imageResponse, encodedPassword);
 
-        List<Long> skillIds = memberRequest.getSkillIds();
-
-        if (!skillIds.isEmpty()) {
-            List<Skill> skills = areSkillsValid(skillIds);
+        if (skills != null) {
             createMemberSkill(skills, member);
         }
 
         return member.getId();
-    }
-
-    private Member buildAndSaveMember(CreateMemberRequest memberRequest, Occupation occupation, String encodedPassword) {
-        Member member = Member.builder()
-                .email(memberRequest.getEmail())
-                .password(encodedPassword)
-                .provider(memberRequest.getProvider())
-                .roles(Role.valueOf("ROLE_USER"))
-                .nickname(memberRequest.getNickname())
-                .introduction(memberRequest.getIntroduction())
-                .occupation(occupation)
-                .profileImageUrl(memberRequest.getProfileImageUrl())
-                .build();
-
-        return memberRepository.save(member);
-    }
-
-    private void createMemberSkill(List<Skill> skills, Member member) {
-        List<MemberSkill> memberSkills = skills.stream()
-                .map(skill -> {
-                    MemberSkillId memberSkillId = new MemberSkillId(member.getId(), skill.getId());
-
-                    return MemberSkill.builder()
-                            .id(memberSkillId)
-                            .member(member)
-                            .skill(skill)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        memberSkillRepository.bulkInsert(memberSkills);
     }
 
     @Transactional
@@ -132,13 +108,16 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMember(UpdateMemberProfileRequest updateMemberRequest) {
+    public void updateMember(UpdateProfileRequest updateProfileRequest, MultipartFile image) throws IOException {
         Member member = getAuthenticatedMember();
 
-        member.setProfileImageUrl(updateMemberRequest.getProfileImageUrl());
-        member.setIntroduction(updateMemberRequest.getIntroduction());
+        fetchValidSkills(updateProfileRequest.getSkillIds());
+        UploadImageResponse imageResponse = uploadImageIfNeeded(new UploadImageResponse(defaultProfileImagePath), image);
 
-        updateMemberSkills(member, updateMemberRequest);
+        member.setProfileImageUrl(imageResponse.getImagePath());
+        member.setIntroduction(updateProfileRequest.getIntroduction());
+
+        updateMemberSkills(member, updateProfileRequest);
     }
 
     public MemberResponse getMemberDetails() {
@@ -151,39 +130,86 @@ public class MemberService {
         return buildMemberResponse(member, memberSkillIdList);
     }
 
+    private void checkDuplMembers(CreateMemberRequest memberRequest) {
+        checkDuplEmailAndProvider(memberRequest);
+        checkDuplNickname(memberRequest);
+    }
+
+    private void checkDuplEmailAndProvider(CreateMemberRequest memberRequest) {
+        memberRepository.findByEmailAndProvider(memberRequest.getEmail(), memberRequest.getProvider())
+                .ifPresent(member -> {
+                    throw new DuplEmailException(409, "이미 존재하는 이메일입니다. 다른 이메일을 사용해주세요.");}
+                );
+    }
+
+    private void checkDuplNickname(CreateMemberRequest memberRequest) {
+        memberRepository.findByNickname(memberRequest.getNickname())
+                .ifPresent(member -> {
+                    throw new DuplNicknameException(409, "이미 존재하는 닉네임입니다. 다른 닉네임을 사용해주세요.");}
+                );
+    }
+
     // TODO: DB 조회 -> 캐싱
-    public List<Skill> areSkillsValid(List<Long> skillIds) {
+    private List<Skill> fetchValidSkills(List<Long> skillIds) {
+        if (skillIds.isEmpty()) {
+            return null;
+        }
         List<Skill> skills = skillRepository.findSkillsByIds(skillIds);
 
         if (skills.size() != skillIds.size()) {
-            throw new SkillsNotValidException(404, "해당하는 스킬 데이터를 찾을 수 없습니다.");
+            throw new SkillsNotValidException(404, "스킬 데이터를 찾을 수 없습니다.");
         }
+
         return skills;
     }
 
-    public Occupation areOccupationValid(Long occupationId) {
+    public Occupation validateOccupation(Long occupationId) {
         return occupationRepository.findById(occupationId).orElseThrow(
                 () -> new DataNotFoundException()
         );
     }
 
-    private void checkDuplEmail(CreateMemberRequest memberRequest) {
-        memberRepository.findByEmailAndProvider(
-                memberRequest.getEmail(), memberRequest.getProvider()
-        ).ifPresent(member -> {
-            throw new DuplEmailException(409, "이미 존재하는 이메일입니다. 다른 이메일을 사용해주세요.");
-        });
-    }
+    private UploadImageResponse uploadImageIfNeeded(UploadImageResponse defaultProfileImagePath, MultipartFile image) throws IOException {
+        UploadImageResponse imageResponse = defaultProfileImagePath;
 
-    private void checkDuplNickname(CreateMemberRequest memberRequest) {
-        Optional<Member> member = memberRepository.findByNickname(memberRequest.getNickname());
-
-        if (member.isPresent()) {
-            throw new DuplNicknameException(409, "이미 존재하는 닉네임입니다. 다른 닉네임을 사용해주세요.");
+        if (!image.isEmpty()) {
+            imageResponse = s3Service.uploadImage(image, "member");
         }
+        return imageResponse;
     }
 
-    public void updateMemberSkills(Member member, UpdateMemberProfileRequest updateMemberRequest) {
+    private Member buildAndSaveMember(CreateMemberRequest memberRequest, Occupation occupation, UploadImageResponse imageResponse, String encodedPassword) {
+        Member member = Member.builder()
+                .email(memberRequest.getEmail())
+                .password(encodedPassword)
+                .provider(memberRequest.getProvider())
+                .roles(Role.valueOf("ROLE_USER"))
+                .nickname(memberRequest.getNickname())
+                .introduction(memberRequest.getIntroduction())
+                .profileImageUrl(imageResponse.getImagePath())
+                .occupation(occupation)
+                .build();
+        memberRepository.save(member);
+        return member;
+    }
+
+    private void createMemberSkill(List<Skill> skills, Member member) {
+        List<MemberSkill> memberSkills = skills.stream()
+                .map(skill -> {
+                    MemberSkillId memberSkillId = new MemberSkillId(member.getId(), skill.getId());
+
+                    return MemberSkill.builder()
+                            .id(memberSkillId)
+                            .member(member)
+                            .skill(skill)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        memberSkillRepository.bulkInsert(memberSkills);
+    }
+
+    public void updateMemberSkills(Member member, UpdateProfileRequest updateMemberRequest) {
         List<Long> currentSkillIds = getSkillIdListFromMember(member);
         List<Long> newSkillIds = updateMemberRequest.getSkillIds();
 

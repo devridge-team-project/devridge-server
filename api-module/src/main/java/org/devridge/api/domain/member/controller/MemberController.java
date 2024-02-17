@@ -6,8 +6,10 @@ import org.devridge.api.domain.member.dto.response.MemberResponse;
 import org.devridge.api.domain.member.service.MemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 
 @RestController
@@ -18,8 +20,11 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping
-    public ResponseEntity<Void> signUp(@Valid @RequestBody CreateMemberRequest memberRequest) {
-        Long userId = memberService.createMember(memberRequest);
+    public ResponseEntity<Void> signUp(
+            @RequestPart(value = "image") MultipartFile image,
+            @RequestPart(value = "member") @Valid CreateMemberRequest memberRequest
+    ) throws IOException {
+        Long userId = memberService.createMember(memberRequest, image);
         return ResponseEntity.created(URI.create("/api/users/" + userId)).build();
     }
 
@@ -42,8 +47,11 @@ public class MemberController {
     }
 
     @PatchMapping
-    public ResponseEntity<Void> updateMember(@Valid @RequestBody UpdateMemberProfileRequest updateMemberRequest) {
-        memberService.updateMember(updateMemberRequest);
+    public ResponseEntity<Void> updateMember(
+            @RequestPart(value = "image") MultipartFile image,
+            @RequestPart(value = "info") @Valid UpdateProfileRequest updateMemberRequest
+    ) throws IOException {
+        memberService.updateMember(updateMemberRequest, image);
         return ResponseEntity.ok().build();
     }
 
