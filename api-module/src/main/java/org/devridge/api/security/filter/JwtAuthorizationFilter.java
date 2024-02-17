@@ -25,6 +25,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -90,6 +91,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         Optional<Member> memberOpt = findMemberFromAccessTokenClaims(response, claims);
         if (!memberOpt.isPresent()) return;
 
+        /**
+         * 엑세스 토큰 만료 시
+         * */
         if (isAccessTokenExpired) {
             Long refreshTokenId = ((Integer)claims.get("refreshTokenId")).longValue();
             Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findById(refreshTokenId);
@@ -100,6 +104,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             }
             // 리프레시 토큰이 살아있는 경우
             RefreshToken refreshToken = refreshTokenOpt.get();
+            String refreshTokenFromCookie = getRefreshTokenFromCookies(request, response, filterChain);
+
+            if (!refreshTokenFromCookie.equals(refreshToken.getRefreshToken())) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             if (issueNewAccessToken(request, response, filterChain, refreshToken, memberOpt.get())) {
                 return;
             }
@@ -128,13 +139,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         boolean hasErrorOccured = true;
 
         try {
-            refreshTokenClaims =
-                    Jwts.parserBuilder().setSigningKey(AuthProperties.getRefreshSecret()).build().parseClaimsJws(refreshToken.getRefreshToken()).getBody();
+            refreshTokenClaims = Jwts.parserBuilder()
+                    .setSigningKey(AuthProperties.getRefreshSecret()).build()
+                    .parseClaimsJws(refreshToken.getRefreshToken())
+                    .getBody();
             hasErrorOccured = false;
         } catch (ExpiredJwtException e) {
             refreshTokenRepository.delete(refreshToken);
             ResponseUtil.createResponseBody(response, HttpStatus.UNAUTHORIZED);
-
             return true;
         } catch (MalformedJwtException e) {
             filterChain.doFilter(request, response);
@@ -155,6 +167,20 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return true;
         }
         return false;
+    }
+
+    private String getRefreshTokenFromCookies(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+        Cookie cookie;
+        try {
+            cookie = Arrays.stream(request.getCookies())
+                    .filter(r -> r.getName().equals("devridge"))
+                    .findAny()
+                    .orElse(null);
+        } catch (NullPointerException e) {
+            filterChain.doFilter(request, response);
+            return null;
+        }
+        return cookie.getValue();
     }
 
     private void saveAuthenticationToSecurityContextHolder(Member member) {
