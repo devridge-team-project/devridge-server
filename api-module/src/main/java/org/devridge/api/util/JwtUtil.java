@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.sociallogin.entity.OAuth2Member;
 import org.devridge.api.security.auth.AuthProperties;
+import org.springframework.http.ResponseCookie;
 
 import java.security.Key;
 import java.util.Date;
@@ -49,6 +50,26 @@ public class JwtUtil {
                 .setExpiration(createTokenExpiration(TOKEN_VALIDITY_TIME_IN_HOURS))
                 .signWith(createSigningKey(AuthProperties.getAccessSecret()), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public static ResponseCookie generateRefreshTokenCookie(String refreshToken) {
+        return ResponseCookie.from("devridge", refreshToken)
+                .httpOnly(true)
+                .sameSite("None")
+                .secure(true)
+                .path("/")
+                .maxAge(REFRESH_TOKEN_VALIDITY_TIME)
+                .build();
+    }
+
+    public static ResponseCookie generateRefreshTokenCookie(String refreshToken, long time) {
+        return ResponseCookie.from("devridge", refreshToken)
+                .httpOnly(true)
+                .sameSite("None")
+                .secure(true)
+                .path("/")
+                .maxAge(time)
+                .build();
     }
 
     private static Date createTokenExpiration(long expirationTime) {
