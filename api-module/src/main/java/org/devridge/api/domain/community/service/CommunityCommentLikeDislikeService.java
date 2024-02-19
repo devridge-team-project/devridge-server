@@ -16,7 +16,6 @@ import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -64,7 +63,7 @@ public class CommunityCommentLikeDislikeService {
                 communityCommentLikeDislikeRepository.save(commentLikeDislike);
             }
         );
-        updateLikeDislike(communityCommentLikeDislikeId);
+        updateLikeDislike(communityCommentLikeDislikeId.getCommentId());
     }
 
     @Transactional
@@ -102,13 +101,13 @@ public class CommunityCommentLikeDislikeService {
                 communityCommentLikeDislikeRepository.save(commentLikeDislike);
             }
         );
-        updateLikeDislike(communityCommentLikeDislikeId);
+        updateLikeDislike(communityCommentLikeDislikeId.getCommentId());
     }
 
-    private void updateLikeDislike(CommunityCommentLikeDislikeId id) {
-        Long likes = Long.valueOf(communityCommentLikeDislikeRepository.countCommunityLikeDislikeById(id, LikeStatus.G));
-        Long disLikes = Long.valueOf(communityCommentLikeDislikeRepository.countCommunityLikeDislikeById(id, LikeStatus.B));
-        communityCommentRepository.updateLikeDislike(likes, disLikes, id.getCommentId());
+    private void updateLikeDislike(Long communityId) {
+        Long likes = Long.valueOf(communityCommentLikeDislikeRepository.countCommunityLikeDislikeById(communityId, LikeStatus.G));
+        Long disLikes = Long.valueOf(communityCommentLikeDislikeRepository.countCommunityLikeDislikeById(communityId, LikeStatus.B));
+        communityCommentRepository.updateLikeDislike(likes, disLikes, communityId);
     }
 
     private void changeIsDeletedStatus(CommunityCommentLikeDislike communitycommentLikeDislike) {
