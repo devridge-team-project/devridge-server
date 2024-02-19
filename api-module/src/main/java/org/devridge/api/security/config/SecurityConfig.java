@@ -67,6 +67,7 @@ public class SecurityConfig {
             .antMatchers(HttpMethod.GET, "/api/qna/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/occupations").permitAll()
             .antMatchers(HttpMethod.GET, "/api/community/**").permitAll()
+            .antMatchers(HttpMethod.PATCH, "/api/users/reset-password").permitAll()
 
             .antMatchers("/api/qna/**").authenticated()
             .antMatchers("/api/community/**").authenticated()
