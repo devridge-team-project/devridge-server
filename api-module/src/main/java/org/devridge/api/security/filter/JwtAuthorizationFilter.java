@@ -2,17 +2,12 @@ package org.devridge.api.security.filter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.domain.auth.entity.RefreshToken;
-import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
-import org.devridge.api.security.auth.AuthProperties;
+import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.security.auth.CustomMemberDetails;
-import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.AccessTokenUtil;
-import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,11 +20,9 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -57,8 +50,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     );
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, UserPrincipalNotFoundException {
-
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (isExcludedUrl(request)) {
             filterChain.doFilter(request, response); //이 필터 스킵, 다음꺼 실행.
             return;
@@ -73,14 +65,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        boolean isAccessTokenExpired = false;
         Claims claims = null;
 
         try {
             claims = AccessTokenUtil.getClaimsFromAccessToken(accessToken);
         } catch (ExpiredJwtException e) {
-            claims = e.getClaims();
-            isAccessTokenExpired = true;
+            filterChain.doFilter(request, response);
+            return;
         } catch (MalformedJwtException e) {
             filterChain.doFilter(request, response);
             return;
@@ -90,31 +81,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         Optional<Member> memberOpt = findMemberFromAccessTokenClaims(response, claims);
-        if (!memberOpt.isPresent()) return;
 
-        /**
-         * 엑세스 토큰 만료 시
-         * */
-        if (isAccessTokenExpired) {
-            Long refreshTokenId = ((Integer)claims.get("refreshTokenId")).longValue();
-            Optional<RefreshToken> refreshTokenOpt = refreshTokenRepository.findById(refreshTokenId);
-
-            if (!refreshTokenOpt.isPresent()) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-            // 리프레시 토큰이 살아있는 경우
-            RefreshToken refreshToken = refreshTokenOpt.get();
-            String refreshTokenFromCookie = getRefreshTokenFromCookies(request, response, filterChain);
-
-            if (!refreshTokenFromCookie.equals(refreshToken.getRefreshToken())) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            if (issueNewAccessToken(request, response, filterChain, refreshToken, memberOpt.get())) {
-                return;
-            }
+        if (!memberOpt.isPresent()) {
+            return;
         }
 
         this.saveAuthenticationToSecurityContextHolder(memberOpt.get());
@@ -133,55 +102,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
 
         return savedMember;
-    }
-
-    private boolean issueNewAccessToken(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, RefreshToken refreshToken, Member savedMember) throws IOException, ServletException {
-        Claims refreshTokenClaims = null;
-        boolean hasErrorOccured = true;
-
-        try {
-            refreshTokenClaims = Jwts.parserBuilder()
-                    .setSigningKey(AuthProperties.getRefreshSecret()).build()
-                    .parseClaimsJws(refreshToken.getRefreshToken())
-                    .getBody();
-            hasErrorOccured = false;
-        } catch (ExpiredJwtException e) {
-            refreshTokenRepository.delete(refreshToken);
-            ResponseUtil.createResponseBody(response, HttpStatus.UNAUTHORIZED);
-            return true;
-        } catch (MalformedJwtException e) {
-            filterChain.doFilter(request, response);
-        } catch (Exception e) {     // TODO :: 구체 예외 처리
-            filterChain.doFilter(request, response);
-        }
-
-        if (hasErrorOccured) {
-            return true;
-        }
-
-        // 리프레시 토큰이 존재한다면 액세스토큰 재발급
-        String newAccessToken = JwtUtil.createAccessToken(savedMember, refreshToken.getId());
-        TokenResponse tokenResponse = new TokenResponse(newAccessToken);
-
-        if (refreshTokenClaims != null) {
-            ResponseUtil.createResponseBody(response, tokenResponse, HttpStatus.OK);
-            return true;
-        }
-        return false;
-    }
-
-    private String getRefreshTokenFromCookies(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
-        Cookie cookie;
-        try {
-            cookie = Arrays.stream(request.getCookies())
-                    .filter(r -> r.getName().equals("devridge"))
-                    .findAny()
-                    .orElse(null);
-        } catch (NullPointerException e) {
-            filterChain.doFilter(request, response);
-            return null;
-        }
-        return cookie.getValue();
     }
 
     private void saveAuthenticationToSecurityContextHolder(Member member) {
