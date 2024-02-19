@@ -2,7 +2,7 @@ package org.devridge.api.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.member.repository.MemberRepository;
-import org.devridge.api.domain.member.repository.RefreshTokenRepository;
+import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.security.auth.CustomMemberDetailsService;
 import org.devridge.api.security.auth.JwtAuthenticationProvider;

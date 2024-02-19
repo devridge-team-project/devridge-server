@@ -5,9 +5,9 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.domain.member.entity.RefreshToken;
+import org.devridge.api.domain.auth.entity.RefreshToken;
 import org.devridge.api.domain.member.repository.MemberRepository;
-import org.devridge.api.domain.member.repository.RefreshTokenRepository;
+import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
 import org.devridge.api.security.auth.AuthProperties;
 import org.devridge.api.security.auth.CustomMemberDetails;
 import org.devridge.api.security.dto.TokenResponse;
@@ -52,7 +52,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             new AntPathRequestMatcher("/api/email-verifications"),
             new AntPathRequestMatcher("/api/users", "POST"),
             new AntPathRequestMatcher("/api/login", "POST"),
-            new AntPathRequestMatcher("/api/users/reset-password", "PATCH")
+            new AntPathRequestMatcher("/api/users/reset-password", "PATCH"),
+            new AntPathRequestMatcher("/api/auth/accessToken", "GET")
     );
 
     @Override
