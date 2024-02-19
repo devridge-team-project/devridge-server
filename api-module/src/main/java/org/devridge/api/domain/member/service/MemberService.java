@@ -1,5 +1,6 @@
 package org.devridge.api.domain.member.service;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.constant.Role;
 import org.devridge.api.domain.emailverification.entity.EmailVerification;
@@ -20,6 +21,7 @@ import org.devridge.api.domain.skill.entity.key.MemberSkillId;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.domain.skill.repository.SkillRepository;
 import org.devridge.api.exception.common.DataNotFoundException;
+import org.devridge.api.util.AccessTokenUtil;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -81,15 +83,9 @@ public class MemberService {
 
     @Transactional
     public void resetPassword(ResetPasswordRequest passwordRequest) {
-        EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailOrderByCreatedAtDesc(
-                passwordRequest.getEmail()
-        ).orElseThrow(() -> new EmailVerificationInvalidException(404, "해당 데이터를 찾을 수 없습니다."));
+        checkTempJwt(passwordRequest.getTempJwt());
 
-        LocalDateTime current = LocalDateTime.now();
-
-        if (emailVerification.getExpireAt().isBefore(current) || !emailVerification.isCheckStatus()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
+        EmailVerification emailVerification = checkEmailVerification(passwordRequest);
 
         Member member = memberRepository.findByEmailAndProvider(passwordRequest.getEmail(), "normal").orElseThrow(
                 () -> new MemberNotFoundException(404, "해당 사용자를 찾을 수 없습니다.")
@@ -97,6 +93,8 @@ public class MemberService {
 
         String encodedPassword = passwordEncoder.encode(passwordRequest.getPassword());
         member.changePassword(encodedPassword);
+
+        emailVerificationRepository.delete(emailVerification);
     }
 
     @Transactional
@@ -261,6 +259,27 @@ public class MemberService {
                 .skillIds(SkillIds)
                 .occupation(member.getOccupation().getOccupation())
                 .build();
+    }
+
+    private Claims checkTempJwt(String temporaryToken) {
+        try {
+            return AccessTokenUtil.getClaimsFromAccessToken(temporaryToken);
+        } catch (Exception e) {
+            throw new AccessTokenInvalidException(403, "토큰이 올바르지 않습니다.");
+        }
+    }
+
+    private EmailVerification checkEmailVerification(ResetPasswordRequest passwordRequest) {
+        EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailOrderByCreatedAtDesc(
+                passwordRequest.getEmail()
+        ).orElseThrow(() -> new EmailVerificationInvalidException(404, "해당 데이터를 찾을 수 없습니다."));
+
+        LocalDateTime current = LocalDateTime.now();
+
+        if (emailVerification.getExpireAt().isBefore(current) || !emailVerification.isCheckStatus()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return emailVerification;
     }
 
     private Member getAuthenticatedMember() {
