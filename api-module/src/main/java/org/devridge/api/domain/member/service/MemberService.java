@@ -83,7 +83,7 @@ public class MemberService {
 
     @Transactional
     public void resetPassword(ResetPasswordRequest passwordRequest) {
-        checkTempJwt(passwordRequest.getTempJwt());
+        checkTemporaryTokenForPasswordReset(passwordRequest.getTempJwt());
 
         EmailVerification emailVerification = checkEmailVerification(passwordRequest);
 
@@ -261,9 +261,14 @@ public class MemberService {
                 .build();
     }
 
-    private Claims checkTempJwt(String temporaryToken) {
+    private Claims checkTemporaryTokenForPasswordReset(String temporaryToken) {
         try {
-            return AccessTokenUtil.getClaimsFromAccessToken(temporaryToken);
+            Claims claims = AccessTokenUtil.getClaimsFromAccessToken(temporaryToken);
+
+            if (!claims.get("purpose").equals("password-reset")) {
+                throw new AccessTokenInvalidException(403, "토큰이 올바르지 않습니다.");
+            }
+            return claims;
         } catch (Exception e) {
             throw new AccessTokenInvalidException(403, "토큰이 올바르지 않습니다.");
         }

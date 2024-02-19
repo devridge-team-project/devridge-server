@@ -85,7 +85,7 @@ public class SocialLoginService {
     public TokenResponse signUpAndLogin(SocialLoginSignUp socialLoginRequest) {
         checkDuplNickname(socialLoginRequest.getNickname());
 
-        Claims claims = checkTempJwt(socialLoginRequest);
+        Claims claims = checkTemporaryTokenForSocialLogin(socialLoginRequest.getTempJwt());
 
         String memberEmail = (String) claims.get("memberEmail");
         String provider = (String) claims.get("provider");
@@ -104,11 +104,14 @@ public class SocialLoginService {
         }
     }
 
-    private static Claims checkTempJwt(SocialLoginSignUp socialLoginRequest) {
-        String tempJwt = socialLoginRequest.getTempJwt();
-
+    private static Claims checkTemporaryTokenForSocialLogin(String temporaryToken) {
         try {
-            return AccessTokenUtil.getClaimsFromAccessToken(tempJwt);
+            Claims claims = AccessTokenUtil.getClaimsFromAccessToken(temporaryToken);
+
+            if (!claims.get("purpose").equals("social-login")) {
+                throw new AccessTokenInvalidException(403, "잘못된 토큰입니다.");
+            }
+            return claims;
         } catch (Exception e) {
             throw new AccessTokenInvalidException(401, "로그아웃 되었습니다. 다시 로그인해주세요.");
         }
