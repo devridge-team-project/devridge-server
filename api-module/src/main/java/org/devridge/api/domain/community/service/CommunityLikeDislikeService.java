@@ -14,7 +14,6 @@ import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -58,7 +57,7 @@ public class CommunityLikeDislikeService {
                 communityLikeDislikeRepository.save(communityLikeDislike);
             }
         );
-        updateLikeDislike(communityLikeDislikeId);
+        updateLikeDislike(communityLikeDislikeId.getCommunityId());
     }
 
     @Transactional
@@ -93,7 +92,7 @@ public class CommunityLikeDislikeService {
                 communityLikeDislikeRepository.save(communityLikeDislike);
             }
         );
-        updateLikeDislike(communityLikeDislikeId);
+        updateLikeDislike(communityLikeDislikeId.getCommunityId());
     }
 
     private void changeIsDeletedStatus(CommunityLikeDislike communityLikeDislike) {
@@ -113,9 +112,9 @@ public class CommunityLikeDislikeService {
         return communityRepository.findById(communityId).orElseThrow(() -> new EntityNotFoundException());
     }
 
-    private void updateLikeDislike(CommunityLikeDislikeId id) {
-        Long likes = Long.valueOf(communityLikeDislikeRepository.countCommunityLikeDislikeById(id, LikeStatus.G));
-        Long disLikes = Long.valueOf(communityLikeDislikeRepository.countCommunityLikeDislikeById(id, LikeStatus.B));
-        communityRepository.updateLikeDislike(likes, disLikes, id.getCommunityId());
+    private void updateLikeDislike(Long communityId) {
+        Long likes = Long.valueOf(communityLikeDislikeRepository.countCommunityLikeDislikeByCommunityId(communityId, LikeStatus.G));
+        Long disLikes = Long.valueOf(communityLikeDislikeRepository.countCommunityLikeDislikeByCommunityId(communityId, LikeStatus.B));
+        communityRepository.updateLikeDislike(likes, disLikes, communityId);
     }
 }
