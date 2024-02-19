@@ -62,6 +62,15 @@ public class CommunityMapper {
     }
 
     public Community toCommunity(Member member, CreateCommunityRequest communityRequest) {
+        if (communityRequest.getImages() != null && !communityRequest.getImages().isEmpty()) {
+            String images = communityRequest.getImages().toString();
+            return Community.builder()
+                .title(communityRequest.getTitle())
+                .content(communityRequest.getContent())
+                .member(member)
+                .images(images.substring(1, images.length() - 1))
+                .build();
+        }
         return Community.builder()
                 .title(communityRequest.getTitle())
                 .content(communityRequest.getContent())

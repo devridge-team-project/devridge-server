@@ -52,11 +52,14 @@ public class Community extends BaseEntity {
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityHashtag> hashtags = new ArrayList<>();
 
+    private String images;
+
     @Builder
-    public Community(Member member, String title, String content) {
+    public Community(Member member, String title, String content, String images) {
         this.member = member;
         this.title = title;
         this.content = content;
+        this.images = images;
     }
 
 

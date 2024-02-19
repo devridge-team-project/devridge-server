@@ -1,5 +1,6 @@
 package org.devridge.api.domain.community.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
@@ -18,6 +19,7 @@ import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.community.repository.HashtagRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.domain.s3.service.S3Service;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ public class CommunityService {
     private final MemberRepository memberRepository;
     private final CommunityHashtagRepository communityHashtagRepository;
     private final HashtagRepository hashtagRepository;
+    private final S3Service s3Service;
 
     public Long createCommunity(CreateCommunityRequest communityRequest) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
@@ -73,6 +76,8 @@ public class CommunityService {
         updateByHashtagIds(communityHashtags);
 
         communityRepository.deleteById(communityId);
+        List<String> images = Arrays.asList(community.getImages().split(", "));
+        s3Service.deleteAllImage(images);
     }
 
     public List<CommunityListResponse> getAllCommunity() {
@@ -140,11 +145,13 @@ public class CommunityService {
             .collect(Collectors.toList());
     }
 
-    private CommunityHashtag saveOrRestoreCommunityHashtag(Community community, Hashtag hashtag) {  // 소프트 딜리트 포함 가져오기  -> 다 지워진상태or 없는상태 위에서 다지움
+    private CommunityHashtag saveOrRestoreCommunityHashtag(Community community,
+        Hashtag hashtag) {  // 소프트 딜리트 포함 가져오기  -> 다 지워진상태or 없는상태 위에서 다지움
         return communityHashtagRepository.findByCommunityIdAndHashtagId(community.getId(), hashtag.getId())
             .map(result -> {
                 communityHashtagRepository.restoreByCommunityIdAndHashtagId(community.getId(), hashtag.getId());
-                return communityHashtagRepository.findById(new CommunityHashtagId(community.getId(), hashtag.getId())).orElseThrow();
+                return communityHashtagRepository.findById(new CommunityHashtagId(community.getId(), hashtag.getId()))
+                    .orElseThrow();
             })
             .orElseGet(() -> communityHashtagRepository.save(new CommunityHashtag(community, hashtag)));
     }
