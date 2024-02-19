@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
@@ -24,8 +25,8 @@ public class SocialLoginController {
     private final SocialLoginService socialLoginService;
 
     @PostMapping
-    public ResponseEntity<?> signIn(@RequestBody @Valid SocialLoginRequest socialLoginRequest) {
-       SocialLoginResponse data = socialLoginService.signIn(socialLoginRequest);
+    public ResponseEntity<?> signIn(@RequestBody @Valid SocialLoginRequest socialLoginRequest, HttpServletResponse response) {
+       SocialLoginResponse data = socialLoginService.signIn(socialLoginRequest, response);
 
        if (data.isRedirect()) {
            SocialLoginRedirect result = new SocialLoginRedirect(data.getRedirectUri());
@@ -39,9 +40,9 @@ public class SocialLoginController {
 
     @PostMapping("/signUp")
     public ResponseEntity<TokenResponse> createMemberAndLogin(
-            @RequestBody @Valid SocialLoginSignUp socialLoginRequest
-    ) {
-        TokenResponse result = socialLoginService.signUpAndLogin(socialLoginRequest);
+            @RequestBody @Valid SocialLoginSignUp socialLoginRequest, HttpServletResponse response)
+    {
+        TokenResponse result = socialLoginService.signUpAndLogin(socialLoginRequest, response);
         return ResponseEntity.ok().body(result);
     }
 }
