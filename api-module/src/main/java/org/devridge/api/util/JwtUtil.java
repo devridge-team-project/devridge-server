@@ -46,7 +46,18 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject("temporaryJwt")
                 .claim("memberEmail", oAuth2MemberInfo.getEmail())
+                .claim("purpose", "social-login")
                 .claim("provider", oAuth2MemberInfo.getProvider())
+                .setExpiration(createTokenExpiration(TOKEN_VALIDITY_TIME_IN_HOURS))
+                .signWith(createSigningKey(AuthProperties.getAccessSecret()), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public static String createTemporaryJwt(String email) {
+        return Jwts.builder()
+                .setSubject("temporaryJwt")
+                .claim("memberEmail", email)
+                .claim("purpose", "password-reset")
                 .setExpiration(createTokenExpiration(TOKEN_VALIDITY_TIME_IN_HOURS))
                 .signWith(createSigningKey(AuthProperties.getAccessSecret()), SignatureAlgorithm.HS256)
                 .compact();

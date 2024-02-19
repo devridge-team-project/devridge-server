@@ -5,6 +5,7 @@ import org.devridge.api.domain.emailverification.dto.request.SendEmailRequest;
 import org.devridge.api.domain.emailverification.entity.EmailVerification;
 import org.devridge.api.domain.emailverification.repository.EmailVerificationRepository;
 import org.devridge.api.domain.emailverification.exception.EmailVerificationInvalidException;
+import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.RandomGeneratorUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -58,7 +59,7 @@ public class EmailVerificationService {
     }
 
     @Transactional
-    public void checkVerificationCode(String email, String code) {
+    public String checkVerificationCode(String email, String code) {
         EmailVerification emailVerification = emailVerificationRepository.findTopByReceiptEmailOrderByCreatedAtDesc(email)
                 .orElseThrow(() -> new EmailVerificationInvalidException(404, "해당 데이터를 찾을 수 없습니다."));
 
@@ -68,6 +69,8 @@ public class EmailVerificationService {
         validateVerificationCode(code, emailVerification.getContent());
 
         emailVerification.changeCheckStatus();
+
+        return JwtUtil.createTemporaryJwt(email);
     }
 
     private static void validateEmailVerification(EmailVerification emailVerification, LocalDateTime current) {
