@@ -52,6 +52,16 @@ public class JwtUtil {
                 .compact();
     }
 
+    public static String createTemporaryJwt(String email) {
+        return Jwts.builder()
+                .setSubject("temporaryJwt")
+                .claim("memberEmail", email)
+                .claim("purpose", "password-reset")
+                .setExpiration(createTokenExpiration(TOKEN_VALIDITY_TIME_IN_HOURS))
+                .signWith(createSigningKey(AuthProperties.getAccessSecret()), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public static ResponseCookie generateRefreshTokenCookie(String refreshToken) {
         return ResponseCookie.from("devridge", refreshToken)
                 .httpOnly(true)
