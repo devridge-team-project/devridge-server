@@ -2,14 +2,16 @@ package org.devridge.api.domain.auth.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import lombok.RequiredArgsConstructor;
+import org.devridge.api.domain.auth.entity.RefreshToken;
 import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
 import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.domain.auth.entity.RefreshToken;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.exception.common.TokenInvalidException;
+import org.devridge.api.security.auth.AuthProperties;
 import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.AccessTokenUtil;
 import org.devridge.api.util.JwtUtil;
@@ -52,6 +54,8 @@ public class AuthService {
         RefreshToken refreshToken = refreshTokenRepository.findById(refreshTokenId)
                         .orElseThrow(() -> new DataNotFoundException());
 
+        validateRefreshToken(refreshToken);
+
         String refreshTokenValue = refreshToken.getRefreshToken();
 
         if (!refreshTokenValue.equals(getRefreshTokenFromCookies(request))) {
@@ -59,12 +63,28 @@ public class AuthService {
         }
     }
 
+    private void validateRefreshToken(RefreshToken refreshToken) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(AuthProperties.getRefreshSecret()).build()
+                    .parseClaimsJws(refreshToken.getRefreshToken())
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            refreshTokenRepository.delete(refreshToken);
+            throw new TokenInvalidException();
+        } catch (MalformedJwtException e) {
+            throw new TokenInvalidException();
+        } catch (Exception e) {
+            throw new TokenInvalidException();
+        }
+    }
+
     private static Claims validateAccessToken(String accessToken) {
-        Claims accessTokenClaims;
+        Claims accessTokenClaims = null;
         try {
             accessTokenClaims = AccessTokenUtil.getClaimsFromAccessToken(accessToken);
         } catch (ExpiredJwtException e) {
-            throw new TokenInvalidException();
+            accessTokenClaims = e.getClaims();
         } catch (MalformedJwtException e) {
             throw new TokenInvalidException();
         } catch (Exception e) {
