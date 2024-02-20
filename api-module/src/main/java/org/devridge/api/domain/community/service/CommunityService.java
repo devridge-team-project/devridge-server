@@ -3,7 +3,6 @@ package org.devridge.api.domain.community.service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
@@ -20,6 +19,7 @@ import org.devridge.api.domain.community.repository.HashtagRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.s3.service.S3Service;
+import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,11 +86,11 @@ public class CommunityService {
     }
 
     private Community getCommunityById(Long communityId) {
-        return communityRepository.findById(communityId).orElseThrow(() -> new EntityNotFoundException());
+        return communityRepository.findById(communityId).orElseThrow(() -> new DataNotFoundException());
     }
 
     private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException());
+        return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
     }
 
     @Transactional

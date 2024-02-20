@@ -1,6 +1,5 @@
 package org.devridge.api.domain.community.service;
 
-import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.entity.Community;
@@ -15,6 +14,7 @@ import org.devridge.api.domain.community.repository.CommunityCommentRepository;
 import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.stereotype.Service;
 
@@ -120,14 +120,14 @@ public class CommunityCommentLikeDislikeService {
     }
 
     private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException());
+        return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
     }
 
     private CommunityComment getCommentById(Long commentId) {
-        return communityCommentRepository.findById(commentId).orElseThrow(() -> new EntityNotFoundException());
+        return communityCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
     }
 
     private Community getCommunityById(Long communityId) {
-        return communityRepository.findById(communityId).orElseThrow(() -> new EntityNotFoundException());
+        return communityRepository.findById(communityId).orElseThrow(() -> new DataNotFoundException());
     }
 }
