@@ -1,6 +1,6 @@
-package org.devridge.api.domain.member.repository;
+package org.devridge.api.domain.auth.repository;
 
-import org.devridge.api.domain.member.entity.RefreshToken;
+import org.devridge.api.domain.auth.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

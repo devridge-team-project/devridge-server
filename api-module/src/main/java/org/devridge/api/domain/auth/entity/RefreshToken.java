@@ -1,10 +1,11 @@
-package org.devridge.api.domain.member.entity;
+package org.devridge.api.domain.auth.entity;
 
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.member.AbstractTimeEntity;
+import org.devridge.api.domain.member.entity.Member;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
