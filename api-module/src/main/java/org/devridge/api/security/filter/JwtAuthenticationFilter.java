@@ -3,15 +3,17 @@ package org.devridge.api.security.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.devridge.api.domain.member.dto.response.LoginResponse;
 import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.domain.member.entity.RefreshToken;
-import org.devridge.api.domain.member.repository.RefreshTokenRepository;
+import org.devridge.api.domain.auth.entity.RefreshToken;
+import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.domain.member.exception.WrongLoginException;
 import org.devridge.api.security.auth.CustomMemberDetails;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.util.ResponseUtil;
 import org.devridge.common.dto.BaseErrorResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -60,13 +62,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         // 1. 로그인 성공된 유저 조회
         Member member = ((CustomMemberDetails) authResult.getPrincipal()).getMember();
 
-        // 2. Refresh Token DB 저장 (해당 유저의 리프레시 토큰이 이미 존재한다면, 삭제 후 저장)
+        // 2. Refresh Token DB 저장 (해당 유저의 리프레시 토큰이 이미 존재한다면, 삭제 후 저장), 쿠키에 담아 반환
         String refreshToken = JwtUtil.createRefreshToken(member);
+
+        ResponseCookie responseCookie = JwtUtil.generateRefreshTokenCookie(refreshToken);
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+
         Long refreshTokenId = saveRefreshToken(member, refreshToken);
 
         // 3. AccessToken 발급
         String accessToken = JwtUtil.createAccessToken(member, refreshTokenId);
-
         LoginResponse loginResponse = new LoginResponse(accessToken);
 
         ResponseUtil.createResponseBody(response, loginResponse, HttpStatus.OK);

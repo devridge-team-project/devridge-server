@@ -31,8 +31,8 @@ public interface CommunityCommentLikeDislikeRepository extends
 
     @Query(
         value = "SELECT COUNT(cld) " +
-            "FROM CommunityCommentLikeDislike cld " +
-            "WHERE cld.id = :id AND cld.status = :status AND cld.isDeleted = false"
+                "FROM CommunityCommentLikeDislike cld " +
+                "WHERE cld.id.commentId = :commentId AND cld.status = :status AND cld.isDeleted = false"
     )
-    int countCommunityLikeDislikeById(@Param("id") CommunityCommentLikeDislikeId id, @Param("status") LikeStatus status);
+    int countCommunityLikeDislikeById(@Param("commentId") Long commentId, @Param("status") LikeStatus status);
 }

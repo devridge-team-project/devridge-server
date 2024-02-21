@@ -8,8 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface CommunityLikeDislikeRepository extends
-    JpaRepository<CommunityLikeDislike, CommunityLikeDislikeId> {
+public interface CommunityLikeDislikeRepository extends JpaRepository<CommunityLikeDislike, CommunityLikeDislikeId> {
 
     @Modifying
     @Query(
@@ -30,7 +29,7 @@ public interface CommunityLikeDislikeRepository extends
     @Query(
         value = "SELECT COUNT(cld) " +
                 "FROM CommunityLikeDislike cld " +
-                "WHERE cld.id = :id AND cld.status = :status AND cld.isDeleted = false"
+                "WHERE cld.id.communityId = :communityId AND cld.status = :status AND cld.isDeleted = false"
     )
-    int countCommunityLikeDislikeById(@Param("id") CommunityLikeDislikeId id, @Param("status") LikeStatus status);
+    int countCommunityLikeDislikeByCommunityId(@Param("communityId") Long communityId, @Param("status") LikeStatus status);
 }

@@ -5,10 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.devridge.api.constant.Role;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.entity.Occupation;
-import org.devridge.api.domain.member.entity.RefreshToken;
+import org.devridge.api.domain.auth.entity.RefreshToken;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.repository.OccupationRepository;
-import org.devridge.api.domain.member.repository.RefreshTokenRepository;
+import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
 import org.devridge.api.domain.sociallogin.context.OAuth2MemberInfoContext;
 import org.devridge.api.domain.sociallogin.context.OAuth2TokenContext;
 import org.devridge.api.domain.sociallogin.dto.request.SocialLoginRequest;
@@ -22,9 +22,13 @@ import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.AccessTokenUtil;
 import org.devridge.api.util.JwtUtil;
 import org.devridge.api.exception.common.DataNotFoundException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
@@ -42,7 +46,7 @@ public class SocialLoginService {
     private final OAuth2TokenContext tokenProviderContext;
     private final OAuth2MemberInfoContext oAuth2MemberInfoContext;
 
-    public SocialLoginResponse signIn(SocialLoginRequest socialLoginRequest) {
+    public SocialLoginResponse signIn(SocialLoginRequest socialLoginRequest, HttpServletResponse response) {
         OAuth2TokenResponse tokenResponse = tokenProviderContext.getTokenFromAuthServer(socialLoginRequest);
 
         Map<String, Object> memberInfoFromAuthServer = oAuth2MemberInfoContext.getMemberInfoFromAuthServer(
@@ -55,6 +59,9 @@ public class SocialLoginService {
         if (existingMember.isPresent()) {
             RefreshToken refreshToken = saveRefreshToken(existingMember.get());
             String accessToken = JwtUtil.createAccessToken(existingMember.get(), refreshToken.getId());
+
+            ResponseCookie responseCookie = JwtUtil.generateRefreshTokenCookie(refreshToken.getRefreshToken());
+            response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
 
             return new SocialLoginResponse(accessToken, null, false);
         }
@@ -82,10 +89,11 @@ public class SocialLoginService {
     }
 
     // TODO : skillId, occupationId 검사 : 메모리
-    public TokenResponse signUpAndLogin(SocialLoginSignUp socialLoginRequest) {
+    @Transactional
+    public TokenResponse signUpAndLogin(SocialLoginSignUp socialLoginRequest, HttpServletResponse response) {
         checkDuplNickname(socialLoginRequest.getNickname());
 
-        Claims claims = checkTempJwt(socialLoginRequest);
+        Claims claims = checkTemporaryTokenForSocialLogin(socialLoginRequest.getTempJwt());
 
         String memberEmail = (String) claims.get("memberEmail");
         String provider = (String) claims.get("provider");
@@ -94,6 +102,9 @@ public class SocialLoginService {
 
         RefreshToken refreshToken = saveRefreshToken(member);
         String accessToken = JwtUtil.createAccessToken(member, refreshToken.getId());
+
+        ResponseCookie responseCookie = JwtUtil.generateRefreshTokenCookie(refreshToken.getRefreshToken());
+        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
 
         return new TokenResponse(accessToken);
     }
@@ -104,11 +115,14 @@ public class SocialLoginService {
         }
     }
 
-    private static Claims checkTempJwt(SocialLoginSignUp socialLoginRequest) {
-        String tempJwt = socialLoginRequest.getTempJwt();
-
+    private static Claims checkTemporaryTokenForSocialLogin(String temporaryToken) {
         try {
-            return AccessTokenUtil.getClaimsFromAccessToken(tempJwt);
+            Claims claims = AccessTokenUtil.getClaimsFromAccessToken(temporaryToken);
+
+            if (!claims.get("purpose").equals("social-login")) {
+                throw new AccessTokenInvalidException(403, "잘못된 토큰입니다.");
+            }
+            return claims;
         } catch (Exception e) {
             throw new AccessTokenInvalidException(401, "로그아웃 되었습니다. 다시 로그인해주세요.");
         }
