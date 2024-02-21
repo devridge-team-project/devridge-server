@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - 46-docker-cache-actions
+  pull_request:
+    branches:
+      - release
   workflow_dispatch:
 
 permissions:
