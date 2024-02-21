@@ -45,7 +45,9 @@ jobs:
         run: ./gradlew clean build
 
       - name: Separate Layered jar
-        run: java -Djarmode=layertools -jar build/libs/${{ secrets.JAR_NAME }} extract
+        run: |
+          cd ./api-module
+          java -Djarmode=layertools -jar build/libs/${{ secrets.JAR_NAME }} extract
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
