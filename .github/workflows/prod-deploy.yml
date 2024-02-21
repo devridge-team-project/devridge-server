@@ -66,7 +66,7 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-prod-blue
             ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-prod-green
-          cache-from: type=gha  # gha = Guthub Actions용 캐시
+          cache-from: type=gha  # gha = Guthub Actions 용 캐시
           cache-to: type=gha,mode=max
 
       - name: Run in EC2
