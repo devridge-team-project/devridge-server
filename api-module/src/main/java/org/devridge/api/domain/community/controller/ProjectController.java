@@ -1,9 +1,11 @@
 package org.devridge.api.domain.community.controller;
 
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.ProjectRequest;
 import org.devridge.api.domain.community.dto.response.ProjectDetailResponse;
+import org.devridge.api.domain.community.dto.response.ProjectListResponse;
 import org.devridge.api.domain.community.service.ProjectService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,13 +37,13 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllProject() {
-
-        return ResponseEntity.ok().body(projectService.getAllProject());
+    public ResponseEntity<List<ProjectListResponse>> getAllProject() {
+        List<ProjectListResponse> projectListResponses = projectService.getAllProject();
+        return ResponseEntity.ok().body(projectListResponses);
     }
 
     @PutMapping("/{projectId}")
-    public ResponseEntity<?> updateProject(
+    public ResponseEntity<Void> updateProject(
         @PathVariable Long projectId,
         @RequestBody ProjectRequest request
     ) {
@@ -50,8 +52,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{projectId}")
-    public ResponseEntity<?> deleteProject(@PathVariable Long projectId) {
-
+    public ResponseEntity<Void> deleteProject(@PathVariable Long projectId) {
         projectService.deleteProject(projectId);
         return ResponseEntity.ok().build();
     }
