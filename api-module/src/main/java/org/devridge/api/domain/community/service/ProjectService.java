@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.ProjectRequest;
 import org.devridge.api.domain.community.dto.response.ProjectListResponse;
 import org.devridge.api.domain.community.entity.Project;
+import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.community.mapper.ProjectMapper;
 import org.devridge.api.domain.community.repository.ProjectRepository;
 import org.devridge.api.domain.member.entity.Member;
@@ -40,7 +41,13 @@ public class ProjectService {
 
     @Transactional
     public void updateProject(Long projectId, ProjectRequest request) {
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new DataNotFoundException());
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
+        Project project = getProjectById(projectId);
+
+        if (!accessMemberId.equals(project.getMember().getId())) {
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 수정할 수 없습니다.");
+        }
 
         if (request.getImages() != null && !request.getImages().isEmpty()) {
             String images = request.getImages().toString();
@@ -50,20 +57,25 @@ public class ProjectService {
         project.updateProject(request.getTitle(), request.getContent(), request.getCategory().getValue(), null);
     }
 
+    @Transactional
     public void deleteProject(Long projectId) {
-        projectRepository.findById(projectId).ifPresentOrElse(
-            project ->{
-                projectRepository.delete(project);
-                if (project.getImages() != null) {
-                    List<String> images = Arrays.asList(project.getImages().split(", "));
-                    s3Service.deleteAllImage(images);
-                }
-            },
-            () -> {
-                throw new DataNotFoundException();
-            }
-        );
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        Project project = getProjectById(projectId);
 
+        if (!accessMemberId.equals(project.getMember().getId())) {
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 삭제할 수 없습니다.");
+        }
+
+        projectRepository.delete(project);
+
+        if (project.getImages() != null) {
+            List<String> images = Arrays.asList(project.getImages().split(", "));
+            s3Service.deleteAllImage(images);
+        }
+    }
+
+    public Project getProjectById(Long projectId) {
+        return projectRepository.findById(projectId).orElseThrow(() -> new DataNotFoundException());
     }
 
     private Member getMemberById(Long memberId) {
