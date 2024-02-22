@@ -76,8 +76,10 @@ public class CommunityService {
         updateByHashtagIds(communityHashtags);
 
         communityRepository.deleteById(communityId);
-        List<String> images = Arrays.asList(community.getImages().split(", "));
-        s3Service.deleteAllImage(images);
+        if (community.getImages() != null) {
+            List<String> images = Arrays.asList(community.getImages().split(", "));
+            s3Service.deleteAllImage(images);
+        }
     }
 
     public List<CommunityListResponse> getAllCommunity() {
