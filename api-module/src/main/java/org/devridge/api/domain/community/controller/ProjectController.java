@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/project")
+@RequestMapping("/api/community/projects")
 @RequiredArgsConstructor
 public class ProjectController {
 
@@ -27,7 +27,7 @@ public class ProjectController {
     @PostMapping
     public ResponseEntity<Void> createProject(@RequestBody ProjectRequest request) {
         Long projectId = projectService.createProject(request);
-        return ResponseEntity.created(URI.create("/api/project/" + projectId)).build();
+        return ResponseEntity.created(URI.create("/api/community/projects/" + projectId)).build();
     }
 
     @GetMapping("/{projectId}")
