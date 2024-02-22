@@ -8,4 +8,10 @@ import org.springframework.data.repository.query.Param;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
+    @Modifying
+    @Query(
+        value = "UPDATE Project p " +
+            "SET p.views = p.views + 1 " +
+            "WHERE p.id = :id")
+    void updateView(@Param("id") Long id);
 }

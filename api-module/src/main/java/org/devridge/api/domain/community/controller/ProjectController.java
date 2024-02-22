@@ -3,6 +3,7 @@ package org.devridge.api.domain.community.controller;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.ProjectRequest;
+import org.devridge.api.domain.community.dto.response.ProjectDetailResponse;
 import org.devridge.api.domain.community.service.ProjectService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,6 +26,12 @@ public class ProjectController {
     public ResponseEntity<Void> createProject(@RequestBody ProjectRequest request) {
         Long projectId = projectService.createProject(request);
         return ResponseEntity.created(URI.create("/api/project/" + projectId)).build();
+    }
+
+    @GetMapping("/{projectId}")
+    public ResponseEntity<ProjectDetailResponse> getProjectDetail(@PathVariable Long projectId) {
+        ProjectDetailResponse projectDetailResponse = projectService.getProjectDetail(projectId);
+        return ResponseEntity.ok().body(projectDetailResponse);
     }
 
     @GetMapping

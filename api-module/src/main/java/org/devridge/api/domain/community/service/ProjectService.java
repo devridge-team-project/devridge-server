@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.ProjectRequest;
+import org.devridge.api.domain.community.dto.response.ProjectDetailResponse;
 import org.devridge.api.domain.community.dto.response.ProjectListResponse;
 import org.devridge.api.domain.community.entity.Project;
 import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
@@ -32,6 +33,13 @@ public class ProjectService {
 
         Project project = projectMapper.toProject(request, member);
         return projectRepository.save(project).getId();
+    }
+
+    @Transactional
+    public ProjectDetailResponse getProjectDetail(Long projectId) {
+        Project project = getProjectById(projectId);
+        projectRepository.updateView(projectId);
+        return projectMapper.toProjectDetailResponse(project);
     }
 
     public List<ProjectListResponse> getAllProject() {
