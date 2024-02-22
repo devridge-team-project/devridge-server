@@ -1,5 +1,6 @@
 package org.devridge.api.domain.community.service;
 
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.ProjectRequest;
@@ -9,6 +10,7 @@ import org.devridge.api.domain.community.mapper.ProjectMapper;
 import org.devridge.api.domain.community.repository.ProjectRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.domain.s3.service.S3Service;
 import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
     private final MemberRepository memberRepository;
+    private final S3Service s3Service;
 
     public Long createProject(ProjectRequest request) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
@@ -45,6 +48,22 @@ public class ProjectService {
             return;
         }
         project.updateProject(request.getTitle(), request.getContent(), request.getCategory().getValue(), null);
+    }
+
+    public void deleteProject(Long projectId) {
+        projectRepository.findById(projectId).ifPresentOrElse(
+            project ->{
+                projectRepository.delete(project);
+                if (project.getImages() != null) {
+                    List<String> images = Arrays.asList(project.getImages().split(", "));
+                    s3Service.deleteAllImage(images);
+                }
+            },
+            () -> {
+                throw new DataNotFoundException();
+            }
+        );
+
     }
 
     private Member getMemberById(Long memberId) {
