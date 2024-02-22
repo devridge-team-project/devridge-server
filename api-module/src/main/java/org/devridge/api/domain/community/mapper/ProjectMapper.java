@@ -30,4 +30,26 @@ public class ProjectMapper {
                 .category(request.getCategory().getValue())
                 .build();
     }
+
+    public ProjectListResponse toProjectListResponse(Project project) {
+        return ProjectListResponse.builder()
+            .id(project.getId())
+            .view(project.getViews())
+            .category(project.getCategory())
+            .likes(project.getLikes())
+            .dislikes(project.getDislikes())
+            .title(project.getTitle())
+            .content(project.getContent())
+            .build();
+    }
+
+    public List<ProjectListResponse> toProjectListResponses(List<Project> projects) {
+        List<ProjectListResponse> projectListResponses = new ArrayList<>();
+        for (Project project : projects) {
+            projectListResponses.add(
+                toProjectListResponse(project)
+            );
+        }
+        return projectListResponses;
+    }
 }
