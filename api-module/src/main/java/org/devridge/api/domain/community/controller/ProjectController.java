@@ -6,7 +6,9 @@ import org.devridge.api.domain.community.dto.request.ProjectRequest;
 import org.devridge.api.domain.community.service.ProjectService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,6 +30,15 @@ public class ProjectController {
     public ResponseEntity<?> getAllProject() {
 
         return ResponseEntity.ok().body(projectService.getAllProject());
+    }
+
+    @PutMapping("/{projectId}")
+    public ResponseEntity<?> updateProject(
+        @PathVariable Long projectId,
+        @RequestBody ProjectRequest request
+    ) {
+        projectService.updateProject(projectId, request);
+        return ResponseEntity.ok().build();
     }
 
 }
