@@ -1,5 +1,6 @@
 package org.devridge.api.domain.community.service;
 
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.StudyRequest;
@@ -11,6 +12,7 @@ import org.devridge.api.domain.community.mapper.StudyMapper;
 import org.devridge.api.domain.community.repository.StudyRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.domain.s3.service.S3Service;
 import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class StudyService {
     private final StudyRepository studyRepository;
     private final MemberRepository memberRepository;
     private final StudyMapper studyMapper;
+    private final S3Service s3Service;
 
     public Long createStudy(StudyRequest studyRequest) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
@@ -78,6 +81,23 @@ public class StudyService {
             request.getTotalPeople(),
             request.getCurrentPeople()
         );
+    }
+
+    @Transactional
+    public void deleteStudy(Long studyId) {
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        Study study = getStudyById(studyId);
+
+        if (!accessMemberId.equals(study.getMember().getId())) {
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 삭제할 수 없습니다.");
+        }
+
+        studyRepository.delete(study);
+
+        if (study.getImages() != null) {
+            List<String> images = Arrays.asList(study.getImages().split(", "));
+            s3Service.deleteAllImage(images);
+        }
     }
 
     private Member getMemberById(Long memberId) {

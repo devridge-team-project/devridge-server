@@ -8,6 +8,7 @@ import org.devridge.api.domain.community.dto.response.StudyDetailResponse;
 import org.devridge.api.domain.community.dto.response.StudyListResponse;
 import org.devridge.api.domain.community.service.StudyService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,6 +48,12 @@ public class StudyController {
         @RequestBody StudyRequest request
     ) {
         studyService.updateStudy(studyId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{studyId}")
+    public ResponseEntity<Void> deleteStudy(@PathVariable Long studyId) {
+        studyService.deleteStudy(studyId);
         return ResponseEntity.ok().build();
     }
 }
