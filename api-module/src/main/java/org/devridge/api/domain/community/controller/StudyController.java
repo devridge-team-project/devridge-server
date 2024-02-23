@@ -1,9 +1,11 @@
 package org.devridge.api.domain.community.controller;
 
 import java.net.URI;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.StudyRequest;
 import org.devridge.api.domain.community.dto.response.StudyDetailResponse;
+import org.devridge.api.domain.community.dto.response.StudyListResponse;
 import org.devridge.api.domain.community.service.StudyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,5 +32,11 @@ public class StudyController {
     public ResponseEntity<StudyDetailResponse> getStudyDetail(@PathVariable Long studyId) {
         StudyDetailResponse studyDetailResponse = studyService.getStudyDetail(studyId);
         return ResponseEntity.ok().body(studyDetailResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<StudyListResponse>> getAllStudy() {
+        List<StudyListResponse> studyListResponses = studyService.getAllStudy();
+        return ResponseEntity.ok().body(studyListResponses);
     }
 }

@@ -1,9 +1,12 @@
 package org.devridge.api.domain.community.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.StudyRequest;
 import org.devridge.api.domain.community.dto.response.MemberInfoResponse;
 import org.devridge.api.domain.community.dto.response.StudyDetailResponse;
+import org.devridge.api.domain.community.dto.response.StudyListResponse;
 import org.devridge.api.domain.community.entity.Study;
 import org.devridge.api.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
@@ -52,5 +55,27 @@ public class StudyMapper {
                 .totalPeople(studyRequest.getTotalPeople())
                 .currentPeople(studyRequest.getCurrentPeople())
                 .build();
+    }
+
+    public StudyListResponse toStudyListResponse(Study study) {
+        return StudyListResponse.builder()
+            .studyId(study.getId())
+            .views(study.getViews())
+            .category(study.getCategory())
+            .likes(study.getLikes())
+            .dislikes(study.getDislikes())
+            .title(study.getTitle())
+            .content(study.getContent())
+            .build();
+    }
+
+    public List<StudyListResponse> toStudyListResponses(List<Study> studies) {
+        List<StudyListResponse> studyListResponses = new ArrayList<>();
+        for (Study study : studies) {
+            studyListResponses.add(
+                toStudyListResponse(study)
+            );
+        }
+        return studyListResponses;
     }
 }

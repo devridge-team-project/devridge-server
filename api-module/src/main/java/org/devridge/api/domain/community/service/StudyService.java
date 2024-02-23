@@ -1,8 +1,10 @@
 package org.devridge.api.domain.community.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.StudyRequest;
 import org.devridge.api.domain.community.dto.response.StudyDetailResponse;
+import org.devridge.api.domain.community.dto.response.StudyListResponse;
 import org.devridge.api.domain.community.entity.Study;
 import org.devridge.api.domain.community.mapper.StudyMapper;
 import org.devridge.api.domain.community.repository.StudyRepository;
@@ -34,6 +36,11 @@ public class StudyService {
         Study study = getStudyById(studyId);
         studyRepository.updateView(studyId);
         return studyMapper.toStudyDetailResponse(study);
+    }
+
+    public List<StudyListResponse> getAllStudy() {
+        List<Study> studies = studyRepository.findAll();
+        return studyMapper.toStudyListResponses(studies);
     }
 
     private Member getMemberById(Long memberId) {
