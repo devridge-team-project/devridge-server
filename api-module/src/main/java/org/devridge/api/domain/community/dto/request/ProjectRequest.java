@@ -1,18 +1,15 @@
 package org.devridge.api.domain.community.dto.request;
 
 import java.util.List;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
+import org.devridge.api.domain.community.entity.ProjectCategory;
 
 @Getter
-public class CreateCommunityRequest {
+public class ProjectRequest {
 
-    @NotNull
     private String title;
-
-    @NotNull
     private String content;
-
-    private List<String> hashtags;
+    private ProjectCategory category;
     private List<String> images;
+
 }

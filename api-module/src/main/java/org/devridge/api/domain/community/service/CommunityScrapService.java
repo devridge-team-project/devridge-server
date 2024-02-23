@@ -1,6 +1,5 @@
 package org.devridge.api.domain.community.service;
 
-import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityScrap;
@@ -11,8 +10,8 @@ import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.community.repository.CommunityScrapRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,11 +53,11 @@ public class CommunityScrapService {
     }
 
     private Member getMemberById(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException());
+        return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
     }
 
     private Community getCommunityById(Long communityId) {
-        return communityRepository.findById(communityId).orElseThrow(() -> new EntityNotFoundException());
+        return communityRepository.findById(communityId).orElseThrow(() -> new DataNotFoundException());
     }
 
 }

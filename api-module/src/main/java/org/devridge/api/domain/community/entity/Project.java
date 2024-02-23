@@ -1,15 +1,9 @@
 package org.devridge.api.domain.community.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,14 +14,13 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@NoArgsConstructor
+@Getter
 @DynamicInsert
-@SQLDelete(sql = "UPDATE community SET is_deleted = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE project SET is_deleted = true WHERE id = ?")
 @Where(clause = "is_deleted = false")
-@Table(name = "community")
-public class Community extends BaseEntity {
+public class Project extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", updatable = false)
@@ -41,30 +34,28 @@ public class Community extends BaseEntity {
     private Long views;
 
     @ColumnDefault("0")
-    private Long likeCount;
+    private Long likes;
 
     @ColumnDefault("0")
-    private Long dislikeCount;
+    private Long dislikes;
 
-    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
-    private List<CommunityComment> comments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommunityHashtag> hashtags = new ArrayList<>();
+    private String category;
 
     private String images;
 
     @Builder
-    public Community(Member member, String title, String content, String images) {
+    public Project(Member member, String title, String content, String category, String images) {
         this.member = member;
         this.title = title;
         this.content = content;
+        this.category = category;
         this.images = images;
     }
 
-
-    public void updateCommunity(String title, String content) {
+    public void updateProject(String title, String content, String category, String images) {
         this.title = title;
         this.content = content;
+        this.category = category;
+        this.images = images;
     }
 }
