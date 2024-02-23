@@ -59,7 +59,13 @@ public class ProjectService {
 
         if (request.getImages() != null && !request.getImages().isEmpty()) {
             String images = request.getImages().toString();
-            project.updateProject(request.getTitle(), request.getContent(), request.getCategory().getValue(), images.substring(1, images.length() - 1));
+
+            project.updateProject(
+                request.getTitle(),
+                request.getContent(),
+                request.getCategory().getValue(),
+                images.substring(1, images.length() - 1)
+            );
             return;
         }
         project.updateProject(request.getTitle(), request.getContent(), request.getCategory().getValue(), null);
@@ -82,7 +88,7 @@ public class ProjectService {
         }
     }
 
-    public Project getProjectById(Long projectId) {
+    private Project getProjectById(Long projectId) {
         return projectRepository.findById(projectId).orElseThrow(() -> new DataNotFoundException());
     }
 
