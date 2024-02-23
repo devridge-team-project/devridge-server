@@ -63,4 +63,14 @@ public class Study extends BaseEntity {
         this.totalPeople = totalPeople;
         this.currentPeople = currentPeople;
     }
+
+    public void updateStudy(String title, String content, String category, String images, String location, Integer totalPeople, Integer currentPeople) {
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.images = images;
+        this.location = location;
+        this.totalPeople = totalPeople;
+        this.currentPeople = currentPeople;
+    }
 }

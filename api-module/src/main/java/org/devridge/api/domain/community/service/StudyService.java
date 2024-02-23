@@ -6,6 +6,7 @@ import org.devridge.api.domain.community.dto.request.StudyRequest;
 import org.devridge.api.domain.community.dto.response.StudyDetailResponse;
 import org.devridge.api.domain.community.dto.response.StudyListResponse;
 import org.devridge.api.domain.community.entity.Study;
+import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.community.mapper.StudyMapper;
 import org.devridge.api.domain.community.repository.StudyRepository;
 import org.devridge.api.domain.member.entity.Member;
@@ -41,6 +42,42 @@ public class StudyService {
     public List<StudyListResponse> getAllStudy() {
         List<Study> studies = studyRepository.findAll();
         return studyMapper.toStudyListResponses(studies);
+    }
+
+    @Transactional
+    public void updateStudy(Long studyId, StudyRequest request) {
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
+        Study study = getStudyById(studyId);
+
+        if (!accessMemberId.equals(study.getMember().getId())) {
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 수정할 수 없습니다.");
+        }
+
+        if (request.getImages() != null && !request.getImages().isEmpty()) {
+            String images = request.getImages().toString();
+
+            study.updateStudy(
+                request.getTitle(),
+                request.getContent(),
+                request.getCategory().getValue(),
+                images.substring(1, images.length() - 1),
+                request.getLocation(),
+                request.getTotalPeople(),
+                request.getCurrentPeople()
+            );
+            return;
+        }
+
+        study.updateStudy(
+            request.getTitle(),
+            request.getContent(),
+            request.getCategory().getValue(),
+            null,
+            request.getLocation(),
+            request.getTotalPeople(),
+            request.getCurrentPeople()
+        );
     }
 
     private Member getMemberById(Long memberId) {

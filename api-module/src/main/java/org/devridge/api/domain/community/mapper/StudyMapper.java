@@ -41,7 +41,7 @@ public class StudyMapper {
                     .title(studyRequest.getTitle())
                     .content(studyRequest.getContent())
                     .location(studyRequest.getLocation())
-                    .category(studyRequest.getCategory())
+                    .category(studyRequest.getCategory().getValue())
                     .images(images.substring(1, images.length() - 1))
                     .totalPeople(studyRequest.getTotalPeople())
                     .currentPeople(studyRequest.getCurrentPeople())
@@ -51,7 +51,7 @@ public class StudyMapper {
                 .title(studyRequest.getTitle())
                 .content(studyRequest.getContent())
                 .location(studyRequest.getLocation())
-                .category(studyRequest.getCategory())
+                .category(studyRequest.getCategory().getValue())
                 .totalPeople(studyRequest.getTotalPeople())
                 .currentPeople(studyRequest.getCurrentPeople())
                 .build();
