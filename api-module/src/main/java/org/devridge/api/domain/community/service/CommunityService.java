@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
-import org.devridge.api.domain.community.dto.response.CommunityListResponse;
+import org.devridge.api.domain.community.dto.response.CommunitySliceResponse;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityHashtag;
 import org.devridge.api.domain.community.entity.Hashtag;
@@ -91,7 +91,7 @@ public class CommunityService {
 //        return communityMapper.toCommunityListResponses(communities);
 //    }
 
-    public Slice<CommunityListResponse> getAllCommunity(Long lastId, Pageable pageable) {
+    public Slice<CommunitySliceResponse> getAllCommunity(Long lastId, Pageable pageable) {
         return communityQuerydslRepository.searchBySlice(lastId, pageable);
     }
 

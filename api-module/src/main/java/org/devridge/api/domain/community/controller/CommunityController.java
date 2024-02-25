@@ -5,7 +5,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
-import org.devridge.api.domain.community.dto.response.CommunityListResponse;
+import org.devridge.api.domain.community.dto.response.CommunitySliceResponse;
 import org.devridge.api.domain.community.service.CommunityService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -62,12 +62,12 @@ public class CommunityController {
 //    }
 
     @GetMapping
-    public ResponseEntity<Slice<CommunityListResponse>> getAllCommunity(
+    public ResponseEntity<Slice<CommunitySliceResponse>> getAllCommunity(
         @RequestParam(name = "lastId", required = false) Long lastId,
         @PageableDefault( ) Pageable pageable
     ) {
-        Slice<CommunityListResponse> communityListResponses = communityService.getAllCommunity(lastId, pageable);
-        return ResponseEntity.ok().body(communityListResponses);
+        Slice<CommunitySliceResponse> communitySliceResponses = communityService.getAllCommunity(lastId, pageable);
+        return ResponseEntity.ok().body(communitySliceResponses);
     }
 }
 
