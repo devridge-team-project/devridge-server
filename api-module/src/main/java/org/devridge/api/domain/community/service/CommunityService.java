@@ -14,6 +14,7 @@ import org.devridge.api.domain.community.entity.id.CommunityHashtagId;
 import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.community.mapper.CommunityMapper;
 import org.devridge.api.domain.community.repository.CommunityHashtagRepository;
+import org.devridge.api.domain.community.repository.CommunityQuerydslRepository;
 import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.community.repository.HashtagRepository;
 import org.devridge.api.domain.member.entity.Member;
@@ -21,6 +22,8 @@ import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.s3.service.S3Service;
 import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +37,7 @@ public class CommunityService {
     private final CommunityHashtagRepository communityHashtagRepository;
     private final HashtagRepository hashtagRepository;
     private final S3Service s3Service;
+    private final CommunityQuerydslRepository communityQuerydslRepository;
 
     public Long createCommunity(CreateCommunityRequest communityRequest) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
@@ -82,9 +86,13 @@ public class CommunityService {
         }
     }
 
-    public List<CommunityListResponse> getAllCommunity() {
-        List<Community> communities = communityRepository.findAll();
-        return communityMapper.toCommunityListResponses(communities);
+//    public List<CommunityListResponse> getAllCommunity() {
+//        List<Community> communities = communityRepository.findAll();
+//        return communityMapper.toCommunityListResponses(communities);
+//    }
+
+    public Slice<CommunityListResponse> getAllCommunity(Long lastId, Pageable pageable) {
+        return communityQuerydslRepository.searchBySlice(lastId, pageable);
     }
 
     private Community getCommunityById(Long communityId) {

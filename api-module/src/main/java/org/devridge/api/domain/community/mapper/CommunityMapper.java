@@ -45,7 +45,7 @@ public class CommunityMapper {
         return CommunityListResponse.builder()
                 .id(community.getId())
                 .title(community.getTitle())
-                .commentCount(Long.valueOf(community.getComments().size()))
+                .comments(Long.valueOf(community.getComments().size()))
                 .views(community.getViews())
                 .likeCount(community.getLikeCount())
                 .build();
