@@ -1,6 +1,5 @@
 package org.devridge.api.domain.community.service;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
@@ -8,12 +7,15 @@ import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.community.mapper.CommunityCommentMapper;
+import org.devridge.api.domain.community.repository.CommunityCommentQuerydslReopsitory;
 import org.devridge.api.domain.community.repository.CommunityCommentRepository;
 import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class CommunityCommentService {
     private final CommunityCommentMapper communityCommentMapper;
     private final CommunityRepository communityRepository;
     private final MemberRepository memberRepository;
+    private final CommunityCommentQuerydslReopsitory communityCommentQuerydslReopsitory;
 
     public Long createComment(Long communityId, CommunityCommentRequest commentRequest) {
         Community community = getCommunityById(communityId);
@@ -35,9 +38,13 @@ public class CommunityCommentService {
         return communityCommentRepository.save(communityComment).getId();
     }
 
-    public List<CommunityCommentResponse> getAllComment(Long communityId) {
-        List<CommunityComment> communityComments = communityCommentRepository.findByCommunityId(communityId);
-        return communityCommentMapper.toCommentResponses(communityComments);
+//    public List<CommunityCommentResponse> getAllComment(Long communityId) {
+//        List<CommunityComment> communityComments = communityCommentRepository.findByCommunityId(communityId);
+//        return communityCommentMapper.toCommentResponses(communityComments);
+//    }
+
+    public Slice<CommunityCommentResponse> getAllCommunityComment(Long communityId, Long lastId, Pageable pageable) {
+        return communityCommentQuerydslReopsitory.searchBySlice(communityId, lastId, pageable);
     }
 
     public void updateComment(Long communityId, Long commentId, CommunityCommentRequest commentRequest) {
