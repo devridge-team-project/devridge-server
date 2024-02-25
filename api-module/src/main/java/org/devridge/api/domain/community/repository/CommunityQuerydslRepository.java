@@ -1,16 +1,16 @@
 package org.devridge.api.domain.community.repository;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.response.CommunitySliceResponse;
 import org.devridge.api.domain.community.dto.response.HashtagResponse;
 import org.devridge.api.domain.community.dto.response.MemberInfoResponse;
+import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.QCommunity;
 import org.devridge.api.domain.community.entity.QCommunityHashtag;
 import org.devridge.api.domain.member.entity.Member;
@@ -29,25 +29,8 @@ public class CommunityQuerydslRepository {
 
 
     public Slice<CommunitySliceResponse> searchBySlice(Long lastId, Pageable pageable) {
-        List<Tuple> tuples = jpaQueryFactory
-            .select(
-                community.id,
-                community.title,
-                community.views,
-                community.likeCount,
-                community.comments.size().longValue(),
-                community.scraps.size().longValue(),
-
-                community.member,
-
-                community.member.id,
-                community.member.nickname,
-                community.member.profileImageUrl,
-                community.member.introduction,
-
-                community.createdAt,
-                community.updatedAt
-            )
+        List<Community> tuples = jpaQueryFactory
+            .select(community)
             .from(community)
             .leftJoin(community.member)
             .where(
@@ -60,37 +43,24 @@ public class CommunityQuerydslRepository {
 
         List<CommunitySliceResponse> results = new ArrayList<>();
 
-
-        for (Tuple tuple : tuples) {
-            Long communityId = tuple.get(community.id);
-            String title = tuple.get(community.title);
-            Long views = tuple.get(community.views);
-            Long likeCount = tuple.get(community.likeCount);
-            Long comments = tuple.get(community.comments.size().longValue());
-            Long scraps = tuple.get(community.scraps.size().longValue());
-            Long memberId = tuple.get(community.member.id);
-            String nickname = tuple.get(community.member.nickname);
-            String profileImageUrl = tuple.get(community.member.profileImageUrl);
-            String introduction = tuple.get(community.member.introduction);
-
-            if (nickname == null) {
-                memberId = 0L;
-                nickname = "기본 닉네임";
-                profileImageUrl = "기본 프로필 이미지 URL";
-                introduction = "기본 소개";
+        for (Community community : tuples) {
+            MemberInfoResponse memberInfoResponse;
+            try {
+                Member member = community.getMember();
+                 memberInfoResponse = MemberInfoResponse.builder()
+                    .memberId(member.getId())
+                    .nickName(member.getNickname())
+                    .profileImageUrl(member.getProfileImageUrl())
+                    .introduction(member.getIntroduction())
+                    .build();
+            } catch (EntityNotFoundException e) {
+                 memberInfoResponse = MemberInfoResponse.builder()
+                    .memberId(0L)
+                    .nickName("기본 닉네임")
+                    .profileImageUrl("기본 프로필 이미지 URL")
+                    .introduction("기본 소개")
+                    .build();
             }
-
-            Member member = tuple.get(community.member);
-
-            MemberInfoResponse memberInfoResponse = MemberInfoResponse.builder()
-                .memberId(memberId)
-                .nickName(nickname)
-                .profileImageUrl(profileImageUrl)
-                .introduction(introduction)
-                .build();
-
-            LocalDateTime createdAt = tuple.get(community.createdAt);
-            LocalDateTime updatedAt = tuple.get(community.updatedAt);
 
             List<HashtagResponse> hashtags = jpaQueryFactory
                 .select(
@@ -102,21 +72,21 @@ public class CommunityQuerydslRepository {
                     )
                 )
                 .from(communityHashtag)
-                .where(communityHashtag.community.id.eq(tuple.get(community.id)))
+                .where(communityHashtag.community.id.eq(community.getId()))
                 .fetch();
 
             results.add(
                 CommunitySliceResponse.builder()
-                    .id(communityId)
-                    .title(title)
-                    .views(views)
-                    .likeCount(likeCount)
-                    .comments(comments)
+                    .id(community.getId())
+                    .title(community.getTitle())
+                    .views(community.getViews())
+                    .likeCount(community.getLikeCount())
+                    .comments(Long.valueOf(community.getComments().size()))
                     .member(memberInfoResponse)
-                    .createdAt(createdAt)
-                    .updatedAt(updatedAt)
+                    .createdAt(community.getCreatedAt())
+                    .updatedAt(community.getUpdatedAt())
                     .hashtags(hashtags)
-                    .scraps(scraps)
+                    .scraps(Long.valueOf(community.getScraps().size()))
                     .build()
             );
         }
