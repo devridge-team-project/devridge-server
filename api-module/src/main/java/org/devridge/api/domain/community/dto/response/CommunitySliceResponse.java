@@ -17,4 +17,5 @@ public class CommunitySliceResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<HashtagResponse> hashtags;
+    private Long scraps;
 }

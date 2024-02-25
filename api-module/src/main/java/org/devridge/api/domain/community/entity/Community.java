@@ -52,6 +52,9 @@ public class Community extends BaseEntity {
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CommunityHashtag> hashtags = new ArrayList<>();
 
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
+    private List<CommunityScrap> scraps = new ArrayList<>();
+
     private String images;
 
     @Builder

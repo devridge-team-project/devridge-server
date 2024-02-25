@@ -36,6 +36,7 @@ public class CommunityQuerydslRepository {
                 community.views,
                 community.likeCount,
                 community.comments.size().longValue(),
+                community.scraps.size().longValue(),
 
                 community.member,
 
@@ -66,7 +67,7 @@ public class CommunityQuerydslRepository {
             Long views = tuple.get(community.views);
             Long likeCount = tuple.get(community.likeCount);
             Long comments = tuple.get(community.comments.size().longValue());
-
+            Long scraps = tuple.get(community.scraps.size().longValue());
             Long memberId = tuple.get(community.member.id);
             String nickname = tuple.get(community.member.nickname);
             String profileImageUrl = tuple.get(community.member.profileImageUrl);
@@ -115,6 +116,7 @@ public class CommunityQuerydslRepository {
                     .createdAt(createdAt)
                     .updatedAt(updatedAt)
                     .hashtags(hashtags)
+                    .scraps(scraps)
                     .build()
             );
         }
