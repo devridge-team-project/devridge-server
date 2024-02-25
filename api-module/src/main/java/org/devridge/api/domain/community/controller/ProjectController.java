@@ -1,12 +1,13 @@
 package org.devridge.api.domain.community.controller;
 
 import java.net.URI;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.ProjectRequest;
 import org.devridge.api.domain.community.dto.response.ProjectDetailResponse;
 import org.devridge.api.domain.community.dto.response.ProjectListResponse;
 import org.devridge.api.domain.community.service.ProjectService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -36,9 +38,18 @@ public class ProjectController {
         return ResponseEntity.ok().body(projectDetailResponse);
     }
 
+//    @GetMapping
+//    public ResponseEntity<List<ProjectListResponse>> getAllProject() {
+//        List<ProjectListResponse> projectListResponses = projectService.getAllProject();
+//        return ResponseEntity.ok().body(projectListResponses);
+//    }
+
     @GetMapping
-    public ResponseEntity<List<ProjectListResponse>> getAllProject() {
-        List<ProjectListResponse> projectListResponses = projectService.getAllProject();
+    public ResponseEntity<Slice<ProjectListResponse>> getAllCommunity(
+        @RequestParam(name = "lastId", required = false) Long lastId,
+        Pageable pageable
+    ) {
+        Slice<ProjectListResponse> projectListResponses = projectService.getAllProject(lastId, pageable);
         return ResponseEntity.ok().body(projectListResponses);
     }
 

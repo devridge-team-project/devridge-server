@@ -1,10 +1,12 @@
 package org.devridge.api.domain.community.dto.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Builder
 @Getter
+@AllArgsConstructor
 public class ProjectListResponse {
 
     private Long id;

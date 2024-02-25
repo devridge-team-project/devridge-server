@@ -9,12 +9,15 @@ import org.devridge.api.domain.community.dto.response.ProjectListResponse;
 import org.devridge.api.domain.community.entity.Project;
 import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.community.mapper.ProjectMapper;
+import org.devridge.api.domain.community.repository.ProjectQuerydslRepository;
 import org.devridge.api.domain.community.repository.ProjectRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.s3.service.S3Service;
 import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +29,7 @@ public class ProjectService {
     private final ProjectMapper projectMapper;
     private final MemberRepository memberRepository;
     private final S3Service s3Service;
+    private final ProjectQuerydslRepository projectQuerydslRepository;
 
     public Long createProject(ProjectRequest request) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
@@ -42,9 +46,13 @@ public class ProjectService {
         return projectMapper.toProjectDetailResponse(project);
     }
 
-    public List<ProjectListResponse> getAllProject() {
-        List<Project> project = projectRepository.findAll();
-        return projectMapper.toProjectListResponses(project);
+//    public List<ProjectListResponse> getAllProject() {
+//        List<Project> project = projectRepository.findAll();
+//        return projectMapper.toProjectListResponses(project);
+//    }
+
+    public Slice<ProjectListResponse> getAllProject(Long lastId, Pageable pageable) {
+        return projectQuerydslRepository.searchBySlice(lastId, pageable);
     }
 
     @Transactional
