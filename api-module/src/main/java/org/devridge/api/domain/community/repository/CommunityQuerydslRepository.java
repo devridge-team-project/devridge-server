@@ -1,19 +1,17 @@
 package org.devridge.api.domain.community.repository;
 
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.response.CommunitySliceResponse;
 import org.devridge.api.domain.community.dto.response.HashtagResponse;
 import org.devridge.api.domain.community.dto.response.MemberInfoResponse;
-import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.QCommunity;
 import org.devridge.api.domain.community.entity.QCommunityHashtag;
-import org.devridge.api.domain.member.entity.Member;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -29,68 +27,58 @@ public class CommunityQuerydslRepository {
 
 
     public Slice<CommunitySliceResponse> searchBySlice(Long lastId, Pageable pageable) {
-        List<Community> tuples = jpaQueryFactory
-            .select(community)
-            .from(community)
+        List<CommunitySliceResponse> results = jpaQueryFactory
+            .selectFrom(community)
             .leftJoin(community.member)
+            .leftJoin(community.hashtags, communityHashtag)
             .where(
                 ltId(lastId),
                 community.isDeleted.eq(false)
             )
             .orderBy(community.id.desc())
             .limit(pageable.getPageSize() + 1)
-            .fetch();
+            .transform(GroupBy.groupBy(community.id)
+                .list(Projections.constructor(
+                    CommunitySliceResponse.class,
+                    community.id,
+                    community.title,
+                    community.views,
+                    community.likeCount,
+                    community.comments.size().longValue(),
 
-        List<CommunitySliceResponse> results = new ArrayList<>();
-
-        for (Community community : tuples) {
-            MemberInfoResponse memberInfoResponse;
-            try {
-                Member member = community.getMember();
-                 memberInfoResponse = MemberInfoResponse.builder()
-                    .memberId(member.getId())
-                    .nickName(member.getNickname())
-                    .profileImageUrl(member.getProfileImageUrl())
-                    .introduction(member.getIntroduction())
-                    .build();
-            } catch (EntityNotFoundException e) {
-                 memberInfoResponse = MemberInfoResponse.builder()
-                    .memberId(0L)
-                    .nickName("기본 닉네임")
-                    .profileImageUrl("기본 프로필 이미지 URL")
-                    .introduction("기본 소개")
-                    .build();
-            }
-
-            List<HashtagResponse> hashtags = jpaQueryFactory
-                .select(
                     Projections.constructor(
+                        MemberInfoResponse.class,
+                        Expressions.cases()
+                            .when(community.member.nickname.isNull())
+                            .then(0L)
+                            .otherwise(community.member.id),
+                        Expressions.cases()
+                            .when(community.member.nickname.isNull())
+                            .then("DefaultNickname")
+                            .otherwise(community.member.nickname),
+                        Expressions.cases()
+                            .when(community.member.nickname.isNull())
+                            .then("DefaultUrl")
+                            .otherwise(community.member.profileImageUrl),
+                        Expressions.cases()
+                            .when(community.member.nickname.isNull())
+                            .then("DefaultIntroduction")
+                            .otherwise(community.member.introduction)
+                    ),
+
+                    community.createdAt,
+                    community.updatedAt,
+
+                    GroupBy.list(Projections.fields(
                         HashtagResponse.class,
                         communityHashtag.hashtag.id,
                         communityHashtag.hashtag.word,
                         communityHashtag.hashtag.count
-                    )
-                )
-                .from(communityHashtag)
-                .where(communityHashtag.community.id.eq(community.getId()))
-                .fetch();
+                        )),
 
-            results.add(
-                CommunitySliceResponse.builder()
-                    .id(community.getId())
-                    .title(community.getTitle())
-                    .views(community.getViews())
-                    .likeCount(community.getLikeCount())
-                    .comments(Long.valueOf(community.getComments().size()))
-                    .member(memberInfoResponse)
-                    .createdAt(community.getCreatedAt())
-                    .updatedAt(community.getUpdatedAt())
-                    .hashtags(hashtags)
-                    .scraps(Long.valueOf(community.getScraps().size()))
-                    .build()
+                    community.scraps.size().longValue()
+                ))
             );
-        }
-
         return checkLastPage(pageable, results);
     }
 
