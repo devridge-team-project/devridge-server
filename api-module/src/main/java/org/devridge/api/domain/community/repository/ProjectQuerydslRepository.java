@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.response.ProjectListResponse;
 import org.devridge.api.domain.community.entity.QProject;
 import org.devridge.api.domain.skill.entity.QProjectSkill;
+import org.devridge.api.domain.skill.entity.QSkill;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -21,6 +22,7 @@ public class ProjectQuerydslRepository {
     private final JPAQueryFactory jpaQueryFactory;
     private QProject project = QProject.project;
     private QProjectSkill projectSkill = QProjectSkill.projectSkill;
+    private QSkill skill = QSkill.skill1;
 
 
     public Slice<ProjectListResponse> searchBySlice(Long lastId, Pageable pageable) {
@@ -28,6 +30,7 @@ public class ProjectQuerydslRepository {
             .selectFrom(project)
             .leftJoin(project.member)
             .leftJoin(project.projectSkills, projectSkill)
+            .leftJoin(projectSkill.skill, skill)
             .where(
                 ltId(lastId),
                 project.isDeleted.eq(false)
@@ -45,7 +48,7 @@ public class ProjectQuerydslRepository {
                     project.dislikes,
                     project.views,
                     project.isRecruiting,
-                    GroupBy.list(Projections.constructor(String.class, projectSkill.skill.skill)),
+                    GroupBy.list(skill.skill),
                     project.meeting
             )));
 
