@@ -1,5 +1,6 @@
 package org.devridge.api.domain.community.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,10 @@ import org.devridge.api.domain.community.repository.ProjectRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.s3.service.S3Service;
+import org.devridge.api.domain.skill.entity.ProjectSkill;
+import org.devridge.api.domain.skill.entity.Skill;
+import org.devridge.api.domain.skill.repository.ProjectSkillRepository;
+import org.devridge.api.domain.skill.repository.SkillRepository;
 import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.data.domain.Pageable;
@@ -48,8 +53,15 @@ public class ProjectService {
     @Transactional
     public ProjectDetailResponse getProjectDetail(Long projectId) {
         Project project = getProjectById(projectId);
+
+        List<ProjectSkill> temp = project.getProjectSkills();
+        List<String> skills = new ArrayList<>();
+        for (ProjectSkill t : temp) {
+            skills.add(t.getSkill().getSkill());
+        }
+
         projectRepository.updateView(projectId);
-        return projectMapper.toProjectDetailResponse(project);
+        return projectMapper.toProjectDetailResponse(project, skills);
     }
 
 //    public List<ProjectListResponse> getAllProject() {

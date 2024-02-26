@@ -18,7 +18,7 @@ public class ProjectMapper {
 
     private final MemberInfoMapper memberInfoMapper;
 
-    public ProjectDetailResponse toProjectDetailResponse(Project project) {
+    public ProjectDetailResponse toProjectDetailResponse(Project project, List<String> skills) {
         Member member = project.getMember();
         MemberInfoResponse memberInfoResponse = memberInfoMapper.toMemberInfoResponse(member);
         return ProjectDetailResponse.builder()
@@ -31,6 +31,9 @@ public class ProjectMapper {
                 .views(project.getViews() + 1)
                 .createdAt(project.getCreatedAt())
                 .updatedAt(project.getUpdatedAt())
+                .category(project.getCategory())
+                .meeting(project.getMeeting())
+                .skills(skills)
                 .build();
     }
 
