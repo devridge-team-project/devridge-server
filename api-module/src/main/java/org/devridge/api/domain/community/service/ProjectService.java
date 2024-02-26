@@ -83,6 +83,9 @@ public class ProjectService {
             throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 수정할 수 없습니다.");
         }
 
+        projectSkillRepository.deleteByProjectId(projectId);
+
+
         if (request.getImages() != null && !request.getImages().isEmpty()) {
             String images = request.getImages().toString();
 
@@ -90,11 +93,25 @@ public class ProjectService {
                 request.getTitle(),
                 request.getContent(),
                 request.getCategory().getValue(),
-                images.substring(1, images.length() - 1)
+                images.substring(1, images.length() - 1),
+                request.getMeeting().toString(),
+                request.getIsRecruiting()
             );
+
+            createProjectSkill(request.getSkillIds(), projectId);
             return;
         }
-        project.updateProject(request.getTitle(), request.getContent(), request.getCategory().getValue(), null);
+        project.updateProject(
+            request.getTitle(),
+            request.getContent(),
+            request.getCategory().getValue(),
+            null,
+            request.getMeeting().toString(),
+            request.getIsRecruiting()
+        );
+
+        createProjectSkill(request.getSkillIds(), projectId);
+
     }
 
     @Transactional

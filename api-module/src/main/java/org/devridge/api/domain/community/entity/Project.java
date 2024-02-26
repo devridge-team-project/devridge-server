@@ -2,6 +2,7 @@ package org.devridge.api.domain.community.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -48,7 +49,7 @@ public class Project extends BaseEntity {
 
     private String images;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<ProjectSkill> projectSkills = new ArrayList<>();
 
     private String meeting;
@@ -70,10 +71,12 @@ public class Project extends BaseEntity {
 
 
 
-    public void updateProject(String title, String content, String category, String images) {
+    public void updateProject(String title, String content, String category, String images, String meeting, Boolean isRecruiting) {
         this.title = title;
         this.content = content;
         this.category = category;
         this.images = images;
+        this.meeting = meeting;
+        this.isRecruiting = isRecruiting;
     }
 }

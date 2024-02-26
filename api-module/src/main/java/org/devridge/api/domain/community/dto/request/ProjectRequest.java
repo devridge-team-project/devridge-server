@@ -15,4 +15,5 @@ public class ProjectRequest {
 
     private List<Long> skillIds;
     private Meeting meeting;
+    private Boolean isRecruiting;
 }
