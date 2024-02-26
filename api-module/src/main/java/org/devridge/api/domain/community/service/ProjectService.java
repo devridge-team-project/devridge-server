@@ -30,13 +30,19 @@ public class ProjectService {
     private final MemberRepository memberRepository;
     private final S3Service s3Service;
     private final ProjectQuerydslRepository projectQuerydslRepository;
+    private final ProjectSkillRepository projectSkillRepository;
+    private final SkillRepository skillRepository;
 
+    @Transactional
     public Long createProject(ProjectRequest request) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
         Member member = getMemberById(accessMemberId);
 
         Project project = projectMapper.toProject(request, member);
-        return projectRepository.save(project).getId();
+        Long projectId = projectRepository.save(project).getId();
+        createProjectSkill(request.getSkillIds(), projectId);
+
+        return projectId;
     }
 
     @Transactional
@@ -93,6 +99,21 @@ public class ProjectService {
         if (project.getImages() != null) {
             List<String> images = Arrays.asList(project.getImages().split(", "));
             s3Service.deleteAllImage(images);
+        }
+    }
+
+    @Transactional
+    public void createProjectSkill(List<Long> skillIds, Long projectId) {
+        List<Skill> skills = skillRepository.findSkillsByIds(skillIds);
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new DataNotFoundException());
+
+        for (Skill skill : skills) {
+            projectSkillRepository.save(
+                ProjectSkill.builder()
+                    .skill(skill)
+                    .project(project)
+                    .build()
+            );
         }
     }
 

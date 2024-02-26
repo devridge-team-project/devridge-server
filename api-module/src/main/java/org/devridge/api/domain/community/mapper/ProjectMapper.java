@@ -43,6 +43,7 @@ public class ProjectMapper {
                     .content(request.getContent())
                     .images(images.substring(1, images.length() -1))
                     .category(request.getCategory().getValue())
+                    .meeting(request.getMeeting().toString())
                     .build();
         }
         return Project.builder()
@@ -50,6 +51,7 @@ public class ProjectMapper {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .category(request.getCategory().getValue())
+                .meeting(request.getMeeting().toString())
                 .build();
     }
 
