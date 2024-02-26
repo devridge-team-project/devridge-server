@@ -1,16 +1,15 @@
 package org.devridge.api.domain.community.repository;
 
+import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
 import org.devridge.api.domain.community.dto.response.MemberInfoResponse;
-import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.entity.QCommunityComment;
-import org.devridge.api.domain.member.entity.Member;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -24,9 +23,8 @@ public class CommunityCommentQuerydslReopsitory {
     private QCommunityComment comment = QCommunityComment.communityComment;
 
     public Slice<CommunityCommentResponse> searchBySlice(Long communityId, Long lastId, Pageable pageable) {
-        List<CommunityComment> lists = jpaQueryFactory
-            .select(comment)
-            .from(comment)
+        List<CommunityCommentResponse> results = jpaQueryFactory
+            .selectFrom(comment)
             .leftJoin(comment.member)
             .where(
                 ltId(lastId),
@@ -35,42 +33,37 @@ public class CommunityCommentQuerydslReopsitory {
             )
             .orderBy(comment.id.desc())
             .limit(pageable.getPageSize() + 1)
-            .fetch();
+            .transform(GroupBy.groupBy(comment.id)
+                .list(Projections.constructor(
+                    CommunityCommentResponse.class,
+                    comment.id,
+                    comment.content,
+                    comment.createdAt,
+                    comment.updatedAt,
+                    comment.likeCount,
+                    comment.dislikeCount,
 
-        List<CommunityCommentResponse> results = new ArrayList<>();
-
-
-        for (CommunityComment comment : lists) {
-            MemberInfoResponse memberInfoResponse;
-            try {
-                Member member = comment.getMember();
-                 memberInfoResponse = MemberInfoResponse.builder()
-                        .memberId(member.getId())
-                        .nickName(member.getNickname())
-                        .profileImageUrl(member.getProfileImageUrl())
-                        .introduction(member.getIntroduction())
-                        .build();
-            } catch (EntityNotFoundException e) {
-                 memberInfoResponse = MemberInfoResponse.builder()
-                        .memberId(0L)
-                        .nickName("기본 닉네임")
-                        .profileImageUrl("기본 프로필 이미지 URL")
-                        .introduction("기본 소개")
-                        .build();
-            }
-
-            results.add(
-                CommunityCommentResponse.builder()
-                    .commentId(comment.getId())
-                    .content(comment.getContent())
-                    .createdAt(comment.getCreatedAt())
-                    .updatedAt(comment.getUpdatedAt())
-                    .likeCount(comment.getLikeCount())
-                    .dislikeCount(comment.getDislikeCount())
-                    .memberInfoResponse(memberInfoResponse)
-                    .build()
-            );
-        }
+                    Projections.constructor(
+                        MemberInfoResponse.class,
+                        Expressions.cases()
+                            .when(comment.member.nickname.isNull())
+                            .then(0L)
+                            .otherwise(comment.member.id),
+                        Expressions.cases()
+                            .when(comment.member.nickname.isNull())
+                            .then("DefaultNickname")
+                            .otherwise(comment.member.nickname),
+                        Expressions.cases()
+                            .when(comment.member.nickname.isNull())
+                            .then("DefaultUrl")
+                            .otherwise(comment.member.profileImageUrl),
+                        Expressions.cases()
+                            .when(comment.member.nickname.isNull())
+                            .then("DefaultIntroduction")
+                            .otherwise(comment.member.introduction)
+                    )
+                )
+            ));
         return checkLastPage(pageable, results);
     }
 
