@@ -31,6 +31,7 @@ public class CommunityQuerydslRepository {
             .selectFrom(community)
             .leftJoin(community.member)
             .leftJoin(community.hashtags, communityHashtag)
+            .leftJoin(communityHashtag.hashtag)
             .where(
                 ltId(lastId),
                 community.isDeleted.eq(false)
