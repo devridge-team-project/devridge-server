@@ -34,6 +34,7 @@ public class ProjectMapper {
                 .category(project.getCategory())
                 .meeting(project.getMeeting())
                 .skills(skills)
+                .isRecruiting(project.getIsRecruiting())
                 .build();
     }
 

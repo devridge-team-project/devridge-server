@@ -2,6 +2,7 @@ package org.devridge.api.domain.community.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -52,14 +53,19 @@ public class Project extends BaseEntity {
 
     private String meeting;
 
+    @Column(columnDefinition = "TINYINT(1)")
+    @ColumnDefault("true")
+    private Boolean isRecruiting;
+
     @Builder
-    public Project(Member member, String title, String content, String category, String images, String meeting) {
+    public Project(Member member, String title, String content, String category, String images, String meeting, Boolean isRecruiting) {
         this.member = member;
         this.title = title;
         this.content = content;
         this.category = category;
         this.images = images;
         this.meeting = meeting;
+        this.isRecruiting = isRecruiting;
     }
 
 

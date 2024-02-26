@@ -27,5 +27,6 @@ public class ProjectDetailResponse {
     private String category;
     private List<String> skills;
     private String meeting;
+    private Boolean isRecruiting;
 
 }
