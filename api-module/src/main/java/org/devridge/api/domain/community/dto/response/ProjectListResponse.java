@@ -1,5 +1,6 @@
 package org.devridge.api.domain.community.dto.response;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,5 +17,7 @@ public class ProjectListResponse {
     private Long likes;
     private Long dislikes;
     private Long view;
-
+    private Boolean isRecruiting;
+    private List<String> skills;
+    private String meeting;
 }

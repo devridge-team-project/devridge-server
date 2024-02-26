@@ -45,7 +45,7 @@ public class ProjectController {
 //    }
 
     @GetMapping
-    public ResponseEntity<Slice<ProjectListResponse>> getAllCommunity(
+    public ResponseEntity<Slice<ProjectListResponse>> getAllProject(
         @RequestParam(name = "lastId", required = false) Long lastId,
         Pageable pageable
     ) {
