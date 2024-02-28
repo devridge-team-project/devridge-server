@@ -1,10 +1,13 @@
 package org.devridge.api.domain.coffeechat.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import org.devridge.api.domain.coffeechat.entity.id.ChatRoomId;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.entity.BaseEntity;
 
@@ -24,6 +27,7 @@ public class ChatMessage extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_room_id")
+    @JsonBackReference
     private ChatRoom chatRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
