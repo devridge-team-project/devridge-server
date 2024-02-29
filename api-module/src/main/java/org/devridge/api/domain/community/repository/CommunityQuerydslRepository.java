@@ -48,7 +48,7 @@ public class CommunityQuerydslRepository {
                         CommunitySliceResponse.class,
                         community.id,
                         community.title,
-                        community.views,
+                        community.viewCount,
                         community.likeCount,
                         community.comments.size().longValue(),
 

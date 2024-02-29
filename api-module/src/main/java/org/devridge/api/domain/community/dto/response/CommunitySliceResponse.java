@@ -12,7 +12,7 @@ import lombok.Getter;
 public class CommunitySliceResponse {
     private Long id;
     private String title;
-    private Long views;
+    private Long viewCount;
     private Long likeCount;
     private Long comments;
     private MemberInfoResponse member;

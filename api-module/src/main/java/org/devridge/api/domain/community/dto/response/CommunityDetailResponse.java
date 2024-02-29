@@ -15,7 +15,7 @@ public class CommunityDetailResponse {
 
     private String title;
     private String content;
-    private Long views;
+    private Long viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long likeCount;

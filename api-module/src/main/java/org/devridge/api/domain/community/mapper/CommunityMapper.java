@@ -28,7 +28,7 @@ public class CommunityMapper {
                 .content(community.getContent())
                 .likeCount(community.getLikeCount())
                 .dislikeCount(community.getDislikeCount())
-                .views(community.getViewCount() + 1)
+                .viewCount(community.getViewCount() + 1)
                 .createdAt(community.getCreatedAt())
                 .updatedAt(community.getUpdatedAt())
                 .hashtags(toHashtags(community))
@@ -46,7 +46,7 @@ public class CommunityMapper {
                 .id(community.getId())
                 .title(community.getTitle())
                 .commentCount(Long.valueOf(community.getComments().size()))
-                .views(community.getViewCount())
+                .viewCount(community.getViewCount())
                 .likeCount(community.getLikeCount())
                 .build();
     }
