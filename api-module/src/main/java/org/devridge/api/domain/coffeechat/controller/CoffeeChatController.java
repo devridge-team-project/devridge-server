@@ -19,7 +19,7 @@ public class CoffeeChatController {
     /**
      * 내 전체 커피챗 리스트 조회
      * @param lastIndex
-     * @return
+     * @return 내 채팅방 리스트 목록 무한 스크롤
      */
     @GetMapping
     public ResponseEntity<List<GetAllMyChatRoom>> getAllMyChatRoom(
@@ -32,7 +32,8 @@ public class CoffeeChatController {
     /**
      * 채팅방 입장 시 메세지 리스트 조회
      * @param chatRoomId
-     * @return
+     * @param lastIndex
+     * @return 해당 채팅방 메세지 목록 무한 스크롤
      */
     @GetMapping("/{chatRoomId}")
     public ResponseEntity<List<GetAllChatMessage>> getAllChatMessages(
