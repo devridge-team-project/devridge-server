@@ -1,12 +1,17 @@
 package org.devridge.api.domain.coffeechat.controller;
 
 import lombok.RequiredArgsConstructor;
+
+import org.devridge.api.domain.coffeechat.dto.request.CreateCoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllChatMessage;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllMyChatRoom;
 import org.devridge.api.domain.coffeechat.service.CoffeeChatService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -42,5 +47,16 @@ public class CoffeeChatController {
     ) {
         List<GetAllChatMessage> result = coffeeChatService.getAllChatMessage(chatRoomId, lastIndex);
         return ResponseEntity.ok().body(result);
+    }
+
+    /**
+     * 커피챗 요청 생성
+     */
+    @PostMapping("/request")
+    public ResponseEntity<Void> createCoffeeChatRequest(
+        @RequestBody @Valid CreateCoffeeChatRequest coffeeChatRequest
+    ) {
+        Long coffeeChatRequestId = coffeeChatService.createCoffeeChatRequest(coffeeChatRequest);
+        return ResponseEntity.created(URI.create("/api/coffee-chat/request" + coffeeChatRequestId)).build();
     }
 }

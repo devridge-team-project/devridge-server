@@ -2,17 +2,21 @@ package org.devridge.api.domain.coffeechat.service;
 
 import lombok.RequiredArgsConstructor;
 
+import org.devridge.api.domain.coffeechat.dto.request.CreateCoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllMyChatRoom;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
+import org.devridge.api.domain.coffeechat.entity.CoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.mapper.CoffeeChatMapper;
 import org.devridge.api.domain.coffeechat.repository.ChatMessageRepository;
 import org.devridge.api.domain.coffeechat.repository.ChatRoomRepository;
 import org.devridge.api.domain.coffeechat.repository.CoffeeChatQuerydslRepository;
+import org.devridge.api.domain.coffeechat.repository.CoffeeChatRequestRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.exception.common.DataNotFoundException;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,9 +32,10 @@ public class CoffeeChatService {
     private final CoffeeChatQuerydslRepository coffeeChatQuerydslRepository;
     private final CoffeeChatMapper coffeeChatMapper;
     private final ChatMessageRepository chatMessageRepository;
+    private final CoffeeChatRequestRepository coffeeChatRequestRepository;
 
     public List<GetAllMyChatRoom> getAllMyChatRoom(Long lastIndex) {
-        Member member = this.getMember();
+        Member member = this.getMember(getMemberId());
 
         if (lastIndex == null) {
             Long maxId = chatRoomRepository.findMaxId(member).orElse(0L);
@@ -58,8 +63,16 @@ public class CoffeeChatService {
         return coffeeChatMapper.toGetAllChatMessage(messages);
     }
 
-    private Member getMember() {
-        Long memberId = getMemberId();
+    public Long createCoffeeChatRequest(CreateCoffeeChatRequest request) {
+        // TODO: 비동기 처리
+        Member fromMember = this.getMember(getMemberId());
+        Member toMember = this.getMember(request.getToMemberId());
+        CoffeeChatRequest coffeeChatRequest = coffeeChatMapper.toCoffeeChatRequest(toMember, fromMember);
+
+        return coffeeChatRequestRepository.save(coffeeChatRequest).getId();
+    }
+
+    private Member getMember(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
     }
 }

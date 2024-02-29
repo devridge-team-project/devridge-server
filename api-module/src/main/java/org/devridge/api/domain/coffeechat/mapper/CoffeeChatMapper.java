@@ -1,9 +1,11 @@
 package org.devridge.api.domain.coffeechat.mapper;
 
+import org.devridge.api.domain.coffeechat.dto.request.CreateCoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllChatMessage;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllMyChatRoom;
 import org.devridge.api.domain.coffeechat.entity.ChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
+import org.devridge.api.domain.coffeechat.entity.CoffeeChatRequest;
 import org.devridge.api.domain.member.entity.Member;
 
 import org.springframework.stereotype.Component;
@@ -43,5 +45,9 @@ public class CoffeeChatMapper {
         }
 
         return messages;
+    }
+
+    public CoffeeChatRequest toCoffeeChatRequest(Member toMember, Member fromMember) {
+        return new CoffeeChatRequest(fromMember, toMember);
     }
 }

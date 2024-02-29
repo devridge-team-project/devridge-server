@@ -1,0 +1,43 @@
+package org.devridge.api.domain.coffeechat.entity;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+
+import lombok.NoArgsConstructor;
+import org.devridge.api.domain.member.entity.Member;
+import org.devridge.common.entity.BaseEntity;
+
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+
+import javax.persistence.*;
+
+import java.time.LocalDateTime;
+
+@DynamicInsert
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "coffee_chat_request")
+@Entity
+public class CoffeeChatRequest extends BaseEntity {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "from_member_id")
+    private Member fromMember;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "to_member_id")
+    private Member toMember;
+
+    @Column(name = "is_success", columnDefinition = "TINYINT(1)")
+    @ColumnDefault("false")
+    private Boolean isSuccess;
+
+    private LocalDateTime readAt;
+
+    public CoffeeChatRequest(Member fromMember, Member toMember) {
+        this.fromMember = fromMember;
+        this.toMember = toMember;
+    }
+}
