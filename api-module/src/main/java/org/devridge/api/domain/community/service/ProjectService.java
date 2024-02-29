@@ -54,10 +54,10 @@ public class ProjectService {
     public ProjectDetailResponse getProjectDetail(Long projectId) {
         Project project = getProjectById(projectId);
 
-        List<ProjectSkill> temp = project.getProjectSkills();
+        List<ProjectSkill> projectSkills = project.getProjectSkills();
         List<String> skills = new ArrayList<>();
-        for (ProjectSkill t : temp) {
-            skills.add(t.getSkill().getSkill());
+        for (ProjectSkill projectSkill : projectSkills) {
+            skills.add(projectSkill.getSkill().getSkill());
         }
 
         projectRepository.updateView(projectId);
