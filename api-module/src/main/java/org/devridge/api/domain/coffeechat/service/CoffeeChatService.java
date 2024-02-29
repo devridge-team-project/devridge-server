@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.devridge.api.domain.coffeechat.dto.type.YesOrNo.Y;
 import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
 
 @RequiredArgsConstructor
@@ -57,7 +56,9 @@ public class CoffeeChatService {
     @Transactional(readOnly = true)
     public List<GetAllChatMessage> getAllChatMessage(Long chatRoomId, Long lastIndex) {
         // TODO: 내 채팅방이 아닌 경우 접근 금지 인터셉터 추가
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new DataNotFoundException());
+        ChatRoom chatRoom = chatRoomRepository
+                .findById(chatRoomId)
+                .orElseThrow(() -> new DataNotFoundException());
 
         if (lastIndex == null) {
             Long maxId = chatMessageRepository.findMaxId(chatRoom).orElse(0L);
@@ -75,13 +76,16 @@ public class CoffeeChatService {
         // TODO: 비동기 처리
         Member fromMember = this.getMember(getMemberId());
         Member toMember = this.getMember(request.getToMemberId());
-        CoffeeChatRequest coffeeChatRequest = coffeeChatMapper.toCoffeeChatRequest(toMember, fromMember);
+        CoffeeChatRequest coffeeChatRequest = coffeeChatMapper
+                .toCoffeeChatRequest(toMember, fromMember, request.getMessage());
 
         return coffeeChatRequestRepository.save(coffeeChatRequest).getId();
     }
 
     @Transactional
-    public CoffeeChatResult acceptOrRejectCoffeeChatRequest(Long requestId, AcceptOrRejectCoffeeChatRequest request) {
+    public CoffeeChatResult acceptOrRejectCoffeeChatRequest(
+        Long requestId, AcceptOrRejectCoffeeChatRequest request
+    ) {
         CoffeeChatRequest coffeeChatRequest = coffeeChatRequestRepository
             .findById(requestId)
             .orElseThrow(DataNotFoundException::new);

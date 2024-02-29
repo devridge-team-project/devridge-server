@@ -12,6 +12,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
@@ -30,15 +31,19 @@ public class CoffeeChatRequest extends BaseEntity {
     @JoinColumn(name = "to_member_id")
     private Member toMember;
 
+    @NotNull
+    private String message;
+
     @Column(name = "is_success", columnDefinition = "TINYINT(1)")
     @ColumnDefault("false")
     private Boolean isSuccess;
 
     private LocalDateTime readAt;
 
-    public CoffeeChatRequest(Member fromMember, Member toMember) {
+    public CoffeeChatRequest(Member fromMember, Member toMember, String message) {
         this.fromMember = fromMember;
         this.toMember = toMember;
+        this.message = message;
     }
 
     public void updateSuccess(Boolean isSuccess) {
