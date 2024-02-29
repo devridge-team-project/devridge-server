@@ -16,9 +16,13 @@ public class CommunityCommentResponse {
     private Long commentId;
 
     private String content;
+
     private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
+
     private Long likeCount;
+
     private Long dislikeCount;
 
     @JsonProperty("member")

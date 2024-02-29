@@ -15,6 +15,8 @@ public class MemberInfoResponse {
 
     @JsonProperty("nickname")
     private String nickName;
+
     private String profileImageUrl;
+
     private String introduction;
 }
