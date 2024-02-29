@@ -38,7 +38,7 @@ public class Community extends BaseEntity {
     private String content;
 
     @ColumnDefault("0")
-    private Long views;
+    private Long viewCount;
 
     @ColumnDefault("0")
     private Long likeCount;

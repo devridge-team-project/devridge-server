@@ -11,5 +11,5 @@ public class CommunityListResponse {
     private String title;
     private Long views;
     private Long likeCount;
-    private Long comments;
+    private Long commentCount;
 }
