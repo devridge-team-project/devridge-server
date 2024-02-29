@@ -49,4 +49,8 @@ public class CoffeeChatRequest extends BaseEntity {
     public void updateSuccess(Boolean isSuccess) {
         this.isSuccess = isSuccess;
     }
+
+    public void updateReadAt() {
+        this.readAt = LocalDateTime.now();
+    }
 }

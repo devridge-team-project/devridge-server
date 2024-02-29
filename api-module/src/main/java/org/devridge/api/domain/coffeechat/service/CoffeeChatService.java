@@ -7,6 +7,7 @@ import org.devridge.api.domain.coffeechat.dto.request.CreateCoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.dto.response.CoffeeChatResult;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllMyChatRoom;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllChatMessage;
+import org.devridge.api.domain.coffeechat.dto.response.GetCoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.dto.type.YesOrNo;
 import org.devridge.api.domain.coffeechat.entity.ChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
@@ -31,6 +32,8 @@ import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
 @RequiredArgsConstructor
 @Service
 public class CoffeeChatService {
+
+    // TODO: 내 요청 외에는 볼 수 없도록 인터셉터 설정
 
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
@@ -110,6 +113,17 @@ public class CoffeeChatService {
         }
 
         throw new BadRequestException();
+    }
+
+    public GetCoffeeChatRequest getCoffeeChatRequest(Long requestId) {
+        CoffeeChatRequest coffeeChatRequest = coffeeChatRequestRepository
+            .findById(requestId)
+            .orElseThrow(DataNotFoundException::new);
+
+        coffeeChatRequest.updateReadAt();
+        coffeeChatRequestRepository.save(coffeeChatRequest);
+
+        return coffeeChatMapper.toGetCoffeeChatRequest(coffeeChatRequest);
     }
 
     private Member getMember(Long memberId) {

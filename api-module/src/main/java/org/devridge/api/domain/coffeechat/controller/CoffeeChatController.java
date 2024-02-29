@@ -7,6 +7,7 @@ import org.devridge.api.domain.coffeechat.dto.request.CreateCoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.dto.response.CoffeeChatResult;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllChatMessage;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllMyChatRoom;
+import org.devridge.api.domain.coffeechat.dto.response.GetCoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.service.CoffeeChatService;
 
 import org.springframework.http.ResponseEntity;
@@ -60,6 +61,21 @@ public class CoffeeChatController {
     ) {
         Long coffeeChatRequestId = coffeeChatService.createCoffeeChatRequest(coffeeChatRequest);
         return ResponseEntity.created(URI.create("/api/coffee-chat/request" + coffeeChatRequestId)).build();
+    }
+
+    /**
+     * 커피챗 요청 리스트(커피챗 목록 + 알림으로 보여주기 위한 readAt이 null인 개수 반환)
+     */
+
+    /**
+     * 커피챗 요청 보기
+     * @param requestId
+     * @return 커피챗 요청 세부 내용
+     */
+    @GetMapping("/request/{requestId}")
+    public ResponseEntity<GetCoffeeChatRequest> getCoffeeChat(@PathVariable Long requestId) {
+        GetCoffeeChatRequest result = coffeeChatService.getCoffeeChatRequest(requestId);
+        return ResponseEntity.ok().body(result);
     }
 
     /**
