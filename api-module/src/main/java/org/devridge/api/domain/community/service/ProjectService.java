@@ -92,9 +92,9 @@ public class ProjectService {
             project.updateProject(
                 request.getTitle(),
                 request.getContent(),
-                request.getCategory().getValue(),
+                request.getCategory(),
                 images.substring(1, images.length() - 1),
-                request.getMeeting().toString(),
+                request.getMeeting(),
                 request.getIsRecruiting()
             );
 
@@ -104,9 +104,9 @@ public class ProjectService {
         project.updateProject(
             request.getTitle(),
             request.getContent(),
-            request.getCategory().getValue(),
+            request.getCategory(),
             null,
-            request.getMeeting().toString(),
+            request.getMeeting(),
             request.getIsRecruiting()
         );
 

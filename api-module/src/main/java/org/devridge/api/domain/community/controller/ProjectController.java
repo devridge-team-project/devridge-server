@@ -1,6 +1,7 @@
 package org.devridge.api.domain.community.controller;
 
 import java.net.URI;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.ProjectRequest;
 import org.devridge.api.domain.community.dto.response.ProjectDetailResponse;
@@ -27,7 +28,7 @@ public class ProjectController {
     private final ProjectService projectService;
 
     @PostMapping
-    public ResponseEntity<Void> createProject(@RequestBody ProjectRequest request) {
+    public ResponseEntity<Void> createProject(@Valid @RequestBody ProjectRequest request) {
         Long projectId = projectService.createProject(request);
         return ResponseEntity.created(URI.create("/api/community/projects/" + projectId)).build();
     }

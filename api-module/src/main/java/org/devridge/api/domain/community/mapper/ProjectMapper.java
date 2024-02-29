@@ -46,16 +46,16 @@ public class ProjectMapper {
                     .title(request.getTitle())
                     .content(request.getContent())
                     .images(images.substring(1, images.length() -1))
-                    .category(request.getCategory().getValue())
-                    .meeting(request.getMeeting().toString())
+                    .category(request.getCategory())
+                    .meeting(request.getMeeting())
                     .build();
         }
         return Project.builder()
                 .member(member)
                 .title(request.getTitle())
                 .content(request.getContent())
-                .category(request.getCategory().getValue())
-                .meeting(request.getMeeting().toString())
+                .category(request.getCategory())
+                .meeting(request.getMeeting())
                 .build();
     }
 
