@@ -29,7 +29,7 @@ public class ProjectSkill extends BaseTimeEntity {
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("skillId")
     @JoinColumn(name = "skill_id")
     private Skill skill;
