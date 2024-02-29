@@ -36,12 +36,6 @@ public class CommunityCommentController {
         return ResponseEntity.created(URI.create("/api/community/" + communityId + "/comments/" + commentId)).build();
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<CommunityCommentResponse>> getAllComments(@PathVariable Long communityId) {
-//        List<CommunityCommentResponse> commentResponses = communityCommentService.getAllComment(communityId);
-//        return ResponseEntity.ok().body(commentResponses);
-//    }
-
     @GetMapping
     public ResponseEntity<Slice<CommunityCommentResponse>> getAllComments(
         @PathVariable Long communityId,

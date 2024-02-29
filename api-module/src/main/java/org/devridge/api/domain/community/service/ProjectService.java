@@ -64,11 +64,6 @@ public class ProjectService {
         return projectMapper.toProjectDetailResponse(project, skills);
     }
 
-//    public List<ProjectListResponse> getAllProject() {
-//        List<Project> project = projectRepository.findAll();
-//        return projectMapper.toProjectListResponses(project);
-//    }
-
     public Slice<ProjectListResponse> getAllProject(Long lastId, Pageable pageable) {
         return projectQuerydslRepository.searchBySlice(lastId, pageable);
     }

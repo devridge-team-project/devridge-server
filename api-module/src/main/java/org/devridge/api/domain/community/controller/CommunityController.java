@@ -55,12 +55,6 @@ public class CommunityController {
         return ResponseEntity.ok().build();
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<CommunityListResponse>> getAllCommunity() {
-//        List<CommunityListResponse> communityListResponses = communityService.getAllCommunity();
-//        return ResponseEntity.ok().body(communityListResponses);
-//    }
-
     @GetMapping
     public ResponseEntity<Slice<CommunitySliceResponse>> getAllCommunity(
         @RequestParam(name = "lastId", required = false) Long lastId,
