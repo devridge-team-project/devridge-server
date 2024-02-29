@@ -40,4 +40,8 @@ public class CoffeeChatRequest extends BaseEntity {
         this.fromMember = fromMember;
         this.toMember = toMember;
     }
+
+    public void updateSuccess(Boolean isSuccess) {
+        this.isSuccess = isSuccess;
+    }
 }

@@ -2,7 +2,9 @@ package org.devridge.api.domain.coffeechat.controller;
 
 import lombok.RequiredArgsConstructor;
 
+import org.devridge.api.domain.coffeechat.dto.request.AcceptOrRejectCoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.dto.request.CreateCoffeeChatRequest;
+import org.devridge.api.domain.coffeechat.dto.response.CoffeeChatResult;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllChatMessage;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllMyChatRoom;
 import org.devridge.api.domain.coffeechat.service.CoffeeChatService;
@@ -58,5 +60,20 @@ public class CoffeeChatController {
     ) {
         Long coffeeChatRequestId = coffeeChatService.createCoffeeChatRequest(coffeeChatRequest);
         return ResponseEntity.created(URI.create("/api/coffee-chat/request" + coffeeChatRequestId)).build();
+    }
+
+    /**
+     * 커피챗 승인 및 거절
+     * @param requestId
+     * @param request
+     * @return 승인 및 거절 결과
+     */
+    @PatchMapping("/request/{requestId}")
+    public ResponseEntity<CoffeeChatResult> acceptOrRejectCoffeeChatRequest(
+        @PathVariable Long requestId,
+        @RequestBody @Valid AcceptOrRejectCoffeeChatRequest request
+    ) {
+        CoffeeChatResult result = coffeeChatService.acceptOrRejectCoffeeChatRequest(requestId, request);
+        return ResponseEntity.ok().body(result);
     }
 }

@@ -50,4 +50,8 @@ public class CoffeeChatMapper {
     public CoffeeChatRequest toCoffeeChatRequest(Member toMember, Member fromMember) {
         return new CoffeeChatRequest(fromMember, toMember);
     }
+
+    public ChatRoom toChatRoom(Member firstMember, Member secondMember) {
+        return new ChatRoom(firstMember, secondMember);
+    }
 }

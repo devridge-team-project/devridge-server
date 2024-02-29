@@ -2,9 +2,12 @@ package org.devridge.api.domain.coffeechat.service;
 
 import lombok.RequiredArgsConstructor;
 
+import org.devridge.api.domain.coffeechat.dto.request.AcceptOrRejectCoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.dto.request.CreateCoffeeChatRequest;
+import org.devridge.api.domain.coffeechat.dto.response.CoffeeChatResult;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllMyChatRoom;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllChatMessage;
+import org.devridge.api.domain.coffeechat.dto.type.YesOrNo;
 import org.devridge.api.domain.coffeechat.entity.ChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
 import org.devridge.api.domain.coffeechat.entity.CoffeeChatRequest;
@@ -15,12 +18,15 @@ import org.devridge.api.domain.coffeechat.repository.CoffeeChatQuerydslRepositor
 import org.devridge.api.domain.coffeechat.repository.CoffeeChatRequestRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.exception.common.BadRequestException;
 import org.devridge.api.exception.common.DataNotFoundException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.devridge.api.domain.coffeechat.dto.type.YesOrNo.Y;
 import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
 
 @RequiredArgsConstructor
@@ -34,6 +40,7 @@ public class CoffeeChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final CoffeeChatRequestRepository coffeeChatRequestRepository;
 
+    @Transactional(readOnly = true)
     public List<GetAllMyChatRoom> getAllMyChatRoom(Long lastIndex) {
         Member member = this.getMember(getMemberId());
 
@@ -47,6 +54,7 @@ public class CoffeeChatService {
         return coffeeChatMapper.toGetAllMyChatRooms(chatRooms, member);
     }
 
+    @Transactional(readOnly = true)
     public List<GetAllChatMessage> getAllChatMessage(Long chatRoomId, Long lastIndex) {
         // TODO: 내 채팅방이 아닌 경우 접근 금지 인터셉터 추가
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId).orElseThrow(() -> new DataNotFoundException());
@@ -72,7 +80,35 @@ public class CoffeeChatService {
         return coffeeChatRequestRepository.save(coffeeChatRequest).getId();
     }
 
+    @Transactional
+    public CoffeeChatResult acceptOrRejectCoffeeChatRequest(Long requestId, AcceptOrRejectCoffeeChatRequest request) {
+        CoffeeChatRequest coffeeChatRequest = coffeeChatRequestRepository
+            .findById(requestId)
+            .orElseThrow(DataNotFoundException::new);
+
+        switch (YesOrNo.valueOf(request.getAnswer())) {
+            case Y:
+                coffeeChatRequest.updateSuccess(true);
+                coffeeChatRequestRepository.save(coffeeChatRequest);
+
+                /* 승인 시 채팅방 생성 */
+                Member firstMember = coffeeChatRequest.getFromMember();
+                Member secondMember = coffeeChatRequest.getToMember();
+                ChatRoom chatRoom = coffeeChatMapper.toChatRoom(firstMember, secondMember);
+                chatRoomRepository.save(chatRoom);
+
+                return new CoffeeChatResult("커피챗 요청이 승인되었습니다.");
+            case N:
+                coffeeChatRequest.updateSuccess(false);
+                coffeeChatRequestRepository.save(coffeeChatRequest);
+
+                return new CoffeeChatResult("커피챗 요청이 거절되었습니다.");
+        }
+
+        throw new BadRequestException();
+    }
+
     private Member getMember(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
+        return memberRepository.findById(memberId).orElseThrow(DataNotFoundException::new);
     }
 }
