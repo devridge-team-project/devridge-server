@@ -10,6 +10,7 @@ import org.devridge.api.domain.community.dto.response.ProjectListResponse;
 import org.devridge.api.domain.community.entity.Project;
 import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.community.mapper.ProjectMapper;
+import org.devridge.api.domain.community.repository.ProjectBulkRepository;
 import org.devridge.api.domain.community.repository.ProjectQuerydslRepository;
 import org.devridge.api.domain.community.repository.ProjectRepository;
 import org.devridge.api.domain.member.entity.Member;
@@ -37,6 +38,7 @@ public class ProjectService {
     private final ProjectQuerydslRepository projectQuerydslRepository;
     private final ProjectSkillRepository projectSkillRepository;
     private final SkillRepository skillRepository;
+    private final ProjectBulkRepository projectBulkRepository;
 
     @Transactional
     public Long createProject(ProjectRequest request) {
@@ -131,14 +133,7 @@ public class ProjectService {
         List<Skill> skills = skillRepository.findSkillsByIds(skillIds);
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new DataNotFoundException());
 
-        for (Skill skill : skills) {
-            projectSkillRepository.save(
-                ProjectSkill.builder()
-                    .skill(skill)
-                    .project(project)
-                    .build()
-            );
-        }
+        projectBulkRepository.saveAll(skills, project);
     }
 
     private Project getProjectById(Long projectId) {
