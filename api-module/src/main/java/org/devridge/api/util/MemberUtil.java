@@ -1,11 +1,11 @@
-package org.devridge.api.domain.qna.mapper;
+package org.devridge.api.util;
 
 import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.domain.qna.dto.response.FindWriterInformation;
+import org.devridge.common.dto.FindWriterInformation;
 
 import javax.persistence.EntityNotFoundException;
 
-public class MemberMapper {
+public class MemberUtil {
 
     public static FindWriterInformation toMember(Member member) {
         try {

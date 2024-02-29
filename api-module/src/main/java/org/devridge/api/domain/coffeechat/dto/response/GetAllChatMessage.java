@@ -2,11 +2,13 @@ package org.devridge.api.domain.coffeechat.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.devridge.common.dto.FindWriterInformation;
 
 @Getter
 @AllArgsConstructor
-public class GetAllMyChatRoom {
+public class GetAllChatMessage {
 
     private Long id;
-    private String title;
+    private FindWriterInformation member;
+    private String content;
 }

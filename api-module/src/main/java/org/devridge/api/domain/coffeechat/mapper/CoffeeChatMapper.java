@@ -1,13 +1,18 @@
 package org.devridge.api.domain.coffeechat.mapper;
 
+import org.devridge.api.domain.coffeechat.dto.response.GetAllChatMessage;
 import org.devridge.api.domain.coffeechat.dto.response.GetAllMyChatRoom;
+import org.devridge.api.domain.coffeechat.entity.ChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
 import org.devridge.api.domain.member.entity.Member;
+
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static org.devridge.api.util.MemberUtil.toMember;
 
 @Component
 public class CoffeeChatMapper {
@@ -24,5 +29,19 @@ public class CoffeeChatMapper {
         }
 
         return myChatRooms;
+    }
+
+    public List<GetAllChatMessage> toGetAllChatMessage(List<ChatMessage> chatMessages) {
+        List<GetAllChatMessage> messages = new ArrayList<>();
+
+        for (ChatMessage message : chatMessages) {
+            messages.add(new GetAllChatMessage(
+                message.getId(),
+                toMember(message.getMember()),
+                message.getContent())
+            );
+        }
+
+        return messages;
     }
 }

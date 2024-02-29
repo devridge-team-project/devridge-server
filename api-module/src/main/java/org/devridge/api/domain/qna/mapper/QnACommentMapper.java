@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.devridge.api.domain.qna.mapper.MemberMapper.toMember;
+import static org.devridge.api.util.MemberUtil.toMember;
 
 @Component
 public class QnACommentMapper {

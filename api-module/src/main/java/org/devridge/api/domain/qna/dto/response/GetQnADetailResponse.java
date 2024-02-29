@@ -2,10 +2,9 @@ package org.devridge.api.domain.qna.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.devridge.common.dto.FindWriterInformation;
 
 import java.time.LocalDateTime;
-
-import java.util.List;
 
 @Getter
 @Builder

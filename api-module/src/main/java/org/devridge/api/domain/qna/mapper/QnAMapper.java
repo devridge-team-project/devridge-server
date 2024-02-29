@@ -2,13 +2,13 @@ package org.devridge.api.domain.qna.mapper;
 
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
-import org.devridge.api.domain.qna.dto.response.FindWriterInformation;
+import org.devridge.common.dto.FindWriterInformation;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.entity.QnA;
 
 import org.springframework.stereotype.Component;
 
-import static org.devridge.api.domain.qna.mapper.MemberMapper.toMember;
+import static org.devridge.api.util.MemberUtil.toMember;
 
 @Component
 public class QnAMapper {

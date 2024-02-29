@@ -1,7 +1,7 @@
-package org.devridge.api.domain.qna.dto.response;
+package org.devridge.common.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.AllArgsConstructor;
+
 import lombok.Builder;
 import lombok.Getter;
 
