@@ -14,7 +14,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/api/connect-socket")
+        registry.addEndpoint("/api/coffee-chat/connect-socket")
                 .withSockJS();
     }
 
@@ -25,7 +25,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/api/subscribe");
-        registry.setApplicationDestinationPrefixes("/api/publish");
+        registry.enableSimpleBroker("/api/coffee-chat/subscribe");
+        registry.setApplicationDestinationPrefixes("/api/coffee-chat/publish");
     }
 }
