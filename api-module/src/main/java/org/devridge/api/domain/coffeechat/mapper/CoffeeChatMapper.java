@@ -64,8 +64,13 @@ public class CoffeeChatMapper {
 
     public GetAllCoffeeChatRequest toGetSendCoffeeChatRequests(List<CoffeeChatRequest> requests) {
         List<GetCoffeeChatRequestResponse> coffeeChatRequests = new ArrayList<>();
+        Integer noReadCount = 0;
 
         for (CoffeeChatRequest request : requests) {
+            if (request.getReadAt() == null) {
+                noReadCount++;
+            }
+
             coffeeChatRequests.add(
                 new GetCoffeeChatRequestResponse(
                     toMember(request.getToMember()),
@@ -74,13 +79,18 @@ public class CoffeeChatMapper {
             );
         }
 
-        return new GetAllCoffeeChatRequest(coffeeChatRequests, 0L);
+        return new GetAllCoffeeChatRequest(coffeeChatRequests, noReadCount);
     }
 
     public GetAllCoffeeChatRequest toGetReceiveCoffeeChatRequests(List<CoffeeChatRequest> requests) {
         List<GetCoffeeChatRequestResponse> coffeeChatRequests = new ArrayList<>();
+        Integer noReadCount = 0;
 
         for (CoffeeChatRequest request : requests) {
+            if (request.getReadAt() == null) {
+                noReadCount++;
+            }
+
             coffeeChatRequests.add(
                 new GetCoffeeChatRequestResponse(
                     toMember(request.getFromMember()),
@@ -89,7 +99,7 @@ public class CoffeeChatMapper {
             );
         }
 
-        return new GetAllCoffeeChatRequest(coffeeChatRequests, 0L);
+        return new GetAllCoffeeChatRequest(coffeeChatRequests, noReadCount);
     }
 
     public ChatMessage toChatMessage(CreateChatMessageRequest request, Member member, ChatRoom chatRoom) {

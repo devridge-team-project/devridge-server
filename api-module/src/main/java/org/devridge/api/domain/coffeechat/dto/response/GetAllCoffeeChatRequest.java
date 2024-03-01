@@ -10,5 +10,5 @@ import java.util.List;
 public class GetAllCoffeeChatRequest {
 
     private List<GetCoffeeChatRequestResponse> coffeeChatRequests;
-    private Long noReadCount;
+    private Integer noReadCount;
 }
