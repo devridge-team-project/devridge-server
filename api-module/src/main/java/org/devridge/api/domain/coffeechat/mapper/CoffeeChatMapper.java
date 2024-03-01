@@ -1,9 +1,6 @@
 package org.devridge.api.domain.coffeechat.mapper;
 
-import org.devridge.api.domain.coffeechat.dto.request.CreateCoffeeChatRequest;
-import org.devridge.api.domain.coffeechat.dto.response.GetAllChatMessage;
-import org.devridge.api.domain.coffeechat.dto.response.GetAllMyChatRoom;
-import org.devridge.api.domain.coffeechat.dto.response.GetCoffeeChatRequest;
+import org.devridge.api.domain.coffeechat.dto.response.*;
 import org.devridge.api.domain.coffeechat.entity.ChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
 import org.devridge.api.domain.coffeechat.entity.CoffeeChatRequest;
@@ -39,10 +36,12 @@ public class CoffeeChatMapper {
         List<GetAllChatMessage> messages = new ArrayList<>();
 
         for (ChatMessage message : chatMessages) {
-            messages.add(new GetAllChatMessage(
-                message.getId(),
-                toMember(message.getMember()),
-                message.getContent())
+            messages.add(
+                new GetAllChatMessage(
+                    message.getId(),
+                    toMember(message.getMember()),
+                    message.getContent()
+                )
             );
         }
 
@@ -57,8 +56,38 @@ public class CoffeeChatMapper {
         return new ChatRoom(firstMember, secondMember);
     }
 
-    public GetCoffeeChatRequest toGetCoffeeChatRequest(CoffeeChatRequest request) {
+    public GetCoffeeChatRequestResponse toGetCoffeeChatRequest(CoffeeChatRequest request) {
         FindWriterInformation fromMember = toMember(request.getFromMember());
-        return new GetCoffeeChatRequest(fromMember, request.getMessage());
+        return new GetCoffeeChatRequestResponse(fromMember, request.getMessage());
+    }
+
+    public GetAllCoffeeChatRequest toGetSendCoffeeChatRequests(List<CoffeeChatRequest> requests) {
+        List<GetCoffeeChatRequestResponse> coffeeChatRequests = new ArrayList<>();
+
+        for (CoffeeChatRequest request : requests) {
+            coffeeChatRequests.add(
+                new GetCoffeeChatRequestResponse(
+                    toMember(request.getToMember()),
+                    request.getMessage()
+                )
+            );
+        }
+
+        return new GetAllCoffeeChatRequest(coffeeChatRequests, 0L);
+    }
+
+    public GetAllCoffeeChatRequest toGetReceiveCoffeeChatRequests(List<CoffeeChatRequest> requests) {
+        List<GetCoffeeChatRequestResponse> coffeeChatRequests = new ArrayList<>();
+
+        for (CoffeeChatRequest request : requests) {
+            coffeeChatRequests.add(
+                new GetCoffeeChatRequestResponse(
+                    toMember(request.getFromMember()),
+                    request.getMessage()
+                )
+            );
+        }
+
+        return new GetAllCoffeeChatRequest(coffeeChatRequests, 0L);
     }
 }

@@ -4,10 +4,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.coffeechat.dto.request.AcceptOrRejectCoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.dto.request.CreateCoffeeChatRequest;
-import org.devridge.api.domain.coffeechat.dto.response.CoffeeChatResult;
-import org.devridge.api.domain.coffeechat.dto.response.GetAllMyChatRoom;
-import org.devridge.api.domain.coffeechat.dto.response.GetAllChatMessage;
-import org.devridge.api.domain.coffeechat.dto.response.GetCoffeeChatRequest;
+import org.devridge.api.domain.coffeechat.dto.response.*;
+import org.devridge.api.domain.coffeechat.dto.type.ViewOption;
 import org.devridge.api.domain.coffeechat.dto.type.YesOrNo;
 import org.devridge.api.domain.coffeechat.entity.ChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
@@ -115,7 +113,7 @@ public class CoffeeChatService {
         throw new BadRequestException();
     }
 
-    public GetCoffeeChatRequest getCoffeeChatRequest(Long requestId) {
+    public GetCoffeeChatRequestResponse getCoffeeChatRequest(Long requestId) {
         CoffeeChatRequest coffeeChatRequest = coffeeChatRequestRepository
             .findById(requestId)
             .orElseThrow(DataNotFoundException::new);
@@ -124,6 +122,21 @@ public class CoffeeChatService {
         coffeeChatRequestRepository.save(coffeeChatRequest);
 
         return coffeeChatMapper.toGetCoffeeChatRequest(coffeeChatRequest);
+    }
+
+    public GetAllCoffeeChatRequest getCoffeeChatRequests(String viewOption) {
+        Member member = this.getMember(getMemberId());
+
+        switch (ViewOption.valueOf(viewOption)) {
+            case send:
+                List<CoffeeChatRequest> sendResult = coffeeChatQuerydslRepository.findAllSendCoffeeChatRequest(member);
+                return coffeeChatMapper.toGetSendCoffeeChatRequests(sendResult);
+            case receive:
+                List<CoffeeChatRequest> receiveResult = coffeeChatQuerydslRepository.findAllReceiveCoffeeChatRequest(member);
+                return coffeeChatMapper.toGetReceiveCoffeeChatRequests(receiveResult);
+        }
+
+        throw new BadRequestException();
     }
 
     private Member getMember(Long memberId) {

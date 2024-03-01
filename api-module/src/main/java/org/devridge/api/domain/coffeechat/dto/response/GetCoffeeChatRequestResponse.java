@@ -9,8 +9,8 @@ import org.devridge.common.dto.FindWriterInformation;
 @Builder
 @AllArgsConstructor
 @Getter
-public class GetCoffeeChatRequest {
+public class GetCoffeeChatRequestResponse {
 
-    private FindWriterInformation fromMember;
+    private FindWriterInformation member;
     private String message;
 }
