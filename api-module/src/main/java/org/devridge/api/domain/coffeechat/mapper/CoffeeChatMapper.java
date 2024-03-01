@@ -1,5 +1,6 @@
 package org.devridge.api.domain.coffeechat.mapper;
 
+import org.devridge.api.domain.coffeechat.dto.request.CreateChatMessageRequest;
 import org.devridge.api.domain.coffeechat.dto.response.*;
 import org.devridge.api.domain.coffeechat.entity.ChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
@@ -89,5 +90,13 @@ public class CoffeeChatMapper {
         }
 
         return new GetAllCoffeeChatRequest(coffeeChatRequests, 0L);
+    }
+
+    public ChatMessage toChatMessage(CreateChatMessageRequest request, Member member, ChatRoom chatRoom) {
+        return ChatMessage.builder()
+            .chatRoom(chatRoom)
+            .member(member)
+            .content(request.getMessage())
+            .build();
     }
 }

@@ -3,6 +3,7 @@ package org.devridge.api.domain.coffeechat.controller;
 import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.coffeechat.dto.request.AcceptOrRejectCoffeeChatRequest;
+import org.devridge.api.domain.coffeechat.dto.request.CreateChatMessageRequest;
 import org.devridge.api.domain.coffeechat.dto.request.CreateCoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.dto.response.*;
 import org.devridge.api.domain.coffeechat.service.CoffeeChatService;
@@ -97,5 +98,19 @@ public class CoffeeChatController {
     ) {
         CoffeeChatResult result = coffeeChatService.acceptOrRejectCoffeeChatRequest(requestId, request);
         return ResponseEntity.ok().body(result);
+    }
+
+    /**
+     * 채팅 메세지 보내기
+     * @param roomId
+     * @param request
+     */
+    @PostMapping("/{roomId}")
+    public ResponseEntity<Void> createChatMessage(
+        @PathVariable Long roomId,
+        @RequestBody @Valid CreateChatMessageRequest request
+    ) {
+        Long messageId = coffeeChatService.createChatMessage(request, roomId);
+        return ResponseEntity.created(URI.create("/api/coffee-chat/" + roomId + "/" + messageId)).build();
     }
 }

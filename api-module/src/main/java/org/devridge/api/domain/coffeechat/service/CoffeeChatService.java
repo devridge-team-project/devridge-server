@@ -3,6 +3,7 @@ package org.devridge.api.domain.coffeechat.service;
 import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.coffeechat.dto.request.AcceptOrRejectCoffeeChatRequest;
+import org.devridge.api.domain.coffeechat.dto.request.CreateChatMessageRequest;
 import org.devridge.api.domain.coffeechat.dto.request.CreateCoffeeChatRequest;
 import org.devridge.api.domain.coffeechat.dto.response.*;
 import org.devridge.api.domain.coffeechat.dto.type.ViewOption;
@@ -137,6 +138,14 @@ public class CoffeeChatService {
         }
 
         throw new BadRequestException();
+    }
+
+    public Long createChatMessage(CreateChatMessageRequest request, Long roomId) {
+        Member member = this.getMember(getMemberId());
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(DataNotFoundException::new);
+        ChatMessage chatMessage = coffeeChatMapper.toChatMessage(request, member, chatRoom);
+
+        return chatMessageRepository.save(chatMessage).getId();
     }
 
     private Member getMember(Long memberId) {
