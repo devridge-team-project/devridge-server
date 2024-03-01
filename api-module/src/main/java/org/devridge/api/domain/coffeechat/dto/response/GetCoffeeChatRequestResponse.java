@@ -11,6 +11,7 @@ import org.devridge.common.dto.FindWriterInformation;
 @Getter
 public class GetCoffeeChatRequestResponse {
 
+    private Long id;
     private FindWriterInformation member;
     private String message;
 }

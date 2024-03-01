@@ -59,7 +59,7 @@ public class CoffeeChatMapper {
 
     public GetCoffeeChatRequestResponse toGetCoffeeChatRequest(CoffeeChatRequest request) {
         FindWriterInformation fromMember = toMember(request.getFromMember());
-        return new GetCoffeeChatRequestResponse(fromMember, request.getMessage());
+        return new GetCoffeeChatRequestResponse(request.getId(), fromMember, request.getMessage());
     }
 
     public GetAllCoffeeChatRequest toGetSendCoffeeChatRequests(List<CoffeeChatRequest> requests) {
@@ -73,6 +73,7 @@ public class CoffeeChatMapper {
 
             coffeeChatRequests.add(
                 new GetCoffeeChatRequestResponse(
+                    request.getId(),
                     toMember(request.getToMember()),
                     request.getMessage()
                 )
@@ -93,6 +94,7 @@ public class CoffeeChatMapper {
 
             coffeeChatRequests.add(
                 new GetCoffeeChatRequestResponse(
+                    request.getId(),
                     toMember(request.getFromMember()),
                     request.getMessage()
                 )
