@@ -17,7 +17,8 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     @Query(
         value = "SELECT MAX(id) " +
                 "FROM ChatRoom " +
-                "WHERE firstMember = :member"
+                "WHERE firstMember = :member " +
+                "   OR secondMember = :member"
     )
     Optional<Long> findMaxId(@Param("member") Member member);
 }

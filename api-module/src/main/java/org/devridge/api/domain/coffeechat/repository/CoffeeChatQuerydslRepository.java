@@ -26,7 +26,8 @@ public class CoffeeChatQuerydslRepository {
         return jpaQueryFactory
             .selectFrom(qChatRoom)
             .where(
-                qChatRoom.firstMember.eq(member).or(qChatRoom.secondMember.eq(member)),
+                qChatRoom.firstMember.eq(member)
+                .or(qChatRoom.secondMember.eq(member)),
                 qChatRoom.id.loe(lastIndex)
             )
             .limit(PAGE_SIZE)
