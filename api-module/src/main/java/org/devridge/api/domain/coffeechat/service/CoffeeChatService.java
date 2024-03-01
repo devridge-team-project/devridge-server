@@ -129,18 +129,35 @@ public class CoffeeChatService {
         return coffeeChatMapper.toGetCoffeeChatRequest(coffeeChatRequest);
     }
 
-    public GetAllCoffeeChatRequest getCoffeeChatRequests(String viewOption) {
+    public GetAllCoffeeChatRequest getCoffeeChatRequests(String viewOption, Long lastIndex) {
         Member member = this.getMember(getMemberId());
+
+        if (lastIndex == null) {
+            Long maxId = coffeeChatRequestRepository.findMaxId(member).orElse(0L);
+
+            switch (ViewOption.valueOf(viewOption)) {
+                case send:
+                    List<CoffeeChatRequest> sendResult = coffeeChatQuerydslRepository
+                        .findAllSendCoffeeChatRequest(member, maxId);
+
+                    return coffeeChatMapper.toGetSendCoffeeChatRequests(sendResult);
+                case receive:
+                    List<CoffeeChatRequest> receiveResult = coffeeChatQuerydslRepository
+                        .findAllReceiveCoffeeChatRequest(member, maxId);
+
+                    return coffeeChatMapper.toGetReceiveCoffeeChatRequests(receiveResult);
+            }
+        }
 
         switch (ViewOption.valueOf(viewOption)) {
             case send:
                 List<CoffeeChatRequest> sendResult = coffeeChatQuerydslRepository
-                        .findAllSendCoffeeChatRequest(member);
+                    .findAllSendCoffeeChatRequest(member, lastIndex);
 
                 return coffeeChatMapper.toGetSendCoffeeChatRequests(sendResult);
             case receive:
                 List<CoffeeChatRequest> receiveResult = coffeeChatQuerydslRepository
-                        .findAllReceiveCoffeeChatRequest(member);
+                    .findAllReceiveCoffeeChatRequest(member, lastIndex);
 
                 return coffeeChatMapper.toGetReceiveCoffeeChatRequests(receiveResult);
         }

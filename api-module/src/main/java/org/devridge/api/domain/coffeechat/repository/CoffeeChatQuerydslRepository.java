@@ -49,10 +49,13 @@ public class CoffeeChatQuerydslRepository {
      * 내가 보낸 요청 목록 리스트 (fromMember가 자기 자신)
      * @param toMember
      */
-    public List<CoffeeChatRequest> findAllSendCoffeeChatRequest(Member toMember) {
+    public List<CoffeeChatRequest> findAllSendCoffeeChatRequest(Member toMember, Long lastIndex) {
         return jpaQueryFactory
             .selectFrom(qCoffeeChatRequest)
-            .where(qCoffeeChatRequest.fromMember.eq(toMember))
+            .where(
+                qCoffeeChatRequest.fromMember.eq(toMember),
+                qCoffeeChatRequest.id.loe(lastIndex)
+            )
             .limit(PAGE_SIZE)
             .fetch();
     }
@@ -61,10 +64,13 @@ public class CoffeeChatQuerydslRepository {
      * 내가 받은 요청 목록 리스트 (toMember가 자기 자신)
      * @param fromMember
      */
-    public List<CoffeeChatRequest> findAllReceiveCoffeeChatRequest(Member fromMember) {
+    public List<CoffeeChatRequest> findAllReceiveCoffeeChatRequest(Member fromMember, Long lastIndex) {
         return jpaQueryFactory
             .selectFrom(qCoffeeChatRequest)
-            .where(qCoffeeChatRequest.toMember.eq(fromMember))
+            .where(
+                qCoffeeChatRequest.toMember.eq(fromMember),
+                qCoffeeChatRequest.id.loe(lastIndex)
+            )
             .limit(PAGE_SIZE)
             .fetch();
     }

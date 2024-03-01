@@ -68,9 +68,10 @@ public class CoffeeChatController {
      */
     @GetMapping("/request")
     public ResponseEntity<GetAllCoffeeChatRequest> getCoffeeChatRequests(
-        @RequestParam(value = "viewOption") String viewOption
+        @RequestParam(value = "viewOption") String viewOption,
+        @RequestParam(value = "lastIndex", required = false) Long lastIndex
     ) {
-        GetAllCoffeeChatRequest result = coffeeChatService.getCoffeeChatRequests(viewOption);
+        GetAllCoffeeChatRequest result = coffeeChatService.getCoffeeChatRequests(viewOption, lastIndex);
         return ResponseEntity.ok().body(result);
     }
 
