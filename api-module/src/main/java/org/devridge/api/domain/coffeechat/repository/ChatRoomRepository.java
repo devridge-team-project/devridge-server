@@ -2,6 +2,7 @@ package org.devridge.api.domain.coffeechat.repository;
 
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
 import org.devridge.api.domain.member.entity.Member;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

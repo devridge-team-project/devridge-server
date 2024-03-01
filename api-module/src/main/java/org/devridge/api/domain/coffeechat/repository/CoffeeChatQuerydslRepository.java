@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.devridge.api.domain.coffeechat.entity.*;
 import org.devridge.api.domain.member.entity.Member;
+
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

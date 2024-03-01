@@ -5,8 +5,8 @@ import org.devridge.api.domain.coffeechat.entity.ChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
 import org.devridge.api.domain.coffeechat.entity.CoffeeChatRequest;
 import org.devridge.api.domain.member.entity.Member;
-
 import org.devridge.common.dto.FindWriterInformation;
+
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
