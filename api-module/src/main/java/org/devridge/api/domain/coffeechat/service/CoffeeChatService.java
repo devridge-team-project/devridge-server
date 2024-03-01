@@ -60,7 +60,7 @@ public class CoffeeChatService {
         // TODO: 내 채팅방이 아닌 경우 접근 금지 인터셉터 추가
         ChatRoom chatRoom = chatRoomRepository
                 .findById(chatRoomId)
-                .orElseThrow(() -> new DataNotFoundException());
+                .orElseThrow(DataNotFoundException::new);
 
         if (lastIndex == null) {
             Long maxId = chatMessageRepository.findMaxId(chatRoom).orElse(0L);
@@ -98,10 +98,7 @@ public class CoffeeChatService {
                 coffeeChatRequestRepository.save(coffeeChatRequest);
 
                 /* 승인 시 채팅방 생성 */
-                Member firstMember = coffeeChatRequest.getFromMember();
-                Member secondMember = coffeeChatRequest.getToMember();
-                ChatRoom chatRoom = coffeeChatMapper.toChatRoom(firstMember, secondMember);
-                chatRoomRepository.save(chatRoom);
+                createChatRoom(coffeeChatRequest);
 
                 return new CoffeeChatResult("커피챗 요청이 승인되었습니다.");
             case N:
@@ -112,6 +109,13 @@ public class CoffeeChatService {
         }
 
         throw new BadRequestException();
+    }
+
+    private void createChatRoom(CoffeeChatRequest coffeeChatRequest) {
+        Member firstMember = coffeeChatRequest.getFromMember();
+        Member secondMember = coffeeChatRequest.getToMember();
+        ChatRoom chatRoom = coffeeChatMapper.toChatRoom(firstMember, secondMember);
+        chatRoomRepository.save(chatRoom);
     }
 
     public GetCoffeeChatRequestResponse getCoffeeChatRequest(Long requestId) {
@@ -130,10 +134,14 @@ public class CoffeeChatService {
 
         switch (ViewOption.valueOf(viewOption)) {
             case send:
-                List<CoffeeChatRequest> sendResult = coffeeChatQuerydslRepository.findAllSendCoffeeChatRequest(member);
+                List<CoffeeChatRequest> sendResult = coffeeChatQuerydslRepository
+                        .findAllSendCoffeeChatRequest(member);
+
                 return coffeeChatMapper.toGetSendCoffeeChatRequests(sendResult);
             case receive:
-                List<CoffeeChatRequest> receiveResult = coffeeChatQuerydslRepository.findAllReceiveCoffeeChatRequest(member);
+                List<CoffeeChatRequest> receiveResult = coffeeChatQuerydslRepository
+                        .findAllReceiveCoffeeChatRequest(member);
+
                 return coffeeChatMapper.toGetReceiveCoffeeChatRequests(receiveResult);
         }
 
