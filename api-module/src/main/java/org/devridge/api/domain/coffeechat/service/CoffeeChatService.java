@@ -148,6 +148,13 @@ public class CoffeeChatService {
         return chatMessageRepository.save(chatMessage).getId();
     }
 
+    public void deleteChatMessage(Long roomId, Long messageId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(DataNotFoundException::new);
+        ChatMessage message = chatMessageRepository.findById(messageId).orElseThrow(DataNotFoundException::new);
+
+        chatMessageRepository.deleteById(messageId);
+    }
+
     private Member getMember(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(DataNotFoundException::new);
     }

@@ -113,4 +113,18 @@ public class CoffeeChatController {
         Long messageId = coffeeChatService.createChatMessage(request, roomId);
         return ResponseEntity.created(URI.create("/api/coffee-chat/" + roomId + "/" + messageId)).build();
     }
+
+    /**
+     * 채팅 메세지 삭제
+     * @param roomId
+     * @param messageId
+     */
+    @DeleteMapping("/{roomId}/{messageId}")
+    public ResponseEntity<Void> deleteChatMessage(
+        @PathVariable Long roomId,
+        @PathVariable Long messageId
+    ) {
+        coffeeChatService.deleteChatMessage(roomId, messageId);
+        return ResponseEntity.ok().build();
+    }
 }
