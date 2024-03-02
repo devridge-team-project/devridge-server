@@ -159,14 +159,14 @@ public class CoffeeChatService {
 
     public Long createChatMessage(CreateChatMessageRequest request, Long roomId) {
         Member member = this.getMember(getMemberId());
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(DataNotFoundException::new);
+        ChatRoom chatRoom = this.getChatRoom(roomId);
         ChatMessage chatMessage = coffeeChatMapper.toChatMessage(request, member, chatRoom);
 
         return chatMessageRepository.save(chatMessage).getId();
     }
 
     public void deleteChatMessage(Long roomId, Long messageId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(DataNotFoundException::new);
+        ChatRoom chatRoom = this.getChatRoom(roomId);
         ChatMessage message = chatMessageRepository.findById(messageId).orElseThrow(DataNotFoundException::new);
 
         chatMessageRepository.deleteById(messageId);
@@ -174,5 +174,9 @@ public class CoffeeChatService {
 
     private Member getMember(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(DataNotFoundException::new);
+    }
+
+    private ChatRoom getChatRoom(Long roomId) {
+        return chatRoomRepository.findById(roomId).orElseThrow(DataNotFoundException::new);
     }
 }
