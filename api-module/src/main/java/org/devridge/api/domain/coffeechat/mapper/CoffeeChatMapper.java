@@ -126,4 +126,9 @@ public class CoffeeChatMapper {
             .content(request.getMessage())
             .build();
     }
+
+    public GetAllChatMessage toGetChatMessage(ChatMessage message) {
+        FindWriterInformation member = toMember(message.getMember());
+        return new GetAllChatMessage(message.getId(), member, message.getContent());
+    }
 }

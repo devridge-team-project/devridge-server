@@ -157,12 +157,14 @@ public class CoffeeChatService {
         throw new BadRequestException();
     }
 
-    public Long createChatMessage(CreateChatMessageRequest request, Long roomId) {
+    public GetAllChatMessage createChatMessage(CreateChatMessageRequest request, Long roomId) {
         Member member = this.getMember(getMemberId());
         ChatRoom chatRoom = this.getChatRoom(roomId);
         ChatMessage chatMessage = coffeeChatMapper.toChatMessage(request, member, chatRoom);
 
-        return chatMessageRepository.save(chatMessage).getId();
+        ChatMessage saveResult = chatMessageRepository.save(chatMessage);
+
+        return coffeeChatMapper.toGetChatMessage(saveResult);
     }
 
     public void deleteChatMessage(Long roomId, Long messageId) {
