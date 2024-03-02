@@ -69,7 +69,8 @@ public class CoffeeChatQuerydslRepository {
             .selectFrom(qCoffeeChatRequest)
             .where(
                 qCoffeeChatRequest.toMember.eq(fromMember),
-                qCoffeeChatRequest.id.loe(lastIndex)
+                qCoffeeChatRequest.id.loe(lastIndex),
+                qCoffeeChatRequest.isSuccess.isNull()
             )
             .limit(PAGE_SIZE)
             .fetch();

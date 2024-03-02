@@ -71,16 +71,31 @@ public class CoffeeChatMapper {
                 noReadCount++;
             }
 
+            String status = this.getStatus(request.getIsSuccess());
+
             coffeeChatRequests.add(
                 new GetCoffeeChatRequestResponse(
                     request.getId(),
                     toMember(request.getToMember()),
-                    request.getMessage()
+                    request.getMessage(),
+                    status
                 )
             );
         }
 
         return new GetAllCoffeeChatRequest(coffeeChatRequests, noReadCount);
+    }
+
+    private String getStatus(Boolean isSuccess) {
+        if (isSuccess == null) {
+            return "대기중";
+        }
+
+        if (isSuccess) {
+            return "승인";
+        }
+
+        return "거절";
     }
 
     public GetAllCoffeeChatRequest toGetReceiveCoffeeChatRequests(List<CoffeeChatRequest> requests) {

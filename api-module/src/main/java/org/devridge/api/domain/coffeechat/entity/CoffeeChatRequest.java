@@ -35,7 +35,6 @@ public class CoffeeChatRequest extends BaseEntity {
     private String message;
 
     @Column(name = "is_success", columnDefinition = "TINYINT(1)")
-    @ColumnDefault("false")
     private Boolean isSuccess;
 
     private LocalDateTime readAt;
