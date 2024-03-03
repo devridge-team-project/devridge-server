@@ -39,7 +39,7 @@ public class CoffeeChatQuerydslRepository {
             .selectFrom(qChatMessage)
             .where(
                 qChatMessage.chatRoom.eq(chatRoom),
-                qChatRoom.id.loe(lastIndex)
+                qChatMessage.id.loe(lastIndex)
             )
             .limit(PAGE_SIZE)
             .fetch();
