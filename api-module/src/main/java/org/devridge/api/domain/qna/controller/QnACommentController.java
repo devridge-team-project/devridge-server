@@ -20,6 +20,12 @@ public class QnACommentController {
 
     private final QnACommentService qnaCommentService;
 
+    /**
+     * 해당 Q&A 댓글 리스트 조회
+     * @param qnaId
+     * @param lastIndex
+     * @return Q&A 댓글 무한 스크롤
+     */
     @GetMapping
     public ResponseEntity<List<GetAllCommentByQnAId>> getAllQnAComment(
         @PathVariable Long qnaId,
@@ -29,6 +35,11 @@ public class QnACommentController {
         return ResponseEntity.ok().body(comments);
     }
 
+    /**
+     * Q&A 답글 생성
+     * @param qnaId
+     * @param commentRequest
+     */
     @PostMapping
     public ResponseEntity<Void> createQnAComment(
         @PathVariable Long qnaId,
@@ -38,6 +49,12 @@ public class QnACommentController {
         return ResponseEntity.created(URI.create("/api/qna/" + qnaId + "/comments/" + commentId)).build();
     }
 
+    /**
+     * Q&A 답글 수정
+     * @param qnaId
+     * @param commentId
+     * @param commentRequest
+     */
     @PatchMapping("/{commentId}")
     public ResponseEntity<Void> updateQnAComment(
         @PathVariable Long qnaId,
@@ -48,6 +65,11 @@ public class QnACommentController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Q&A 답글 삭제
+     * @param qnaId
+     * @param commentId
+     */
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteQnAComment(
         @PathVariable Long qnaId,
@@ -57,6 +79,11 @@ public class QnACommentController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Q&A 답글 추천
+     * @param qnaId
+     * @param commentId
+     */
     @PostMapping("/like/{commentId}")
     public ResponseEntity<Void> createQnACommentLike(
         @PathVariable Long qnaId,
@@ -66,6 +93,11 @@ public class QnACommentController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Q&A 답글 비추천
+     * @param qnaId
+     * @param commentId
+     */
     @PostMapping("/dislike/{commentId}")
     public ResponseEntity<Void> createQnACommentDislike(
         @PathVariable Long qnaId,
