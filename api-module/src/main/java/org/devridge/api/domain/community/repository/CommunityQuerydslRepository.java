@@ -5,18 +5,14 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.response.CommunitySliceResponse;
-import org.devridge.api.domain.community.dto.response.HashtagResponse;
 import org.devridge.api.domain.community.dto.response.MemberInfoResponse;
+import org.devridge.api.domain.community.entity.CommunityHashtag;
 import org.devridge.api.domain.community.entity.QCommunity;
 import org.devridge.api.domain.community.entity.QCommunityHashtag;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
@@ -27,31 +23,32 @@ public class CommunityQuerydslRepository {
     private QCommunity community = QCommunity.community;
     private QCommunityHashtag communityHashtag = QCommunityHashtag.communityHashtag;
 
+    public List<CommunityHashtag> findCommunityHashtagsInCommunityIds(List<Long> communityIds) {
+        return jpaQueryFactory
+            .selectFrom(communityHashtag)
+            .leftJoin(communityHashtag.hashtag).fetchJoin()
+            .where(communityHashtag.community.id.in(communityIds))
+            .fetch();
+    }
 
-    public Slice<CommunitySliceResponse> searchBySlice(Long lastId, Pageable pageable) {
-        List<CommunitySliceResponse> results = new ArrayList<>();
-
-        while (results.size() <= 10) {
-            List<CommunitySliceResponse> result = jpaQueryFactory
-                .selectFrom(community)
-                .leftJoin(community.member)
-                .leftJoin(community.hashtags, communityHashtag)
-                .leftJoin(communityHashtag.hashtag)
-                .where(
-                    ltId(lastId),
-                    community.isDeleted.eq(false)
-                )
-                .orderBy(community.id.desc())
-                .limit(pageable.getPageSize() + 1)
-                .transform(GroupBy.groupBy(community.id)
-                    .list(Projections.constructor(
+    public List<CommunitySliceResponse> searchByCommunity(Long lastId, Pageable pageable) {
+        return jpaQueryFactory
+            .selectFrom(community)
+            .leftJoin(community.member)
+            .where(
+                ltId(lastId),
+                community.isDeleted.eq(false)
+            )
+            .orderBy(community.id.desc())
+            .limit(pageable.getPageSize() + 1)
+            .transform(GroupBy.groupBy(community.id).list(
+                    Projections.fields(
                         CommunitySliceResponse.class,
                         community.id,
                         community.title,
                         community.viewCount,
                         community.likeCount,
-                        community.comments.size().longValue(),
-
+                        community.comments.size().longValue().as("comments"),
                         Projections.constructor(
                             MemberInfoResponse.class,
                             Expressions.cases()
@@ -70,26 +67,13 @@ public class CommunityQuerydslRepository {
                                 .when(community.member.nickname.isNull())
                                 .then("DefaultIntroduction")
                                 .otherwise(community.member.introduction)
-                        ),
-
+                        ).as("member"),
                         community.createdAt,
                         community.updatedAt,
-
-                        GroupBy.list(Projections.fields(
-                            HashtagResponse.class,
-                            communityHashtag.hashtag.id,
-                            communityHashtag.hashtag.word,
-                            communityHashtag.hashtag.count
-                        )),
-
-                        community.scraps.size().longValue()
-                    ))
-                );
-            results.addAll(result);
-        }
-
-        Pageable customPageable = PageRequest.of(0 , results.size() - 1, pageable.getSort());
-        return checkLastPage(customPageable, results);
+                        community.scraps.size().longValue().as("scraps")
+                    )
+                )
+            );
     }
 
     // no-offset 방식 처리하는 메서드
@@ -101,16 +85,4 @@ public class CommunityQuerydslRepository {
         return community.id.lt(communityId);
     }
 
-    private Slice<CommunitySliceResponse> checkLastPage(Pageable pageable, List<CommunitySliceResponse> results) {
-
-        boolean hasNext = false;
-
-        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
-        if (results.size() > pageable.getPageSize()) {
-            hasNext = true;
-            results.remove(pageable.getPageSize());
-        }
-
-        return new SliceImpl<>(results, pageable, hasNext);
-    }
 }
