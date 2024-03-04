@@ -26,8 +26,8 @@ public class ChatStompController {
      * @param roomId
      * @param request
      */
-    @MessageMapping("/{roomId}")
-    @SendTo("/api/subscribe/coffee-chat/{roomId}")
+    @MessageMapping("/{roomId}")     // request: /api/coffee-chat/publish/{roomId}
+    @SendTo("/api/coffee-chat/subscribe/{roomId}")  // subscribe 채팅방으로 메세지 전송
     public ResponseEntity<GetAllChatMessage> createChatMessage(
         @DestinationVariable Long roomId,
         @RequestBody @Valid CreateChatMessageRequest request
