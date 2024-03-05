@@ -73,10 +73,12 @@ public class SecurityConfig {
             .antMatchers(HttpMethod.GET, "/api/qna/**").permitAll()
             .antMatchers(HttpMethod.GET, "/api/occupations").permitAll()
             .antMatchers(HttpMethod.GET, "/api/community/**").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/notes/**").permitAll()
             .antMatchers(HttpMethod.PATCH, "/api/users/reset-password").permitAll()
             .antMatchers("/api/ws").permitAll()
             .antMatchers("/api/qna/**").authenticated()
             .antMatchers("/api/community/**").authenticated()
+            .antMatchers("/api/notes/**").authenticated()
             .antMatchers(securityConstant().USER_ROLE_PERMIT_PATHS).hasRole(SecurityPathType.USER_ROLE)
             .anyRequest().denyAll();
 
