@@ -46,4 +46,10 @@ public class NoteController {
         List<NoteSenderResponse> noteSenderResponses = noteService.getSentNotes();
         return ResponseEntity.ok().body(noteSenderResponses);
     }
+
+    @DeleteMapping("/sent/{noteId}")
+    public ResponseEntity<Void> deleteNoteBySender(@PathVariable Long noteId) {
+        noteService.deleteNoteBySender(noteId);
+        return ResponseEntity.ok().build();
+    }
 }

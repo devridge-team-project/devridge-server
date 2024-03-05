@@ -90,4 +90,17 @@ public class NoteService {
         }
         return noteSenderResponses;
     }
+
+    @Transactional
+    public void deleteNoteBySender(Long NoteId) {
+        Member sender = SecurityContextHolderUtil.getMember();
+        Note note = noteRepository.findById(NoteId).orElseThrow();
+
+        if (sender.getId().equals(note.getSender().getId())) {
+            note.deleteBySender();
+            if (note.isDeleted()) {
+                noteRepository.delete(note);
+            }
+        }
+    }
 }
