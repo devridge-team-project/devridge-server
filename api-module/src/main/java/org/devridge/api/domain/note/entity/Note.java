@@ -16,8 +16,7 @@ import lombok.NoArgsConstructor;
 import org.devridge.api.domain.member.entity.Member;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -53,12 +52,16 @@ public class Note {
 
     private LocalDateTime readAt;
 
+    @CreatedDate
+    private LocalDateTime sendAt;
+
     @Builder
     public Note(String title, String content, Member sender, Member receiver) {
         this.title = title;
         this.content = content;
         this.sender = sender;
         this.receiver = receiver;
+        this.sendAt = LocalDateTime.now();
     }
 
     public void deleteBySender() {
