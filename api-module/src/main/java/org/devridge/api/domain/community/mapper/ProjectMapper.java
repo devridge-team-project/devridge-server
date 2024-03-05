@@ -62,7 +62,7 @@ public class ProjectMapper {
     public ProjectListResponse toProjectListResponse(Project project) {
         return ProjectListResponse.builder()
             .id(project.getId())
-            .view(project.getViews())
+            .views(project.getViews())
             .category(project.getCategory())
             .likes(project.getLikes())
             .dislikes(project.getDislikes())
