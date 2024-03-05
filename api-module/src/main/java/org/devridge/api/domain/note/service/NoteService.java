@@ -11,6 +11,7 @@ import org.devridge.api.domain.note.entity.Note;
 import org.devridge.api.domain.note.repository.NoteRepository;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -52,5 +53,18 @@ public class NoteService {
             }
         }
         return noteResponses;
+    }
+
+    @Transactional
+    public void deleteNoteByReceiver(Long NoteId) {
+        Member receiver = SecurityContextHolderUtil.getMember();
+        Note note = noteRepository.findById(NoteId).orElseThrow();
+
+        if (receiver.getId().equals(note.getReceiver().getId())) {
+            note.deleteByReceiver();
+            if (note.isDeleted()) {
+                noteRepository.delete(note);
+            }
+        }
     }
 }

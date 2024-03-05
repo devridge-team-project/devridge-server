@@ -7,7 +7,9 @@ import org.devridge.api.domain.note.dto.request.NoteRequest;
 import org.devridge.api.domain.note.dto.response.NoteResponse;
 import org.devridge.api.domain.note.service.NoteService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,10 +29,15 @@ public class NoteController {
     }
 
     @GetMapping("/receive")
-    public ResponseEntity<?> getReceivedNotes() {
+    public ResponseEntity<List<NoteResponse>> getReceivedNotes() {
         List<NoteResponse> noteResponses = noteService.getReceivedNotes();
         return ResponseEntity.ok().body(noteResponses);
     }
 
+    @DeleteMapping("/receive/{noteId}")
+    public ResponseEntity<Void> deleteNoteByReceiver(@PathVariable Long noteId) {
+        noteService.deleteNoteByReceiver(noteId);
+        return ResponseEntity.ok().build();
+    }
 
 }
