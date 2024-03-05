@@ -5,6 +5,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.note.dto.request.NoteRequest;
 import org.devridge.api.domain.note.dto.response.NoteResponse;
+import org.devridge.api.domain.note.dto.response.NoteSenderResponse;
 import org.devridge.api.domain.note.service.NoteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,4 +41,9 @@ public class NoteController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/sent")
+    public ResponseEntity<List<NoteSenderResponse>> getSentNotes() {
+        List<NoteSenderResponse> noteSenderResponses = noteService.getSentNotes();
+        return ResponseEntity.ok().body(noteSenderResponses);
+    }
 }

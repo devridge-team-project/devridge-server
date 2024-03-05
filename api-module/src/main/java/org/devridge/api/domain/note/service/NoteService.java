@@ -7,6 +7,7 @@ import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.note.dto.request.NoteRequest;
 import org.devridge.api.domain.note.dto.response.NoteResponse;
+import org.devridge.api.domain.note.dto.response.NoteSenderResponse;
 import org.devridge.api.domain.note.entity.Note;
 import org.devridge.api.domain.note.repository.NoteRepository;
 import org.devridge.api.util.SecurityContextHolderUtil;
@@ -66,5 +67,27 @@ public class NoteService {
                 noteRepository.delete(note);
             }
         }
+    }
+
+    public List<NoteSenderResponse> getSentNotes() {
+        Member sender = SecurityContextHolderUtil.getMember();
+        List<Note> notes = noteRepository.findAllBySender(sender);
+
+        List<NoteSenderResponse> noteSenderResponses = new ArrayList<>();
+
+        for (Note note : notes) {
+            if (!note.getDeletedBySender()) {
+                noteSenderResponses.add(
+                    NoteSenderResponse.builder()
+                        .title(note.getTitle())
+                        .content(note.getContent())
+                        .receiverName(note.getReceiver().getNickname())
+                        .readAt(note.getReadAt())
+                        .sendTime(note.getSendAt())
+                        .build()
+                );
+            }
+        }
+        return noteSenderResponses;
     }
 }

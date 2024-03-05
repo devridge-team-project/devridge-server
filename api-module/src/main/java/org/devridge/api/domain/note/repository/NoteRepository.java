@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface NoteRepository extends JpaRepository<Note, Long> {
 
     List<Note> findAllByReceiver(Member member);
+    List<Note> findAllBySender(Member member);
 }
