@@ -14,5 +14,6 @@ public class CreateCommunityRequest {
     private String content;
 
     private List<String> hashtags;
+
     private List<String> images;
 }

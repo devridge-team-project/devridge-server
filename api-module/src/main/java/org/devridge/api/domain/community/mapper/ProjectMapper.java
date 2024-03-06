@@ -18,7 +18,7 @@ public class ProjectMapper {
 
     private final MemberInfoMapper memberInfoMapper;
 
-    public ProjectDetailResponse toProjectDetailResponse(Project project) {
+    public ProjectDetailResponse toProjectDetailResponse(Project project, List<String> skills) {
         Member member = project.getMember();
         MemberInfoResponse memberInfoResponse = memberInfoMapper.toMemberInfoResponse(member);
         return ProjectDetailResponse.builder()
@@ -31,6 +31,10 @@ public class ProjectMapper {
                 .views(project.getViews() + 1)
                 .createdAt(project.getCreatedAt())
                 .updatedAt(project.getUpdatedAt())
+                .category(project.getCategory())
+                .meeting(project.getMeeting())
+                .skills(skills)
+                .isRecruiting(project.getIsRecruiting())
                 .build();
     }
 
@@ -42,21 +46,23 @@ public class ProjectMapper {
                     .title(request.getTitle())
                     .content(request.getContent())
                     .images(images.substring(1, images.length() -1))
-                    .category(request.getCategory().getValue())
+                    .category(request.getCategory())
+                    .meeting(request.getMeeting())
                     .build();
         }
         return Project.builder()
                 .member(member)
                 .title(request.getTitle())
                 .content(request.getContent())
-                .category(request.getCategory().getValue())
+                .category(request.getCategory())
+                .meeting(request.getMeeting())
                 .build();
     }
 
     public ProjectListResponse toProjectListResponse(Project project) {
         return ProjectListResponse.builder()
             .id(project.getId())
-            .view(project.getViews())
+            .views(project.getViews())
             .category(project.getCategory())
             .likes(project.getLikes())
             .dislikes(project.getDislikes())

@@ -1,12 +1,17 @@
 package org.devridge.api.domain.community.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
-import org.devridge.api.domain.community.dto.response.CommunityListResponse;
+import org.devridge.api.domain.community.dto.response.CommunitySliceResponse;
+import org.devridge.api.domain.community.dto.response.HashtagResponse;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityHashtag;
 import org.devridge.api.domain.community.entity.Hashtag;
@@ -14,6 +19,7 @@ import org.devridge.api.domain.community.entity.id.CommunityHashtagId;
 import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.community.mapper.CommunityMapper;
 import org.devridge.api.domain.community.repository.CommunityHashtagRepository;
+import org.devridge.api.domain.community.repository.CommunityQuerydslRepository;
 import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.community.repository.HashtagRepository;
 import org.devridge.api.domain.member.entity.Member;
@@ -21,6 +27,9 @@ import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.s3.service.S3Service;
 import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +43,7 @@ public class CommunityService {
     private final CommunityHashtagRepository communityHashtagRepository;
     private final HashtagRepository hashtagRepository;
     private final S3Service s3Service;
+    private final CommunityQuerydslRepository communityQuerydslRepository;
 
     public Long createCommunity(CreateCommunityRequest communityRequest) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
@@ -82,9 +92,62 @@ public class CommunityService {
         }
     }
 
-    public List<CommunityListResponse> getAllCommunity() {
-        List<Community> communities = communityRepository.findAll();
-        return communityMapper.toCommunityListResponses(communities);
+    public Slice<CommunitySliceResponse> getAllCommunity(Long lastId, Pageable pageable) {
+        List<CommunitySliceResponse> communitySliceResponses = communityQuerydslRepository.searchByCommunity(lastId, pageable);
+        List<Long> communityIds = toCommunityIds(communitySliceResponses);
+        List<CommunityHashtag> communityHashtags = communityQuerydslRepository.findCommunityHashtagsInCommunityIds(communityIds);
+        List<CommunitySliceResponse> groupedByCommunitySliceResponses = groupByCommunityId(communityHashtags, communitySliceResponses);
+        return checkLastPage(pageable, groupedByCommunitySliceResponses);
+    }
+
+    private Slice<CommunitySliceResponse> checkLastPage(Pageable pageable, List<CommunitySliceResponse> results) {
+
+        boolean hasNext = false;
+
+        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
+        if (results.size() > pageable.getPageSize()) {
+            hasNext = true;
+            results.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(results, pageable, hasNext);
+    }
+
+    private List<CommunitySliceResponse> groupByCommunityId(List<CommunityHashtag> communityHashtags, List<CommunitySliceResponse> communitySliceResponses) {
+        Map<Long, List<HashtagResponse>> groupedByCommunityId = new HashMap<>();
+
+        for (CommunityHashtag communityHashtag : communityHashtags) {
+            Long communityId = communityHashtag.getId().getCommunityId();
+            HashtagResponse hashtagResponse = HashtagResponse.builder()
+                .id(communityHashtag.getHashtag().getId())
+                .word(communityHashtag.getHashtag().getWord())
+                .build();
+
+            if (groupedByCommunityId.containsKey(communityId)) {
+                groupedByCommunityId.get(communityId).add(hashtagResponse);
+            } else {
+                List<HashtagResponse> communityIdByHashtag = new ArrayList<>();
+                communityIdByHashtag.add(hashtagResponse);
+                groupedByCommunityId.put(communityId, communityIdByHashtag);
+            }
+        }
+
+        for (CommunitySliceResponse communitySliceResponse : communitySliceResponses) {
+            groupedByCommunityId.forEach((communityId, HashtagResponses) -> {
+                if (Objects.equals(communityId, communitySliceResponse.getId())) {
+                    communitySliceResponse.setHashtags(HashtagResponses);
+                }
+            });
+        }
+
+        return communitySliceResponses;
+    }
+
+
+    private List<Long> toCommunityIds(List<CommunitySliceResponse> result) {
+        return result.stream()
+            .map(communityId -> communityId.getId())
+            .collect(Collectors.toList());
     }
 
     private Community getCommunityById(Long communityId) {

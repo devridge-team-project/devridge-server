@@ -1,5 +1,12 @@
 package org.devridge.api.domain.skill.entity;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,12 +14,6 @@ import org.devridge.common.entity.BaseEntity;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -27,6 +28,9 @@ public class Skill extends BaseEntity {
 
     @OneToMany(mappedBy = "skill")
     private Set<MemberSkill> memberSkills = new HashSet<>();
+
+    @OneToMany(mappedBy = "skill")
+    private List<ProjectSkill> projectSkills = new ArrayList<>();
 
     @Builder
     public Skill(String skill) {

@@ -13,7 +13,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     @Modifying
     @Query(
         value = "UPDATE Community c " +
-                "SET c.views = c.views + 1 " +
+                "SET c.viewCount = c.viewCount + 1 " +
                 "WHERE c.id = :id")
     void updateView(@Param("id") Long id);
 
