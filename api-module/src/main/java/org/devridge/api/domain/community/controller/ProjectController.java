@@ -39,12 +39,6 @@ public class ProjectController {
         return ResponseEntity.ok().body(projectDetailResponse);
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<ProjectListResponse>> getAllProject() {
-//        List<ProjectListResponse> projectListResponses = projectService.getAllProject();
-//        return ResponseEntity.ok().body(projectListResponses);
-//    }
-
     @GetMapping
     public ResponseEntity<Slice<ProjectListResponse>> getAllProject(
         @RequestParam(name = "lastId", required = false) Long lastId,

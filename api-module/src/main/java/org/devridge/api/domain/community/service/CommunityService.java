@@ -92,11 +92,6 @@ public class CommunityService {
         }
     }
 
-//    public List<CommunityListResponse> getAllCommunity() {
-//        List<Community> communities = communityRepository.findAll();
-//        return communityMapper.toCommunityListResponses(communities);
-//    }
-
     public Slice<CommunitySliceResponse> getAllCommunity(Long lastId, Pageable pageable) {
         List<CommunitySliceResponse> communitySliceResponses = communityQuerydslRepository.searchByCommunity(lastId, pageable);
         List<Long> communityIds = toCommunityIds(communitySliceResponses);

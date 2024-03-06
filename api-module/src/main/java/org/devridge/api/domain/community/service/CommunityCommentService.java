@@ -38,11 +38,6 @@ public class CommunityCommentService {
         return communityCommentRepository.save(communityComment).getId();
     }
 
-//    public List<CommunityCommentResponse> getAllComment(Long communityId) {
-//        List<CommunityComment> communityComments = communityCommentRepository.findByCommunityId(communityId);
-//        return communityCommentMapper.toCommentResponses(communityComments);
-//    }
-
     public Slice<CommunityCommentResponse> getAllCommunityComment(Long communityId, Long lastId, Pageable pageable) {
         return communityCommentQuerydslReopsitory.searchBySlice(communityId, lastId, pageable);
     }
