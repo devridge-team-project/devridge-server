@@ -9,6 +9,7 @@ import org.devridge.api.domain.note.dto.request.NoteRequest;
 import org.devridge.api.domain.note.dto.response.NoteResponse;
 import org.devridge.api.domain.note.dto.response.NoteSenderResponse;
 import org.devridge.api.domain.note.dto.response.ReceivedNoteDetailResponse;
+import org.devridge.api.domain.note.dto.response.SentNoteDetailResponse;
 import org.devridge.api.domain.note.entity.Note;
 import org.devridge.api.domain.note.exception.NoteForbiddenException;
 import org.devridge.api.domain.note.repository.NoteRepository;
@@ -124,4 +125,21 @@ public class NoteService {
             .receivedTime(note.getSendAt())
             .build();
     }
+
+    public SentNoteDetailResponse getSentNoteDetail(Long NoteId) {
+        Member sender = SecurityContextHolderUtil.getMember();
+        Note note = noteRepository.findById(NoteId).orElseThrow();
+
+        if (!sender.getId().equals(note.getSender().getId())) {
+            throw new NoteForbiddenException(403, "본인이 발신하지 않은 쪽지 입니다.");
+        }
+
+        return SentNoteDetailResponse.builder()
+            .title(note.getTitle())
+            .content(note.getContent())
+            .receiverName(note.getReceiver().getNickname())
+            .sentTime(note.getSendAt())
+            .build();
+    }
+
 }

@@ -7,6 +7,7 @@ import org.devridge.api.domain.note.dto.request.NoteRequest;
 import org.devridge.api.domain.note.dto.response.NoteResponse;
 import org.devridge.api.domain.note.dto.response.NoteSenderResponse;
 import org.devridge.api.domain.note.dto.response.ReceivedNoteDetailResponse;
+import org.devridge.api.domain.note.dto.response.SentNoteDetailResponse;
 import org.devridge.api.domain.note.service.NoteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,4 +61,9 @@ public class NoteController {
         return ResponseEntity.ok().body(receivedNoteDetailResponse);
     }
 
+    @GetMapping("/sent/{noteId}")
+    public ResponseEntity<SentNoteDetailResponse> getSentNoteDetail(@PathVariable Long noteId) {
+        SentNoteDetailResponse sentNoteDetailResponse = noteService.getSentNoteDetail(noteId);
+        return ResponseEntity.ok().body(sentNoteDetailResponse);
+    }
 }
