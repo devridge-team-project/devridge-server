@@ -8,7 +8,9 @@ import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.note.dto.request.NoteRequest;
 import org.devridge.api.domain.note.dto.response.NoteResponse;
 import org.devridge.api.domain.note.dto.response.NoteSenderResponse;
+import org.devridge.api.domain.note.dto.response.ReceivedNoteDetailResponse;
 import org.devridge.api.domain.note.entity.Note;
+import org.devridge.api.domain.note.exception.NoteForbiddenException;
 import org.devridge.api.domain.note.repository.NoteRepository;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.stereotype.Service;
@@ -102,5 +104,24 @@ public class NoteService {
                 noteRepository.delete(note);
             }
         }
+    }
+
+    @Transactional
+    public ReceivedNoteDetailResponse getReceivedNoteDetail(Long NoteId) {
+        Member receiver = SecurityContextHolderUtil.getMember();
+        Note note = noteRepository.findById(NoteId).orElseThrow();
+
+        if(!receiver.getId().equals(note.getReceiver().getId())){
+            throw new NoteForbiddenException(403, "본인이 수신하지 않은 쪽지 입니다.");
+        }
+
+        note.updateReadAt();
+
+        return ReceivedNoteDetailResponse.builder()
+            .title(note.getTitle())
+            .content(note.getContent())
+            .senderName(note.getSender().getNickname())
+            .receivedTime(note.getSendAt())
+            .build();
     }
 }
