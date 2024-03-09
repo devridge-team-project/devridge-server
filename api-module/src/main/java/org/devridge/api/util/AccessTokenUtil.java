@@ -12,13 +12,11 @@ public class AccessTokenUtil {
     }
 
     public static String extractAccessTokenFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization").trim();
+        String bearerToken = request.getHeader("Authorization");
 
-        if (bearerToken != null && !bearerToken.trim().isEmpty() && bearerToken.startsWith("Bearer ")) {
-            String accessToken = bearerToken.substring(7);
-            return accessToken;
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7).trim();
         }
-
         return null;
     }
 }

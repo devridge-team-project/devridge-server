@@ -1,4 +1,6 @@
-package org.devridge.api.exception.common;
+package org.devridge.api.exception.custom;
+
+import org.devridge.api.exception.common.BaseException;
 
 public class TokenInvalidException extends BaseException {
 
