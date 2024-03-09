@@ -1,9 +1,10 @@
 package org.devridge.api.security.config;
 
 import lombok.RequiredArgsConstructor;
-import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
+import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
+import org.devridge.api.security.auth.CustomAuthenticationEntryPoint;
 import org.devridge.api.security.auth.CustomMemberDetailsService;
 import org.devridge.api.security.auth.JwtAuthenticationProvider;
 import org.devridge.api.security.constant.SecurityConstant;
@@ -44,6 +45,9 @@ public class SecurityConfig {
 
         http
             .cors();
+
+        http.exceptionHandling()
+            .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
 
         http
             .csrf().disable()
