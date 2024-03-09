@@ -3,25 +3,25 @@ package org.devridge.api.domain.sociallogin.service;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.constant.Role;
+import org.devridge.api.domain.auth.entity.RefreshToken;
+import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.entity.Occupation;
-import org.devridge.api.domain.auth.entity.RefreshToken;
+import org.devridge.api.domain.member.exception.AccessTokenInvalidException;
+import org.devridge.api.domain.member.exception.DuplNicknameException;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.repository.OccupationRepository;
-import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
 import org.devridge.api.domain.sociallogin.context.OAuth2MemberInfoContext;
 import org.devridge.api.domain.sociallogin.context.OAuth2TokenContext;
 import org.devridge.api.domain.sociallogin.dto.request.SocialLoginRequest;
 import org.devridge.api.domain.sociallogin.dto.request.SocialLoginSignUp;
-import org.devridge.api.domain.sociallogin.dto.response.oauth.OAuth2TokenResponse;
 import org.devridge.api.domain.sociallogin.dto.response.SocialLoginResponse;
+import org.devridge.api.domain.sociallogin.dto.response.oauth.OAuth2TokenResponse;
 import org.devridge.api.domain.sociallogin.entity.OAuth2Member;
-import org.devridge.api.domain.member.exception.AccessTokenInvalidException;
-import org.devridge.api.domain.member.exception.DuplNicknameException;
+import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.AccessTokenUtil;
 import org.devridge.api.util.JwtUtil;
-import org.devridge.api.exception.common.DataNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,15 +62,12 @@ public class SocialLoginService {
             ResponseCookie responseCookie = JwtUtil.generateRefreshTokenCookie(refreshToken.getRefreshToken());
             response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
 
-            return new SocialLoginResponse(accessToken, null, false);
+            return new SocialLoginResponse(accessToken, false);
         }
 
         String tempJwt = JwtUtil.createTemporaryJwt(oAuth2MemberInfo);
 
-        // TODO : redirect uri 정하기 (프론트)
-        URI redirectUri = URI.create(String.format("%s?token=%s", "abc.def", tempJwt));
-
-        return new SocialLoginResponse(null, redirectUri.toString(), true);
+        return new SocialLoginResponse(tempJwt, true);
     }
 
     private RefreshToken saveRefreshToken(Member member) {
@@ -94,11 +90,7 @@ public class SocialLoginService {
         checkDuplNickname(socialLoginRequest.getNickname());
 
         Claims claims = checkTemporaryTokenForSocialLogin(socialLoginRequest.getTempJwt());
-
-        String memberEmail = (String) claims.get("memberEmail");
-        String provider = (String) claims.get("provider");
-
-        Member member = createMember(socialLoginRequest, memberEmail, provider);
+        Member member = createMember(socialLoginRequest, claims);
 
         RefreshToken refreshToken = saveRefreshToken(member);
         String accessToken = JwtUtil.createAccessToken(member, refreshToken.getId());
@@ -107,6 +99,14 @@ public class SocialLoginService {
         response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
 
         return new TokenResponse(accessToken);
+    }
+
+    private Member createMember(SocialLoginSignUp socialLoginRequest, Claims claims) {
+        String memberEmail = (String) claims.get("memberEmail");
+        String provider = (String) claims.get("provider");
+
+        Member member = createMember(socialLoginRequest, memberEmail, provider);
+        return member;
     }
 
     private void checkDuplNickname(String nickname) {
