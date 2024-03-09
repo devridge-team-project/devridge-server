@@ -72,24 +72,20 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             handleExceptionResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "access-token expired");
             return;
         } catch (MalformedJwtException e) {
-            handleExceptionResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "access-token invalid");
+            filterChain.doFilter(request, response);
             return;
         } catch (Exception e) {
-            handleExceptionResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "access-token invalid");
+            filterChain.doFilter(request, response);
             return;
         }
 
-        Optional<Member> memberOpt = findMemberFromAccessTokenClaims(response, claims);
+        Member member = findMemberFromAccessTokenClaims(response, claims);
+        this.saveAuthenticationToSecurityContextHolder(member);
 
-        if (!memberOpt.isPresent()) {
-            return;
-        }
-
-        this.saveAuthenticationToSecurityContextHolder(memberOpt.get());
         filterChain.doFilter(request, response);
     }
 
-    private Optional<Member> findMemberFromAccessTokenClaims(HttpServletResponse response, Claims claims) throws IOException {
+    private Member findMemberFromAccessTokenClaims(HttpServletResponse response, Claims claims) throws IOException {
         Optional<Member> savedMember = memberRepository.findByEmailAndProvider(
                 claims.get("memberEmail").toString(),
                 claims.get("provider").toString()
@@ -100,7 +96,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return null;
         }
 
-        return savedMember;
+        return savedMember.get();
     }
 
     private void saveAuthenticationToSecurityContextHolder(Member member) {
