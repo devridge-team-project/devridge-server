@@ -68,7 +68,7 @@ public class SecurityConfig {
             .antMatchers(HttpMethod.GET, "/api/occupations").permitAll()
             .antMatchers(HttpMethod.GET, "/api/community/**").permitAll()
             .antMatchers(HttpMethod.PATCH, "/api/users/reset-password").permitAll()
-
+            .antMatchers("/api/ws").permitAll()
             .antMatchers("/api/qna/**").authenticated()
             .antMatchers("/api/community/**").authenticated()
             .antMatchers(securityConstant().USER_ROLE_PERMIT_PATHS).hasRole(SecurityConstant.USER_ROLE)
