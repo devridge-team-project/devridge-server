@@ -29,7 +29,7 @@ public class ProjectParticipationNoteController {
         return ResponseEntity.created(URI.create("/api/notes/participation/project/" + projectRequestNote)).build();
     }
 
-    @GetMapping("/{participationNoteId}")
+    @GetMapping("/project/{participationNoteId}")
     public ResponseEntity<ReceivedParticipationNoteDetailResponse> getReceivedParticipationNoteDetail(
         @PathVariable Long participationNoteId
     ) {
