@@ -120,4 +120,18 @@ public class ProjectParticipationNoteService {
             }
         }
     }
+
+    @Transactional
+    public void deleteParticipationNoteBySender(Long participationNoteId) {
+        Member sender = SecurityContextHolderUtil.getMember();
+        ProjectParticipationNote projectParticipationNote =
+            projectParticipationNoteRepository.findById(participationNoteId).orElseThrow();
+
+        if (sender.getId().equals(projectParticipationNote.getSender().getId())) {
+            projectParticipationNote.deleteBySender();
+            if (projectParticipationNote.isDeleted()) {
+                projectParticipationNoteRepository.delete(projectParticipationNote);
+            }
+        }
+    }
 }
