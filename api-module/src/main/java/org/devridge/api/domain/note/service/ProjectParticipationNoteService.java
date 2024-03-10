@@ -1,5 +1,7 @@
 package org.devridge.api.domain.note.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.response.MemberInfoResponse;
 import org.devridge.api.domain.community.entity.Project;
@@ -10,10 +12,15 @@ import org.devridge.api.domain.member.exception.MemberNotFoundException;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.note.dto.request.ProjectParticipationNoteRequest;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetailResponse;
+import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
 import org.devridge.api.domain.note.entity.ProjectParticipationNote;
+import org.devridge.api.domain.note.repository.ParticipationNoteQuerydslRepository;
 import org.devridge.api.domain.note.repository.ProjectParticipationNoteRepository;
 import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +32,7 @@ public class ProjectParticipationNoteService {
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
     private final MemberInfoMapper memberInfoMapper;
+    private final ParticipationNoteQuerydslRepository participationNoteQuerydslRepository;
 
     public Long createRequestNote(Long projectId, ProjectParticipationNoteRequest participationNoteRequest) { // 프로젝트 아이디 필요, 내용필요, 보낸는사람 필요, 받을 사람 필요,
         Member sender = SecurityContextHolderUtil.getMember();
@@ -69,4 +77,34 @@ public class ProjectParticipationNoteService {
                 .build();
     }
 
+    public Slice<ReceivedParticipationNoteListResponse> getAllReceivedParticipationNote(Pageable pageable, Long lastId) {
+        Member receiver = SecurityContextHolderUtil.getMember();
+        List<ProjectParticipationNote> projectParticipationNotes =
+                participationNoteQuerydslRepository.searchByProjectParticipationNote(lastId, receiver.getId(), pageable);
+        List<ReceivedParticipationNoteListResponse> receivedParticipationNoteListResponses = new ArrayList<>();
+
+        for (ProjectParticipationNote projectParticipationNote : projectParticipationNotes) {
+            MemberInfoResponse sendMember = memberInfoMapper.toMemberInfoResponse(projectParticipationNote.getSender());
+            receivedParticipationNoteListResponses.add(
+                ReceivedParticipationNoteListResponse.builder()
+                    .sendMember(sendMember)
+                    .receivedTime(projectParticipationNote.getCreatedAt())
+                    .build()
+            );
+        }
+        return checkLastPage(pageable, receivedParticipationNoteListResponses);
+    }
+
+    private Slice<ReceivedParticipationNoteListResponse> checkLastPage(Pageable pageable, List<ReceivedParticipationNoteListResponse> results) {
+
+        boolean hasNext = false;
+
+        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
+        if (results.size() > pageable.getPageSize()) {
+            hasNext = true;
+            results.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(results, pageable, hasNext);
+    }
 }
