@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import org.devridge.api.domain.community.entity.Project;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.common.entity.BaseEntity;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 @Entity
@@ -42,12 +43,39 @@ public class ProjectParticipationNote extends BaseEntity {
 
     private LocalDateTime readAt;
 
+    @Column(columnDefinition = "TINYINT(1)")
+    @ColumnDefault("false")
+    private Boolean deletedBySender;
+
+    @Column(columnDefinition = "TINYINT(1)")
+    @ColumnDefault("false")
+    private Boolean deletedByReceiver;
+
     @Builder
     public ProjectParticipationNote(Project project, Member sender, Member receiver, String content) {
         this.project = project;
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
+    }
+
+    public void deleteBySender() {
+        this.deletedBySender = true;
+    }
+
+    public void deleteByReceiver() {
+        this.deletedByReceiver = true;
+    }
+
+    public boolean isDeletedBySender() {
+        return this.deletedBySender;
+    }
+    public boolean isDeletedByReceiver() {
+        return this.deletedByReceiver;
+    }
+
+    public boolean isDeleted() {
+        return isDeletedBySender() && isDeletedByReceiver();
     }
 
     public void updateReadAt() {
