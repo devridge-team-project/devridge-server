@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.community.entity.Project;
 import org.devridge.api.domain.member.entity.Member;
@@ -18,6 +19,7 @@ import org.hibernate.annotations.DynamicInsert;
 @Entity
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class ProjectParticipationNote extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,5 +48,9 @@ public class ProjectParticipationNote extends BaseEntity {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
+    }
+
+    public void updateReadAt() {
+        this.readAt = LocalDateTime.now();
     }
 }

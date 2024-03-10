@@ -3,8 +3,10 @@ package org.devridge.api.domain.note.controller;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.note.dto.request.ProjectParticipationNoteRequest;
+import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.service.ProjectParticipationNoteService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,5 +27,14 @@ public class ProjectParticipationNoteController {
     ) {
         Long projectRequestNote = projectParticipationNoteService.createRequestNote(projectId, participationNoteRequest);
         return ResponseEntity.created(URI.create("/api/notes/participation/project/" + projectRequestNote)).build();
+    }
+
+    @GetMapping("/{participationNoteId}")
+    public ResponseEntity<ReceivedParticipationNoteDetailResponse> getReceivedParticipationNoteDetail(
+        @PathVariable Long participationNoteId
+    ) {
+        ReceivedParticipationNoteDetailResponse receivedParticipationNoteDetailResponse =
+                projectParticipationNoteService.getReceivedParticipationNoteDetail(participationNoteId);
+        return ResponseEntity.ok().body(receivedParticipationNoteDetailResponse);
     }
 }
