@@ -9,6 +9,7 @@ import org.devridge.api.domain.note.service.ProjectParticipationNoteService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,5 +51,11 @@ public class ProjectParticipationNoteController {
         Slice<ReceivedParticipationNoteListResponse> receivedParticipationNoteListResponses =
                 projectParticipationNoteService.getAllReceivedParticipationNote(pageable, lastId);
         return ResponseEntity.ok().body(receivedParticipationNoteListResponses);
+    }
+
+    @DeleteMapping("/project/receive/{participationNoteId}")
+    public ResponseEntity<Void> deleteParticipationNoteByReceiver(@PathVariable Long participationNoteId) {
+        projectParticipationNoteService.deleteParticipationNoteByReceiver(participationNoteId);
+        return ResponseEntity.ok().build();
     }
 }

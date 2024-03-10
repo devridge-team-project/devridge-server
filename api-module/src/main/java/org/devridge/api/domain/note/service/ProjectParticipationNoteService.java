@@ -107,4 +107,17 @@ public class ProjectParticipationNoteService {
 
         return new SliceImpl<>(results, pageable, hasNext);
     }
+    @Transactional
+    public void deleteParticipationNoteByReceiver(Long participationNoteId) {
+        Member receiver = SecurityContextHolderUtil.getMember();
+        ProjectParticipationNote projectParticipationNote =
+                projectParticipationNoteRepository.findById(participationNoteId).orElseThrow();
+
+        if (receiver.getId().equals(projectParticipationNote.getReceiver().getId())) {
+            projectParticipationNote.deleteByReceiver();
+            if (projectParticipationNote.isDeleted()) {
+                projectParticipationNoteRepository.delete(projectParticipationNote);
+            }
+        }
+    }
 }
