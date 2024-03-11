@@ -28,13 +28,13 @@ public class SocialLoginController {
     public ResponseEntity<?> signIn(@RequestBody @Valid SocialLoginRequest socialLoginRequest, HttpServletResponse response) {
        SocialLoginResponse data = socialLoginService.signIn(socialLoginRequest, response);
 
-       if (data.isRedirect()) {
-           SocialLoginRedirect result = new SocialLoginRedirect(data.getRedirectUri());
+       if (data.isRedirect()) {  // 첫 소셜 로그인 : 리다이렉트 필요
+           SocialLoginRedirect result = new SocialLoginRedirect(data.getToken());
            return ResponseEntity.status(HttpStatus.MULTIPLE_CHOICES).body(result);
        }
 
        return ResponseEntity.status(HttpStatus.OK).body(
-               new TokenResponse(data.getAccessToken())
+               new TokenResponse(data.getToken())
        );
     }
 

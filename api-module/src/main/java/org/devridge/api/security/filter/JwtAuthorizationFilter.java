@@ -69,7 +69,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         try {
             claims = AccessTokenUtil.getClaimsFromAccessToken(accessToken);
         } catch (ExpiredJwtException e) {
-            filterChain.doFilter(request, response);
+            handleExceptionResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "access-token expired");
             return;
         } catch (MalformedJwtException e) {
             filterChain.doFilter(request, response);
@@ -79,17 +79,13 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-        Optional<Member> memberOpt = findMemberFromAccessTokenClaims(response, claims);
+        Member member = findMemberFromAccessTokenClaims(response, claims);
+        this.saveAuthenticationToSecurityContextHolder(member);
 
-        if (!memberOpt.isPresent()) {
-            return;
-        }
-
-        this.saveAuthenticationToSecurityContextHolder(memberOpt.get());
         filterChain.doFilter(request, response);
     }
 
-    private Optional<Member> findMemberFromAccessTokenClaims(HttpServletResponse response, Claims claims) throws IOException {
+    private Member findMemberFromAccessTokenClaims(HttpServletResponse response, Claims claims) throws IOException {
         Optional<Member> savedMember = memberRepository.findByEmailAndProvider(
                 claims.get("memberEmail").toString(),
                 claims.get("provider").toString()
@@ -100,7 +96,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             return null;
         }
 
-        return savedMember;
+        return savedMember.get();
     }
 
     private void saveAuthenticationToSecurityContextHolder(Member member) {
@@ -115,5 +111,17 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private boolean isExcludedUrl(HttpServletRequest request) {
         return excludedUrlPatterns.stream().anyMatch(pattern -> pattern.matches(request));
+    }
+
+    private void handleExceptionResponse(HttpServletResponse response, int status, String errorMessage) throws IOException {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(status);
+
+        String json = String.format("{\"error\":\"%s\"}", errorMessage);
+        response.getWriter().write(json);
+
+        response.getWriter().flush();
+        response.getWriter().close();
     }
 }

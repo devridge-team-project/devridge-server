@@ -10,7 +10,8 @@ import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.exception.common.DataNotFoundException;
-import org.devridge.api.exception.common.TokenInvalidException;
+import org.devridge.api.exception.common.UnAuthorizedException;
+import org.devridge.api.exception.custom.TokenInvalidException;
 import org.devridge.api.security.auth.AuthProperties;
 import org.devridge.api.security.dto.TokenResponse;
 import org.devridge.api.util.AccessTokenUtil;
@@ -30,15 +31,34 @@ public class AuthService {
 
     public TokenResponse reIssueAccessToken(HttpServletRequest request) {
         String accessToken = AccessTokenUtil.extractAccessTokenFromRequest(request);
-        Claims claims = validateAccessToken(accessToken);
 
-        Long refreshTokenId = ((Integer)claims.get("refreshTokenId")).longValue();
-        checkIfRefreshTokenMatches(request, refreshTokenId);
+        if (accessToken == null) {
+            throw new UnAuthorizedException();
+        }
+
+        Claims claims = validateAccessToken(accessToken);
+        Long refreshTokenId = checkRefreshToken(request, claims);
 
         Member member = getMemberFromAccessToken(claims);
         String newAccessToken = JwtUtil.createAccessToken(member, refreshTokenId);
 
         return new TokenResponse(newAccessToken);
+    }
+
+    private Long checkRefreshToken(HttpServletRequest request, Claims claims) {
+        Long refreshTokenId = ((Integer) claims.get("refreshTokenId")).longValue();
+
+        RefreshToken refreshToken = refreshTokenRepository.findById(refreshTokenId)
+                .orElseThrow(() -> new UnAuthorizedException());
+
+        String refreshTokenValue = refreshToken.getRefreshToken();
+
+        if (!refreshTokenValue.equals(getRefreshTokenFromCookies(request))) {
+            throw new TokenInvalidException();
+        }
+        validateRefreshToken(refreshToken);
+
+        return refreshTokenId;
     }
 
     private Member getMemberFromAccessToken(Claims claims) {
@@ -50,17 +70,16 @@ public class AuthService {
         return member;
     }
 
-    private void checkIfRefreshTokenMatches(HttpServletRequest request, Long refreshTokenId) {
+    private String checkIfRefreshTokenMatches(HttpServletRequest request, Long refreshTokenId) {
         RefreshToken refreshToken = refreshTokenRepository.findById(refreshTokenId)
                         .orElseThrow(() -> new DataNotFoundException());
-
-        validateRefreshToken(refreshToken);
-
         String refreshTokenValue = refreshToken.getRefreshToken();
 
         if (!refreshTokenValue.equals(getRefreshTokenFromCookies(request))) {
             throw new TokenInvalidException();
         }
+
+        return refreshToken.getRefreshToken();
     }
 
     private void validateRefreshToken(RefreshToken refreshToken) {
@@ -71,7 +90,7 @@ public class AuthService {
                     .getBody();
         } catch (ExpiredJwtException e) {
             refreshTokenRepository.delete(refreshToken);
-            throw new TokenInvalidException();
+            throw new TokenInvalidException("refresh-token expired");
         } catch (MalformedJwtException e) {
             throw new TokenInvalidException();
         } catch (Exception e) {

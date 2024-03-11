@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class SocialLoginRedirect {
 
-    private String redirectUri;
+    private String tempJwt;
 
-    public SocialLoginRedirect(String redirectUri) {
-        this.redirectUri = redirectUri;
+    public SocialLoginRedirect(String tempJwt) {
+        this.tempJwt = tempJwt;
     }
 }

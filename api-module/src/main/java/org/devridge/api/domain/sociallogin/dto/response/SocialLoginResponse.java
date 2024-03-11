@@ -5,13 +5,11 @@ import lombok.Getter;
 @Getter
 public class SocialLoginResponse {
 
-    private String accessToken;
-    private String redirectUri;
+    private String token;
     private boolean redirect;
 
-    public SocialLoginResponse(String accessToken, String redirectUri, boolean redirect) {
-        this.accessToken = accessToken;
-        this.redirectUri = redirectUri;
+    public SocialLoginResponse(String token, boolean redirect) {
+        this.token = token;
         this.redirect = redirect;
     }
 }
