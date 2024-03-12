@@ -13,6 +13,7 @@ import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.note.dto.request.ProjectParticipationNoteRequest;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
+import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.entity.ProjectParticipationNote;
 import org.devridge.api.domain.note.repository.ParticipationNoteQuerydslRepository;
 import org.devridge.api.domain.note.repository.ProjectParticipationNoteRepository;
@@ -133,5 +134,30 @@ public class ProjectParticipationNoteService {
                 projectParticipationNoteRepository.delete(projectParticipationNote);
             }
         }
+    }
+
+    public SentParticipationNoteDetailResponse getSentParticipationNoteDetail(Long participationNoteId) {
+        Member sender = SecurityContextHolderUtil.getMember();
+        ProjectParticipationNote participationNote = projectParticipationNoteRepository.findById(participationNoteId)
+            .orElseThrow(() -> new DataNotFoundException());
+        Project project = projectRepository.findById(participationNote.getProject().getId()).orElseThrow(() -> new DataNotFoundException());
+
+        MemberInfoResponse senderInfo = memberRepository.findById(participationNote.getReceiver().getId())
+            .map(memberInfoMapper::toMemberInfoResponse)
+            .orElseGet(()->
+                MemberInfoResponse.builder()
+                    .memberId(0L)
+                    .nickName("탈퇴 회원")
+                    .introduction("탈퇴한 회원입니다.")
+                    .profileImageUrl("default.png")
+                    .build()
+            );
+
+        return SentParticipationNoteDetailResponse.builder()
+            .receiveMember(senderInfo)
+            .content(participationNote.getContent())
+            .sendTime(participationNote.getCreatedAt())
+            .isApproved(participationNote.getIsApproved())
+            .build();
     }
 }

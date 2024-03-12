@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.note.dto.request.ProjectParticipationNoteRequest;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
+import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.service.ProjectParticipationNoteService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -63,5 +64,14 @@ public class ProjectParticipationNoteController {
     public ResponseEntity<Void> deleteParticipationNoteBySender(@PathVariable Long participationNoteId) {
         projectParticipationNoteService.deleteParticipationNoteBySender(participationNoteId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/project/send/{participationNoteId}")
+    public ResponseEntity<SentParticipationNoteDetailResponse> getSentParticipationNoteDetail(
+        @PathVariable Long participationNoteId
+    ) {
+        SentParticipationNoteDetailResponse sentParticipationNoteDetailResponse =
+            projectParticipationNoteService.getSentParticipationNoteDetail(participationNoteId);
+        return ResponseEntity.ok().body(sentParticipationNoteDetailResponse);
     }
 }
