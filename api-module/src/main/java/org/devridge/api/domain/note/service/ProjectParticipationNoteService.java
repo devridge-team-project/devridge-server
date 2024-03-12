@@ -16,6 +16,7 @@ import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListRe
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteListResponse;
 import org.devridge.api.domain.note.entity.ProjectParticipationNote;
+import org.devridge.api.domain.note.exception.ParticipationNoteForbiddenException;
 import org.devridge.api.domain.note.repository.ParticipationNoteQuerydslRepository;
 import org.devridge.api.domain.note.repository.ProjectParticipationNoteRepository;
 import org.devridge.api.exception.common.DataNotFoundException;
@@ -57,6 +58,11 @@ public class ProjectParticipationNoteService {
         Member receiver = SecurityContextHolderUtil.getMember();
         ProjectParticipationNote participationNote = projectParticipationNoteRepository.findById(participationNoteId)
                 .orElseThrow(() -> new DataNotFoundException());
+
+        if (!receiver.getId().equals(participationNote.getReceiver().getId())) {
+            throw new ParticipationNoteForbiddenException(403, "회원님이 받은 요청이 아닙니다.");
+        }
+
         Project project = projectRepository.findById(participationNote.getProject().getId()).orElseThrow(() -> new DataNotFoundException());
         MemberInfoResponse senderInfo = memberInfoMapper.toMemberInfoResponse(participationNote.getSender());
         participationNote.updateReadAt();
@@ -131,6 +137,11 @@ public class ProjectParticipationNoteService {
         Member sender = SecurityContextHolderUtil.getMember();
         ProjectParticipationNote participationNote = projectParticipationNoteRepository.findById(participationNoteId)
             .orElseThrow(() -> new DataNotFoundException());
+
+        if (!sender.getId().equals(participationNote.getSender().getId())) {
+            throw new ParticipationNoteForbiddenException(403, "회원님이 보낸 요청이 아닙니다.");
+        }
+
         Project project = projectRepository.findById(participationNote.getProject().getId()).orElseThrow(() -> new DataNotFoundException());
         MemberInfoResponse receiverInfo = memberInfoMapper.toMemberInfoResponse(participationNote.getReceiver());
 
