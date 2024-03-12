@@ -7,9 +7,9 @@ import org.devridge.api.common.security.type.SecurityPathType;
 import org.devridge.api.common.security.filter.JwtAuthenticationFilter;
 import org.devridge.api.common.security.filter.JwtAuthorizationFilter;
 import org.devridge.api.common.security.handler.CustomLogoutHandler;
-import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
-import org.devridge.api.domain.member.repository.MemberRepository;
-import org.devridge.api.domain.skill.repository.MemberSkillRepository;
+import org.devridge.api.infrastructure.auth.RefreshTokenRepository;
+import org.devridge.api.infrastructure.member.MemberRepository;
+import org.devridge.api.infrastructure.skill.MemberSkillRepository;
 import org.devridge.api.common.security.auth.CustomMemberDetailsService;
 import org.devridge.api.common.security.auth.JwtAuthenticationProvider;
 

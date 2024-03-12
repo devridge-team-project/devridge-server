@@ -2,7 +2,7 @@ package org.devridge.api.domain.qna.interceptor;
 
 import lombok.RequiredArgsConstructor;
 
-import org.devridge.api.domain.qna.repository.QnACommentRepository;
+import org.devridge.api.infrastructure.qna.QnACommentRepository;
 import org.devridge.api.common.exception.common.DataNotFoundException;
 
 import org.springframework.http.HttpStatus;

@@ -2,7 +2,7 @@ package org.devridge.api.common.security.auth;
 
 import lombok.RequiredArgsConstructor;
 
-import org.devridge.api.domain.member.repository.MemberRepository;
+import org.devridge.api.infrastructure.member.MemberRepository;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

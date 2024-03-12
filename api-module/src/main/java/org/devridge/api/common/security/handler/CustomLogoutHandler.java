@@ -1,7 +1,7 @@
 package org.devridge.api.common.security.handler;
 
 import io.jsonwebtoken.Claims;
-import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
+import org.devridge.api.infrastructure.auth.RefreshTokenRepository;
 import org.devridge.api.common.util.AccessTokenUtil;
 import org.devridge.api.common.util.JwtUtil;
 import org.devridge.api.common.util.RefreshTokenUtil;
