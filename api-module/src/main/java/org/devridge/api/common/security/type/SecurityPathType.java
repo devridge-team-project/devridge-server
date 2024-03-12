@@ -1,8 +1,8 @@
-package org.devridge.api.common.security.constant;
+package org.devridge.api.common.security.type;
 
 import org.springframework.beans.factory.annotation.Value;
 
-public class SecurityConstant {
+public class SecurityPathType {
 
     public static final String USER_ROLE = "USER";
 

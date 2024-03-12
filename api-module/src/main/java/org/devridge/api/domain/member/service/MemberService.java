@@ -2,7 +2,7 @@ package org.devridge.api.domain.member.service;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.devridge.api.common.constant.Role;
+import org.devridge.api.common.type.Role;
 import org.devridge.api.domain.emailverification.entity.EmailVerification;
 import org.devridge.api.domain.emailverification.exception.EmailVerificationInvalidException;
 import org.devridge.api.domain.emailverification.repository.EmailVerificationRepository;

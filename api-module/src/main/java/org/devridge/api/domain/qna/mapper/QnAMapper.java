@@ -1,8 +1,8 @@
 package org.devridge.api.domain.qna.mapper;
 
+import org.devridge.api.common.dto.UserInformation;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
-import org.devridge.api.common.dto.FindWriterInformation;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.entity.QnA;
 
@@ -14,7 +14,7 @@ import static org.devridge.api.common.util.MemberUtil.toMember;
 public class QnAMapper {
 
     public GetQnADetailResponse toGetQnADetailResponse(QnA result) {
-        FindWriterInformation member = toMember(result.getMember());
+        UserInformation member = toMember(result.getMember());
 
         return GetQnADetailResponse.builder()
             .member(member)

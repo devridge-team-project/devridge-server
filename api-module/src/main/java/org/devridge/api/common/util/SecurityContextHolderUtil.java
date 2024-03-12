@@ -2,6 +2,7 @@ package org.devridge.api.common.util;
 
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.common.security.auth.CustomMemberDetails;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 

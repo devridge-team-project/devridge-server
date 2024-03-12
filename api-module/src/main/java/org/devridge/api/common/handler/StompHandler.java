@@ -1,4 +1,4 @@
-package org.devridge.api.common.config;
+package org.devridge.api.common.handler;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

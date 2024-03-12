@@ -9,20 +9,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CustomCorsConfig implements WebMvcConfigurer {
 
     @Value("${devridge.cors.allowedOrigins}")
-    private String[] allowedOrigins;
+    private String[] ALLOWED_ORIGINS;
 
     @Value("${devridge.cors.allowedMethods}")
-    private String[] allowedMethods;
+    private String[] ALLOWED_METHODS;
 
     @Value("${devridge.cors.allowedHeaders}")
-    private String[] allowedHeaders;
+    private String[] ALLOWED_HEADERS;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(allowedOrigins)
-                .allowedMethods(allowedMethods)
-                .allowedHeaders(allowedHeaders)
+                .allowedOrigins(ALLOWED_ORIGINS)
+                .allowedMethods(ALLOWED_METHODS)
+                .allowedHeaders(ALLOWED_HEADERS)
                 .allowCredentials(true)
                 .maxAge(1800);
     }

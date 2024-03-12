@@ -1,4 +1,4 @@
-package org.devridge.api.common.constant;
+package org.devridge.api.common.type;
 
 public enum Role {
     ROLE_USER,

@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.devridge.api.domain.member.AbstractTimeEntity;
+import org.devridge.api.common.entity.AbstractTimeEntity;
 import org.devridge.api.domain.member.entity.Member;
 
 import javax.persistence.*;

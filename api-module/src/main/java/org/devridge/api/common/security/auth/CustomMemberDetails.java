@@ -1,8 +1,10 @@
 package org.devridge.api.common.security.auth;
 
 import lombok.Getter;
-import org.devridge.api.common.constant.Role;
+
+import org.devridge.api.common.type.Role;
 import org.devridge.api.domain.member.entity.Member;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

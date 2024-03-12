@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class FindWriterInformation {
+public class UserInformation {
 
     private Long id;
     private String nickname;
@@ -15,7 +15,7 @@ public class FindWriterInformation {
     private String introduction;
 
     @QueryProjection
-    public FindWriterInformation(Long id, String nickname, String profileImageUrl, String introduction) {
+    public UserInformation(Long id, String nickname, String profileImageUrl, String introduction) {
         this.id = id;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;

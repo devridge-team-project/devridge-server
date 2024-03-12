@@ -4,13 +4,17 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+
 import lombok.NoArgsConstructor;
+
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.sociallogin.entity.OAuth2Member;
 import org.devridge.api.common.security.auth.AuthProperties;
+
 import org.springframework.http.ResponseCookie;
 
 import java.security.Key;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

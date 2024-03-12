@@ -1,6 +1,7 @@
 package org.devridge.api.common.security.auth;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

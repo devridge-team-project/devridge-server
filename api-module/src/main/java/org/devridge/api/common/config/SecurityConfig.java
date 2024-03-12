@@ -1,8 +1,9 @@
-package org.devridge.api.common.security.config;
+package org.devridge.api.common.config;
 
 import lombok.RequiredArgsConstructor;
+
 import org.devridge.api.common.security.auth.CustomAuthenticationEntryPoint;
-import org.devridge.api.common.security.constant.SecurityConstant;
+import org.devridge.api.common.security.type.SecurityPathType;
 import org.devridge.api.common.security.filter.JwtAuthenticationFilter;
 import org.devridge.api.common.security.filter.JwtAuthorizationFilter;
 import org.devridge.api.common.security.handler.CustomLogoutHandler;
@@ -11,6 +12,7 @@ import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.skill.repository.MemberSkillRepository;
 import org.devridge.api.common.security.auth.CustomMemberDetailsService;
 import org.devridge.api.common.security.auth.JwtAuthenticationProvider;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -75,7 +77,7 @@ public class SecurityConfig {
             .antMatchers("/api/ws").permitAll()
             .antMatchers("/api/qna/**").authenticated()
             .antMatchers("/api/community/**").authenticated()
-            .antMatchers(securityConstant().USER_ROLE_PERMIT_PATHS).hasRole(SecurityConstant.USER_ROLE)
+            .antMatchers(securityConstant().USER_ROLE_PERMIT_PATHS).hasRole(SecurityPathType.USER_ROLE)
             .anyRequest().denyAll();
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -85,8 +87,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityConstant securityConstant() {
-        return new SecurityConstant();
+    public SecurityPathType securityConstant() {
+        return new SecurityPathType();
     }
 
     @Bean

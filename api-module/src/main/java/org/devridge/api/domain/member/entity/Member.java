@@ -1,7 +1,7 @@
 package org.devridge.api.domain.member.entity;
 
 import lombok.*;
-import org.devridge.api.common.constant.Role;
+import org.devridge.api.common.type.Role;
 import org.devridge.api.domain.skill.entity.MemberSkill;
 import org.devridge.api.common.entity.BaseEntity;
 import org.hibernate.annotations.*;

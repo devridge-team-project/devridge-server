@@ -2,6 +2,7 @@ package org.devridge.api.common.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+
 import org.devridge.api.common.security.auth.AuthProperties;
 
 import javax.servlet.http.HttpServletRequest;

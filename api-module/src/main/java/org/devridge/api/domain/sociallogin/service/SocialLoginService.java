@@ -2,7 +2,7 @@ package org.devridge.api.domain.sociallogin.service;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.devridge.api.common.constant.Role;
+import org.devridge.api.common.type.Role;
 import org.devridge.api.domain.auth.entity.RefreshToken;
 import org.devridge.api.domain.auth.repository.RefreshTokenRepository;
 import org.devridge.api.domain.member.entity.Member;

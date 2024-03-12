@@ -1,12 +1,12 @@
 package org.devridge.api.domain.coffeechat.mapper;
 
+import org.devridge.api.common.dto.UserInformation;
 import org.devridge.api.domain.coffeechat.dto.request.CreateChatMessageRequest;
 import org.devridge.api.domain.coffeechat.dto.response.*;
 import org.devridge.api.domain.coffeechat.entity.ChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
 import org.devridge.api.domain.coffeechat.entity.CoffeeChatRequest;
 import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.common.dto.FindWriterInformation;
 
 import org.springframework.stereotype.Component;
 
@@ -58,7 +58,7 @@ public class CoffeeChatMapper {
     }
 
     public GetCoffeeChatRequestResponse toGetCoffeeChatRequest(CoffeeChatRequest request) {
-        FindWriterInformation fromMember = toMember(request.getFromMember());
+        UserInformation fromMember = toMember(request.getFromMember());
         return new GetCoffeeChatRequestResponse(request.getId(), fromMember, request.getMessage());
     }
 
@@ -128,7 +128,7 @@ public class CoffeeChatMapper {
     }
 
     public GetAllChatMessage toGetChatMessage(ChatMessage message) {
-        FindWriterInformation member = toMember(message.getMember());
+        UserInformation member = toMember(message.getMember());
         return new GetAllChatMessage(message.getId(), member, message.getContent());
     }
 }
