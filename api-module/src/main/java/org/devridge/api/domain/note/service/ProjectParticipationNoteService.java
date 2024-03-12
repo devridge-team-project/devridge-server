@@ -58,19 +58,8 @@ public class ProjectParticipationNoteService {
         ProjectParticipationNote participationNote = projectParticipationNoteRepository.findById(participationNoteId)
                 .orElseThrow(() -> new DataNotFoundException());
         Project project = projectRepository.findById(participationNote.getProject().getId()).orElseThrow(() -> new DataNotFoundException());
-        Member sender = memberRepository.findById(project.getMember().getId()).orElseGet(
-            () -> Member.builder()
-                    .nickname("탈퇴 회원")
-                    .introduction("탈퇴한 회원입니다.")
-                    .profileImageUrl("default.png").build()
-        ); // 임시 방편 탈퇴회원
-
-        // 알아야 하는것 = 프로젝트 아이디를 알아야 함
-
-        // 반환할 것 = 맴버 정보 , 내용, projectId?
-
+        MemberInfoResponse senderInfo = memberInfoMapper.toMemberInfoResponse(participationNote.getSender());
         participationNote.updateReadAt();
-        MemberInfoResponse senderInfo = memberInfoMapper.toMemberInfoResponse(sender);
 
         return ReceivedParticipationNoteDetailResponse.builder()
                 .sendMember(senderInfo)
@@ -143,20 +132,10 @@ public class ProjectParticipationNoteService {
         ProjectParticipationNote participationNote = projectParticipationNoteRepository.findById(participationNoteId)
             .orElseThrow(() -> new DataNotFoundException());
         Project project = projectRepository.findById(participationNote.getProject().getId()).orElseThrow(() -> new DataNotFoundException());
-
-        MemberInfoResponse senderInfo = memberRepository.findById(participationNote.getReceiver().getId())
-            .map(memberInfoMapper::toMemberInfoResponse)
-            .orElseGet(()->
-                MemberInfoResponse.builder()
-                    .memberId(0L)
-                    .nickName("탈퇴 회원")
-                    .introduction("탈퇴한 회원입니다.")
-                    .profileImageUrl("default.png")
-                    .build()
-            );
+        MemberInfoResponse receiverInfo = memberInfoMapper.toMemberInfoResponse(participationNote.getReceiver());
 
         return SentParticipationNoteDetailResponse.builder()
-            .receiveMember(senderInfo)
+            .receiveMember(receiverInfo)
             .content(participationNote.getContent())
             .sendTime(participationNote.getCreatedAt())
             .isApproved(participationNote.getIsApproved())
