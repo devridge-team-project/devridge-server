@@ -14,6 +14,7 @@ import org.devridge.api.domain.note.dto.request.ProjectParticipationNoteRequest;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResponse;
+import org.devridge.api.domain.note.dto.response.SentParticipationNoteListResponse;
 import org.devridge.api.domain.note.entity.ProjectParticipationNote;
 import org.devridge.api.domain.note.repository.ParticipationNoteQuerydslRepository;
 import org.devridge.api.domain.note.repository.ProjectParticipationNoteRepository;
@@ -96,7 +97,7 @@ public class ProjectParticipationNoteService {
         return checkLastPage(pageable, receivedParticipationNoteListResponses);
     }
 
-    private Slice<ReceivedParticipationNoteListResponse> checkLastPage(Pageable pageable, List<ReceivedParticipationNoteListResponse> results) {
+    private <T> Slice<T> checkLastPage(Pageable pageable, List<T> results) {
 
         boolean hasNext = false;
 
@@ -159,5 +160,24 @@ public class ProjectParticipationNoteService {
             .sendTime(participationNote.getCreatedAt())
             .isApproved(participationNote.getIsApproved())
             .build();
+    }
+
+    public Slice<SentParticipationNoteListResponse> getAllSentParticipationNote(Pageable pageable, Long lastId) {
+        Member sender = SecurityContextHolderUtil.getMember();
+        List<ProjectParticipationNote> projectParticipationNotes =
+            participationNoteQuerydslRepository.findSenderSortByProjectParticipationNote(lastId, sender.getId(), pageable);
+        List<SentParticipationNoteListResponse> sentParticipationNoteListResponses = new ArrayList<>();
+
+        for (ProjectParticipationNote projectParticipationNote : projectParticipationNotes) {
+            MemberInfoResponse receiveMember = memberInfoMapper.toMemberInfoResponse(projectParticipationNote.getReceiver());
+            sentParticipationNoteListResponses.add(
+                SentParticipationNoteListResponse.builder()
+                    .receiveMember(receiveMember)
+                    .sentTime(projectParticipationNote.getCreatedAt())
+                    .isApproved(projectParticipationNote.getIsApproved())
+                    .build()
+            );
+        }
+        return checkLastPage(pageable, sentParticipationNoteListResponses);
     }
 }
