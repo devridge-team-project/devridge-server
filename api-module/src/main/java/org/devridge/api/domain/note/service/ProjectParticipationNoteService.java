@@ -103,7 +103,7 @@ public class ProjectParticipationNoteService {
     public void deleteParticipationNoteByReceiver(Long participationNoteId) {
         Member receiver = SecurityContextHolderUtil.getMember();
         ProjectParticipationNote projectParticipationNote =
-                projectParticipationNoteRepository.findById(participationNoteId).orElseThrow();
+                projectParticipationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
 
         if (receiver.getId().equals(projectParticipationNote.getReceiver().getId())) {
             projectParticipationNote.deleteByReceiver();
@@ -117,7 +117,7 @@ public class ProjectParticipationNoteService {
     public void deleteParticipationNoteBySender(Long participationNoteId) {
         Member sender = SecurityContextHolderUtil.getMember();
         ProjectParticipationNote projectParticipationNote =
-            projectParticipationNoteRepository.findById(participationNoteId).orElseThrow();
+            projectParticipationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
 
         if (sender.getId().equals(projectParticipationNote.getSender().getId())) {
             projectParticipationNote.deleteBySender();

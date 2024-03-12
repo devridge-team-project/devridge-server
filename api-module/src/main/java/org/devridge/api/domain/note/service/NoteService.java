@@ -13,6 +13,7 @@ import org.devridge.api.domain.note.dto.response.SentNoteDetailResponse;
 import org.devridge.api.domain.note.entity.Note;
 import org.devridge.api.domain.note.exception.NoteForbiddenException;
 import org.devridge.api.domain.note.repository.NoteRepository;
+import org.devridge.api.exception.common.DataNotFoundException;
 import org.devridge.api.util.SecurityContextHolderUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,8 @@ public class NoteService {
 
     public Long createNote(NoteRequest noteRequest) {
         Member sender = SecurityContextHolderUtil.getMember();
-        Member receiver = memberRepository.findByNickname(noteRequest.getReceiverName()).orElseThrow();
+        Member receiver = memberRepository.findByNickname(noteRequest.getReceiverName())
+                .orElseThrow(() -> new DataNotFoundException());
 
         Note note = Note.builder()
             .receiver(receiver)
@@ -62,7 +64,7 @@ public class NoteService {
     @Transactional
     public void deleteNoteByReceiver(Long NoteId) {
         Member receiver = SecurityContextHolderUtil.getMember();
-        Note note = noteRepository.findById(NoteId).orElseThrow();
+        Note note = noteRepository.findById(NoteId).orElseThrow(() -> new DataNotFoundException());
 
         if (receiver.getId().equals(note.getReceiver().getId())) {
             note.deleteByReceiver();
@@ -110,7 +112,7 @@ public class NoteService {
     @Transactional
     public ReceivedNoteDetailResponse getReceivedNoteDetail(Long NoteId) {
         Member receiver = SecurityContextHolderUtil.getMember();
-        Note note = noteRepository.findById(NoteId).orElseThrow();
+        Note note = noteRepository.findById(NoteId).orElseThrow(() -> new DataNotFoundException());
 
         if(!receiver.getId().equals(note.getReceiver().getId())){
             throw new NoteForbiddenException(403, "본인이 수신하지 않은 쪽지 입니다.");
@@ -128,7 +130,7 @@ public class NoteService {
 
     public SentNoteDetailResponse getSentNoteDetail(Long NoteId) {
         Member sender = SecurityContextHolderUtil.getMember();
-        Note note = noteRepository.findById(NoteId).orElseThrow();
+        Note note = noteRepository.findById(NoteId).orElseThrow(() -> new DataNotFoundException());
 
         if (!sender.getId().equals(note.getSender().getId())) {
             throw new NoteForbiddenException(403, "본인이 발신하지 않은 쪽지 입니다.");
