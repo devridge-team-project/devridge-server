@@ -18,15 +18,15 @@ import org.devridge.api.domain.coffeechat.repository.CoffeeChatQuerydslRepositor
 import org.devridge.api.domain.coffeechat.repository.CoffeeChatRequestRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
-import org.devridge.api.exception.common.BadRequestException;
-import org.devridge.api.exception.common.DataNotFoundException;
+import org.devridge.api.common.exception.common.BadRequestException;
+import org.devridge.api.common.exception.common.DataNotFoundException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
+import static org.devridge.api.common.util.SecurityContextHolderUtil.getMemberId;
 
 @RequiredArgsConstructor
 @Service

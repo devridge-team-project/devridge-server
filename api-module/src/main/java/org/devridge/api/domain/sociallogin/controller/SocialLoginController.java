@@ -6,7 +6,7 @@ import org.devridge.api.domain.sociallogin.dto.request.SocialLoginSignUp;
 import org.devridge.api.domain.sociallogin.dto.response.SocialLoginRedirect;
 import org.devridge.api.domain.sociallogin.dto.response.SocialLoginResponse;
 import org.devridge.api.domain.sociallogin.service.SocialLoginService;
-import org.devridge.api.security.dto.TokenResponse;
+import org.devridge.api.common.security.dto.TokenResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

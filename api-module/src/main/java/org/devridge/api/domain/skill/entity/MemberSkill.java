@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.skill.entity.key.MemberSkillId;
-import org.devridge.common.entity.BaseTimeEntity;
+import org.devridge.api.common.entity.BaseTimeEntity;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;

@@ -17,14 +17,14 @@ import org.devridge.api.domain.qna.repository.QnACommentLikeDislikeRepository;
 import org.devridge.api.domain.qna.repository.QnACommentRepository;
 import org.devridge.api.domain.qna.repository.QnAQuerydslRepository;
 import org.devridge.api.domain.qna.repository.QnARepository;
-import org.devridge.api.exception.common.DataNotFoundException;
+import org.devridge.api.common.exception.common.DataNotFoundException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
+import static org.devridge.api.common.util.SecurityContextHolderUtil.getMemberId;
 
 @RequiredArgsConstructor
 @Service

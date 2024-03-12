@@ -6,7 +6,7 @@ import org.devridge.api.domain.coffeechat.entity.ChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
 import org.devridge.api.domain.coffeechat.entity.CoffeeChatRequest;
 import org.devridge.api.domain.member.entity.Member;
-import org.devridge.common.dto.FindWriterInformation;
+import org.devridge.api.common.dto.FindWriterInformation;
 
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static org.devridge.api.util.MemberUtil.toMember;
+import static org.devridge.api.common.util.MemberUtil.toMember;
 
 @Component
 public class CoffeeChatMapper {

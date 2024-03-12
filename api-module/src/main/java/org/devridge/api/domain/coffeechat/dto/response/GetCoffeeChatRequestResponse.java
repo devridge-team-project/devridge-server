@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import lombok.Getter;
 
-import org.devridge.common.dto.FindWriterInformation;
+import org.devridge.api.common.dto.FindWriterInformation;
 
 @Getter
 public class GetCoffeeChatRequestResponse {

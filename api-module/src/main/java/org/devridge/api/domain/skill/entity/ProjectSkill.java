@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.devridge.api.domain.community.entity.Project;
 import org.devridge.api.domain.skill.entity.key.ProjectSkillId;
-import org.devridge.common.entity.BaseTimeEntity;
+import org.devridge.api.common.entity.BaseTimeEntity;
 import org.hibernate.annotations.DynamicInsert;
 
 @Entity

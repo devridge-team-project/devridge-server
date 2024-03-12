@@ -12,8 +12,8 @@ import org.devridge.api.domain.community.repository.CommunityLikeDislikeReposito
 import org.devridge.api.domain.community.repository.CommunityRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.repository.MemberRepository;
-import org.devridge.api.exception.common.DataNotFoundException;
-import org.devridge.api.util.SecurityContextHolderUtil;
+import org.devridge.api.common.exception.common.DataNotFoundException;
+import org.devridge.api.common.util.SecurityContextHolderUtil;
 import org.springframework.stereotype.Service;
 
 @Service

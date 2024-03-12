@@ -18,7 +18,7 @@ import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.repository.QnAScrapRepository;
 import org.devridge.api.domain.s3.service.S3Service;
-import org.devridge.api.exception.common.DataNotFoundException;
+import org.devridge.api.common.exception.common.DataNotFoundException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.devridge.api.util.SecurityContextHolderUtil.getMemberId;
+import static org.devridge.api.common.util.SecurityContextHolderUtil.getMemberId;
 
 @RequiredArgsConstructor
 @Service

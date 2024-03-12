@@ -1,6 +1,6 @@
 package org.devridge.api.domain.emailverification.exception;
 
-import org.devridge.api.exception.common.BaseException;
+import org.devridge.api.common.exception.common.BaseException;
 
 public class EmailVerificationInvalidException extends BaseException {
 
