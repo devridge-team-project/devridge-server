@@ -91,6 +91,7 @@ public class ProjectParticipationNoteService {
                 ReceivedParticipationNoteListResponse.builder()
                     .sendMember(sendMember)
                     .receivedTime(projectParticipationNote.getCreatedAt())
+                    .isApproved(projectParticipationNote.getIsApproved())
                     .build()
             );
         }
