@@ -1,8 +1,10 @@
 package org.devridge.api.application.member;
 
 import lombok.RequiredArgsConstructor;
+
 import org.devridge.api.domain.member.dto.response.OccupationInformation;
 import org.devridge.api.infrastructure.member.OccupationRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;

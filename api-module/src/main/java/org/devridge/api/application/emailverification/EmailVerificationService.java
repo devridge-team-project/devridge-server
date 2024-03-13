@@ -1,17 +1,20 @@
 package org.devridge.api.application.emailverification;
 
 import lombok.RequiredArgsConstructor;
+
 import org.devridge.api.domain.emailverification.dto.request.SendEmailRequest;
 import org.devridge.api.domain.emailverification.entity.EmailVerification;
 import org.devridge.api.infrastructure.emailverification.EmailVerificationRepository;
 import org.devridge.api.domain.emailverification.exception.EmailVerificationInvalidException;
 import org.devridge.api.common.util.JwtUtil;
 import org.devridge.api.common.util.RandomGeneratorUtil;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 

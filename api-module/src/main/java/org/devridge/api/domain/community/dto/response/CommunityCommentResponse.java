@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.devridge.api.common.dto.UserInformation;
 
 
 @Builder
@@ -26,5 +27,5 @@ public class CommunityCommentResponse {
     private Long dislikeCount;
 
     @JsonProperty("member")
-    private MemberInfoResponse memberInfoResponse;
+    private UserInformation userInformation;
 }

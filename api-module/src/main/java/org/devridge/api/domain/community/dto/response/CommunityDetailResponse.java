@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
+import org.devridge.api.common.dto.UserInformation;
 
 @Builder
 @Getter
@@ -28,7 +29,7 @@ public class CommunityDetailResponse {
     private Long dislikeCount;
 
     @JsonProperty("member")
-    private MemberInfoResponse memberInfoResponse;
+    private UserInformation userInformation;
 
     private List<String> hashtags;
 }

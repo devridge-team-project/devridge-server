@@ -1,7 +1,9 @@
 package org.devridge.api.application.member;
 
 import io.jsonwebtoken.Claims;
+
 import lombok.RequiredArgsConstructor;
+
 import org.devridge.api.common.type.Role;
 import org.devridge.api.domain.emailverification.entity.EmailVerification;
 import org.devridge.api.domain.emailverification.exception.EmailVerificationInvalidException;
@@ -32,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
