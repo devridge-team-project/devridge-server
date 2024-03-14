@@ -1,9 +1,9 @@
 package org.devridge.api.domain.member.entity;
 
 import lombok.*;
-import org.devridge.api.constant.Role;
+import org.devridge.api.common.type.Role;
 import org.devridge.api.domain.skill.entity.MemberSkill;
-import org.devridge.common.entity.BaseEntity;
+import org.devridge.api.common.entity.BaseEntity;
 import org.hibernate.annotations.*;
 
 import javax.persistence.*;

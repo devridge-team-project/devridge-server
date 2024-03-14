@@ -3,7 +3,7 @@ package org.devridge.api.domain.qna.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.devridge.common.dto.FindWriterInformation;
+import org.devridge.api.common.dto.UserInformation;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class GetAllCommentByQnAId {
 
     private Long id;
-    private FindWriterInformation member;
+    private UserInformation member;
     private String content;
     private Integer likes;
     private Integer dislikes;

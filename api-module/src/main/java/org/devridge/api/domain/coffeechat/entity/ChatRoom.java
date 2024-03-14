@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import org.devridge.api.domain.member.entity.Member;
-import org.devridge.common.entity.BaseEntity;
+import org.devridge.api.common.entity.BaseEntity;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
