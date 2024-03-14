@@ -10,4 +10,5 @@ public class GetAllMyChatRoom {
 
     private Long id;
     private UserInformation member;
+    private String lastMessage;
 }

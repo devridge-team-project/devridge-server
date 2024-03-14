@@ -23,6 +23,7 @@ import org.devridge.api.common.exception.common.DataNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.devridge.api.common.util.SecurityContextHolderUtil.getMemberId;
@@ -47,16 +48,28 @@ public class CoffeeChatService {
         if (lastIndex == null) {
             Long maxId = chatRoomRepository.findMaxId(member).orElse(0L);
             List<ChatRoom> chatRooms = coffeeChatQuerydslRepository.findAllMyChatRoomByMemberId(maxId, member);
-            return coffeeChatMapper.toGetAllMyChatRooms(chatRooms, member);
+            List<ChatMessage> chatMessages = new ArrayList<>();
+
+            for (ChatRoom room : chatRooms) {
+                List<ChatMessage> message = coffeeChatQuerydslRepository.findLastChatMessageByChatRoomId(room);
+                if (message.size() > 0) chatMessages.add(message.get(0));
+            }
+            return coffeeChatMapper.toGetAllMyChatRooms(chatRooms, chatMessages, member);
         }
 
         List<ChatRoom> chatRooms = coffeeChatQuerydslRepository.findAllMyChatRoomByMemberId(lastIndex, member);
-        return coffeeChatMapper.toGetAllMyChatRooms(chatRooms, member);
+        List<ChatMessage> chatMessages = new ArrayList<>();
+
+        for (ChatRoom room : chatRooms) {
+            List<ChatMessage> message = coffeeChatQuerydslRepository.findLastChatMessageByChatRoomId(room);
+            if (message.size() > 0) chatMessages.add(message.get(0));
+        }
+
+        return coffeeChatMapper.toGetAllMyChatRooms(chatRooms, chatMessages, member);
     }
 
     @Transactional(readOnly = true)
     public List<GetAllChatMessage> getAllChatMessage(Long chatRoomId, Long lastIndex) {
-        // TODO: 내 채팅방이 아닌 경우 접근 금지 인터셉터 추가
         ChatRoom chatRoom = chatRoomRepository
                 .findById(chatRoomId)
                 .orElseThrow(DataNotFoundException::new);

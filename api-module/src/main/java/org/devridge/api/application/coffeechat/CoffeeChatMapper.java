@@ -19,7 +19,7 @@ import static org.devridge.api.common.util.MemberUtil.toMember;
 @Component
 public class CoffeeChatMapper {
 
-    public List<GetAllMyChatRoom> toGetAllMyChatRooms(List<ChatRoom> chatRooms, Member member) {
+    public List<GetAllMyChatRoom> toGetAllMyChatRooms(List<ChatRoom> chatRooms, List<ChatMessage> messages, Member member) {
         List<GetAllMyChatRoom> myChatRooms = new ArrayList<>();
 
         for (ChatRoom room : chatRooms) {
@@ -27,7 +27,15 @@ public class CoffeeChatMapper {
                     ? room.getSecondMember()
                     : room.getFirstMember();
 
-            myChatRooms.add(new GetAllMyChatRoom(room.getId(), toMember(otherMember)));
+            String lastMessage = otherMember.getNickname() + "님과 즐거운 대화를 나눠보세요!";
+            for (ChatMessage message : messages) {
+                if (room.getId() == message.getChatRoom().getId()) {
+                    lastMessage = message.getContent();
+                    break;
+                }
+            }
+
+            myChatRooms.add(new GetAllMyChatRoom(room.getId(), toMember(otherMember), lastMessage));
         }
 
         return myChatRooms;
