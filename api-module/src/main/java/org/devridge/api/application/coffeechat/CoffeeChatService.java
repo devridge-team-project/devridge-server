@@ -48,24 +48,25 @@ public class CoffeeChatService {
         if (lastIndex == null) {
             Long maxId = chatRoomRepository.findMaxId(member).orElse(0L);
             List<ChatRoom> chatRooms = coffeeChatQuerydslRepository.findAllMyChatRoomByMemberId(maxId, member);
-            List<ChatMessage> chatMessages = new ArrayList<>();
-
-            for (ChatRoom room : chatRooms) {
-                List<ChatMessage> message = coffeeChatQuerydslRepository.findLastChatMessageByChatRoomId(room);
-                if (message.size() > 0) chatMessages.add(message.get(0));
-            }
+            List<ChatMessage> chatMessages = this.getLastChatMessages(chatRooms);
             return coffeeChatMapper.toGetAllMyChatRooms(chatRooms, chatMessages, member);
         }
 
         List<ChatRoom> chatRooms = coffeeChatQuerydslRepository.findAllMyChatRoomByMemberId(lastIndex, member);
+        List<ChatMessage> chatMessages = this.getLastChatMessages(chatRooms);
+        return coffeeChatMapper.toGetAllMyChatRooms(chatRooms, chatMessages, member);
+    }
+
+    private List<ChatMessage> getLastChatMessages(List<ChatRoom> chatRooms) {
         List<ChatMessage> chatMessages = new ArrayList<>();
 
+        // TODO: 반복계 쿼리 리팩토링
         for (ChatRoom room : chatRooms) {
             List<ChatMessage> message = coffeeChatQuerydslRepository.findLastChatMessageByChatRoomId(room);
             if (message.size() > 0) chatMessages.add(message.get(0));
         }
 
-        return coffeeChatMapper.toGetAllMyChatRooms(chatRooms, chatMessages, member);
+        return chatMessages;
     }
 
     @Transactional(readOnly = true)

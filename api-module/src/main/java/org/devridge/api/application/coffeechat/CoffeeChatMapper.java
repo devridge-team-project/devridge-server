@@ -21,31 +21,23 @@ import static org.devridge.api.common.util.MemberUtil.toMember;
 @Component
 public class CoffeeChatMapper {
 
-    public List<GetAllMyChatRoom> toGetAllMyChatRooms(List<ChatRoom> chatRooms, List<ChatMessage> messages, Member member) {
+    public List<GetAllMyChatRoom> toGetAllMyChatRooms(
+        List<ChatRoom> chatRooms,
+        List<ChatMessage> messages,
+        Member member
+    ) {
         List<GetAllMyChatRoom> myChatRooms = new ArrayList<>();
 
         for (ChatRoom room : chatRooms) {
             Member otherMember = Objects.equals(room.getFirstMember().getId(), member.getId())
-                    ? room.getSecondMember()
-                    : room.getFirstMember();
+                ? room.getSecondMember()
+                : room.getFirstMember();
 
-            String lastMessage = otherMember.getNickname() + "님과 즐거운 대화를 나눠보세요!";
-            LocalDateTime createdAt = room.getCreatedAt();
-            LocalDateTime updatedAt = room.getUpdatedAt();
-            for (ChatMessage message : messages) {
-                if (Objects.equals(room.getId(), message.getChatRoom().getId())) {
-                    lastMessage = message.getContent();
-                    createdAt = message.getCreatedAt();
-                    updatedAt = message.getUpdatedAt();
-                    break;
-                }
-            }
-
-            LastMessageInformation lastMessageInformation = LastMessageInformation.builder()
-                .message(lastMessage)
-                .createdAt(createdAt)
-                .updateAt(updatedAt)
-                .build();
+            LastMessageInformation lastMessageInformation = this.getLastMessageInformation(
+                messages,
+                otherMember.getNickname(),
+                room
+            );
 
             myChatRooms.add(
                 GetAllMyChatRoom.builder()
@@ -57,6 +49,28 @@ public class CoffeeChatMapper {
         }
 
         return myChatRooms;
+    }
+
+    private LastMessageInformation getLastMessageInformation(List<ChatMessage> messages, String nickname, ChatRoom room) {
+        /* default information value */
+        String lastMessage = nickname + "님과 즐거운 대화를 나눠보세요!";
+        LocalDateTime createdAt = room.getCreatedAt();
+        LocalDateTime updatedAt = room.getUpdatedAt();
+
+        for (ChatMessage message : messages) {
+            if (Objects.equals(room.getId(), message.getChatRoom().getId())) {
+                lastMessage = message.getContent();
+                createdAt = message.getCreatedAt();
+                updatedAt = message.getUpdatedAt();
+                break;
+            }
+        }
+
+        return LastMessageInformation.builder()
+            .message(lastMessage)
+            .createdAt(createdAt)
+            .updateAt(updatedAt)
+            .build();
     }
 
     public List<GetAllChatMessage> toGetAllChatMessage(List<ChatMessage> chatMessages) {
