@@ -11,6 +11,7 @@ import org.devridge.api.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -66,7 +67,9 @@ public class CoffeeChatMapper {
                 new GetAllChatMessage(
                     message.getId(),
                     toMember(message.getMember()),
-                    message.getContent()
+                    message.getContent(),
+                    message.getCreatedAt(),
+                    message.getUpdatedAt()
                 )
             );
         }
@@ -154,6 +157,13 @@ public class CoffeeChatMapper {
 
     public GetAllChatMessage toGetChatMessage(ChatMessage message) {
         UserInformation member = toMember(message.getMember());
-        return new GetAllChatMessage(message.getId(), member, message.getContent());
+
+        return new GetAllChatMessage(
+            message.getId(),
+            member,
+            message.getContent(),
+            message.getCreatedAt(),
+            message.getUpdatedAt()
+        );
     }
 }

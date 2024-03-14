@@ -5,6 +5,8 @@ import lombok.Getter;
 
 import org.devridge.api.common.dto.UserInformation;
 
+import java.time.LocalDateTime;
+
 @Getter
 @AllArgsConstructor
 public class GetAllChatMessage {
@@ -12,4 +14,6 @@ public class GetAllChatMessage {
     private Long id;
     private UserInformation member;
     private String content;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
