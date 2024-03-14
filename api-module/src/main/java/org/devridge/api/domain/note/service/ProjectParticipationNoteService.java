@@ -171,4 +171,17 @@ public class ProjectParticipationNoteService {
         }
         return checkLastPage(pageable, sentParticipationNoteListResponses);
     }
+
+    @Transactional
+    public void participationApproval(Long participationNoteId, Boolean approve) {
+        Member receiver = SecurityContextHolderUtil.getMember();
+        ProjectParticipationNote participationNote = projectParticipationNoteRepository.findById(participationNoteId)
+            .orElseThrow(() -> new DataNotFoundException());
+
+        if (!receiver.getId().equals(participationNote.getReceiver().getId())) {
+            throw new ParticipationNoteForbiddenException(403, "본인에게 온 요청이 아닙니다.");
+        }
+
+        participationNote.updateIsApproved(approve);
+    }
 }

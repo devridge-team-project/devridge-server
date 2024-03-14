@@ -85,4 +85,13 @@ public class ProjectParticipationNoteController {
             projectParticipationNoteService.getAllSentParticipationNote(pageable, lastId);
         return ResponseEntity.ok().body(sentParticipationNoteListResponses);
     }
+
+    @PostMapping("/projects/{participationNoteId}")
+    public ResponseEntity<Void> participationApproval(
+        @PathVariable Long participationNoteId,
+        @RequestParam Boolean approve
+    ) {
+        projectParticipationNoteService.participationApproval(participationNoteId, approve);
+        return ResponseEntity.ok().build();
+    }
 }

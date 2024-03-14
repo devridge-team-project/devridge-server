@@ -81,4 +81,13 @@ public class ProjectParticipationNote extends BaseEntity {
     public void updateReadAt() {
         this.readAt = LocalDateTime.now();
     }
+
+    public void updateIsApproved(Boolean result) {
+        if (result) {
+            this.isApproved = true;
+        }
+        if (!result) {
+            this.isApproved = false;
+        }
+    }
 }
