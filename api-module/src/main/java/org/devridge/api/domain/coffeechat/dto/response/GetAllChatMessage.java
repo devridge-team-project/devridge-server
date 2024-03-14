@@ -13,7 +13,7 @@ public class GetAllChatMessage {
 
     private Long id;
     private UserInformation member;
-    private String content;
+    private String message;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
