@@ -10,6 +10,7 @@ import org.devridge.api.domain.member.entity.Member;
 
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,14 +29,30 @@ public class CoffeeChatMapper {
                     : room.getFirstMember();
 
             String lastMessage = otherMember.getNickname() + "님과 즐거운 대화를 나눠보세요!";
+            LocalDateTime createdAt = room.getCreatedAt();
+            LocalDateTime updatedAt = room.getUpdatedAt();
             for (ChatMessage message : messages) {
-                if (room.getId() == message.getChatRoom().getId()) {
+                if (Objects.equals(room.getId(), message.getChatRoom().getId())) {
                     lastMessage = message.getContent();
+                    createdAt = message.getCreatedAt();
+                    updatedAt = message.getUpdatedAt();
                     break;
                 }
             }
 
-            myChatRooms.add(new GetAllMyChatRoom(room.getId(), toMember(otherMember), lastMessage));
+            LastMessageInformation lastMessageInformation = LastMessageInformation.builder()
+                .message(lastMessage)
+                .createdAt(createdAt)
+                .updateAt(updatedAt)
+                .build();
+
+            myChatRooms.add(
+                GetAllMyChatRoom.builder()
+                    .id(room.getId())
+                    .member(toMember(otherMember))
+                    .lastMessage(lastMessageInformation)
+                    .build()
+            );
         }
 
         return myChatRooms;
