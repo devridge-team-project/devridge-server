@@ -1,4 +1,4 @@
-package org.devridge.api.domain.note.repository;
+package org.devridge.api.infrastructure.note;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;

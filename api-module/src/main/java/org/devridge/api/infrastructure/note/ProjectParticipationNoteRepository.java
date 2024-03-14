@@ -1,4 +1,4 @@
-package org.devridge.api.domain.note.repository;
+package org.devridge.api.infrastructure.note;
 
 import org.devridge.api.domain.note.entity.ProjectParticipationNote;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,15 +1,15 @@
-package org.devridge.api.domain.note.service;
+package org.devridge.api.application.note;
 
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.devridge.api.domain.community.dto.response.MemberInfoResponse;
+import org.devridge.api.common.dto.UserInformation;
+import org.devridge.api.common.exception.common.DataNotFoundException;
+import org.devridge.api.common.util.MemberUtil;
+import org.devridge.api.common.util.SecurityContextHolderUtil;
 import org.devridge.api.domain.community.entity.Project;
-import org.devridge.api.domain.community.mapper.MemberInfoMapper;
-import org.devridge.api.domain.community.repository.ProjectRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.exception.MemberNotFoundException;
-import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.note.dto.request.ProjectParticipationNoteRequest;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
@@ -17,10 +17,10 @@ import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResp
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteListResponse;
 import org.devridge.api.domain.note.entity.ProjectParticipationNote;
 import org.devridge.api.domain.note.exception.ParticipationNoteForbiddenException;
-import org.devridge.api.domain.note.repository.ParticipationNoteQuerydslRepository;
-import org.devridge.api.domain.note.repository.ProjectParticipationNoteRepository;
-import org.devridge.api.exception.common.DataNotFoundException;
-import org.devridge.api.util.SecurityContextHolderUtil;
+import org.devridge.api.infrastructure.community.project.ProjectRepository;
+import org.devridge.api.infrastructure.member.MemberRepository;
+import org.devridge.api.infrastructure.note.ParticipationNoteQuerydslRepository;
+import org.devridge.api.infrastructure.note.ProjectParticipationNoteRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -34,7 +34,6 @@ public class ProjectParticipationNoteService {
     private final ProjectParticipationNoteRepository projectParticipationNoteRepository;
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
-    private final MemberInfoMapper memberInfoMapper;
     private final ParticipationNoteQuerydslRepository participationNoteQuerydslRepository;
 
     public Long createRequestNote(Long projectId, ProjectParticipationNoteRequest participationNoteRequest) { // 프로젝트 아이디 필요, 내용필요, 보낸는사람 필요, 받을 사람 필요,
@@ -64,7 +63,7 @@ public class ProjectParticipationNoteService {
         }
 
         Project project = projectRepository.findById(participationNote.getProject().getId()).orElseThrow(() -> new DataNotFoundException());
-        MemberInfoResponse senderInfo = memberInfoMapper.toMemberInfoResponse(participationNote.getSender());
+        UserInformation senderInfo = MemberUtil.toMember(participationNote.getSender());
         participationNote.updateReadAt();
 
         return ReceivedParticipationNoteDetailResponse.builder()
@@ -81,7 +80,7 @@ public class ProjectParticipationNoteService {
         List<ReceivedParticipationNoteListResponse> receivedParticipationNoteListResponses = new ArrayList<>();
 
         for (ProjectParticipationNote projectParticipationNote : projectParticipationNotes) {
-            MemberInfoResponse sendMember = memberInfoMapper.toMemberInfoResponse(projectParticipationNote.getSender());
+            UserInformation sendMember = MemberUtil.toMember(projectParticipationNote.getSender());
             receivedParticipationNoteListResponses.add(
                 ReceivedParticipationNoteListResponse.builder()
                     .sendMember(sendMember)
@@ -143,7 +142,7 @@ public class ProjectParticipationNoteService {
         }
 
         Project project = projectRepository.findById(participationNote.getProject().getId()).orElseThrow(() -> new DataNotFoundException());
-        MemberInfoResponse receiverInfo = memberInfoMapper.toMemberInfoResponse(participationNote.getReceiver());
+        UserInformation receiverInfo = MemberUtil.toMember(participationNote.getReceiver());
 
         return SentParticipationNoteDetailResponse.builder()
             .receiveMember(receiverInfo)
@@ -160,7 +159,7 @@ public class ProjectParticipationNoteService {
         List<SentParticipationNoteListResponse> sentParticipationNoteListResponses = new ArrayList<>();
 
         for (ProjectParticipationNote projectParticipationNote : projectParticipationNotes) {
-            MemberInfoResponse receiveMember = memberInfoMapper.toMemberInfoResponse(projectParticipationNote.getReceiver());
+            UserInformation receiveMember = MemberUtil.toMember(projectParticipationNote.getReceiver());
             sentParticipationNoteListResponses.add(
                 SentParticipationNoteListResponse.builder()
                     .receiveMember(receiveMember)

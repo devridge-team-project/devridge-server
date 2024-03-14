@@ -8,7 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.response.CommunitySliceResponse;
-import org.devridge.api.domain.community.dto.response.MemberInfoResponse;
+import org.devridge.api.domain.community.dto.response.UserInformation;
 import org.devridge.api.domain.community.entity.CommunityHashtag;
 import org.devridge.api.domain.community.entity.QCommunity;
 import org.devridge.api.domain.community.entity.QCommunityHashtag;
@@ -50,7 +50,7 @@ public class CommunityQuerydslRepository {
                         community.likeCount,
                         community.comments.size().longValue().as("comments"),
                         Projections.constructor(
-                            MemberInfoResponse.class,
+                            UserInformation.class,
                             Expressions.cases()
                                 .when(community.member.nickname.isNull())
                                 .then(0L)

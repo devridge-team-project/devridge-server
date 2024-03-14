@@ -1,4 +1,4 @@
-package org.devridge.api.domain.note.controller;
+package org.devridge.api.presentation.controller.note;
 
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,7 @@ import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetail
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteListResponse;
-import org.devridge.api.domain.note.service.ProjectParticipationNoteService;
+import org.devridge.api.application.note.ProjectParticipationNoteService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;

@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class MemberInfoResponse {
+public class UserInformation {
 
     @JsonProperty("id")
     private Long memberId;

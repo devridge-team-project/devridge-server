@@ -1,4 +1,4 @@
-package org.devridge.api.domain.note.repository;
+package org.devridge.api.infrastructure.note;
 
 import java.util.List;
 import org.devridge.api.domain.member.entity.Member;

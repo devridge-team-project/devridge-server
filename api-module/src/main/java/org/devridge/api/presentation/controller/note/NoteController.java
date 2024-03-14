@@ -1,4 +1,4 @@
-package org.devridge.api.domain.note.controller;
+package org.devridge.api.presentation.controller.note;
 
 import java.net.URI;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.devridge.api.domain.note.dto.response.NoteResponse;
 import org.devridge.api.domain.note.dto.response.NoteSenderResponse;
 import org.devridge.api.domain.note.dto.response.ReceivedNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.SentNoteDetailResponse;
-import org.devridge.api.domain.note.service.NoteService;
+import org.devridge.api.application.note.NoteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

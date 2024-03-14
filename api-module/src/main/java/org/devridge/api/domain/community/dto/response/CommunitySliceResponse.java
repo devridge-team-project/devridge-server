@@ -11,7 +11,7 @@ public class CommunitySliceResponse {
     private Long viewCount;
     private Long likeCount;
     private Long comments;
-    private MemberInfoResponse member;
+    private UserInformation member;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<HashtagResponse> hashtags;

@@ -1,10 +1,11 @@
-package org.devridge.api.domain.note.service;
+package org.devridge.api.application.note;
 
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.devridge.api.common.exception.common.DataNotFoundException;
+import org.devridge.api.common.util.SecurityContextHolderUtil;
 import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.domain.member.repository.MemberRepository;
 import org.devridge.api.domain.note.dto.request.NoteRequest;
 import org.devridge.api.domain.note.dto.response.NoteResponse;
 import org.devridge.api.domain.note.dto.response.NoteSenderResponse;
@@ -12,9 +13,8 @@ import org.devridge.api.domain.note.dto.response.ReceivedNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.SentNoteDetailResponse;
 import org.devridge.api.domain.note.entity.Note;
 import org.devridge.api.domain.note.exception.NoteForbiddenException;
-import org.devridge.api.domain.note.repository.NoteRepository;
-import org.devridge.api.exception.common.DataNotFoundException;
-import org.devridge.api.util.SecurityContextHolderUtil;
+import org.devridge.api.infrastructure.member.MemberRepository;
+import org.devridge.api.infrastructure.note.NoteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
