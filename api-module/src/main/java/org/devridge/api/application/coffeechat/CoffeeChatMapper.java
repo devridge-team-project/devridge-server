@@ -23,11 +23,11 @@ public class CoffeeChatMapper {
         List<GetAllMyChatRoom> myChatRooms = new ArrayList<>();
 
         for (ChatRoom room : chatRooms) {
-            String title = Objects.equals(room.getFirstMember().getId(), member.getId())
-                    ? room.getSecondMember().getNickname()
-                    : room.getFirstMember().getNickname();
+            Member otherMember = Objects.equals(room.getFirstMember().getId(), member.getId())
+                    ? room.getSecondMember()
+                    : room.getFirstMember();
 
-            myChatRooms.add(new GetAllMyChatRoom(room.getId(), title));
+            myChatRooms.add(new GetAllMyChatRoom(room.getId(), toMember(otherMember)));
         }
 
         return myChatRooms;
