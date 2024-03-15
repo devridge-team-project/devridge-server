@@ -2,12 +2,13 @@ package org.devridge.api.presentation.controller.note;
 
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import org.devridge.api.application.note.ProjectParticipationNoteService;
 import org.devridge.api.domain.note.dto.request.ProjectParticipationNoteRequest;
+import org.devridge.api.domain.note.dto.request.StudyParticipationNoteRequest;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteListResponse;
-import org.devridge.api.application.note.ProjectParticipationNoteService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,7 @@ public class ProjectParticipationNoteController {
         @PathVariable Long participationNoteId
     ) {
         ReceivedParticipationNoteDetailResponse receivedParticipationNoteDetailResponse =
-                projectParticipationNoteService.getReceivedParticipationNoteDetail(participationNoteId);
+            projectParticipationNoteService.getReceivedParticipationNoteDetail(participationNoteId);
         return ResponseEntity.ok().body(receivedParticipationNoteDetailResponse);
     }
 
@@ -51,7 +52,7 @@ public class ProjectParticipationNoteController {
         Pageable pageable
     ) {
         Slice<ReceivedParticipationNoteListResponse> receivedParticipationNoteListResponses =
-                projectParticipationNoteService.getAllReceivedParticipationNote(pageable, lastId);
+            projectParticipationNoteService.getAllReceivedParticipationNote(pageable, lastId);
         return ResponseEntity.ok().body(receivedParticipationNoteListResponses);
     }
 
@@ -93,5 +94,14 @@ public class ProjectParticipationNoteController {
     ) {
         projectParticipationNoteService.participationApproval(participationNoteId, approve);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/studies/{studyId}")
+    public ResponseEntity<Void> createStudyRequestNote(
+        @PathVariable Long studyId,
+        @RequestBody StudyParticipationNoteRequest participationNoteRequest
+    ) {
+        Long studyRequestNoteId =  projectParticipationNoteService.createStudyRequestNote(studyId, participationNoteRequest);
+        return ResponseEntity.created(URI.create("/api/notes/participation/studies/" + studyRequestNoteId)).build();
     }
 }

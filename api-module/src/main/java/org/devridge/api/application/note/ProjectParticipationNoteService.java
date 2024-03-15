@@ -8,19 +8,24 @@ import org.devridge.api.common.exception.common.DataNotFoundException;
 import org.devridge.api.common.util.MemberUtil;
 import org.devridge.api.common.util.SecurityContextHolderUtil;
 import org.devridge.api.domain.community.entity.Project;
+import org.devridge.api.domain.community.entity.Study;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.exception.MemberNotFoundException;
 import org.devridge.api.domain.note.dto.request.ProjectParticipationNoteRequest;
+import org.devridge.api.domain.note.dto.request.StudyParticipationNoteRequest;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteListResponse;
 import org.devridge.api.domain.note.entity.ProjectParticipationNote;
+import org.devridge.api.domain.note.entity.StudyParticipationNote;
 import org.devridge.api.domain.note.exception.ParticipationNoteForbiddenException;
 import org.devridge.api.infrastructure.community.project.ProjectRepository;
+import org.devridge.api.infrastructure.community.study.StudyRepository;
 import org.devridge.api.infrastructure.member.MemberRepository;
 import org.devridge.api.infrastructure.note.ParticipationNoteQuerydslRepository;
 import org.devridge.api.infrastructure.note.ProjectParticipationNoteRepository;
+import org.devridge.api.infrastructure.note.StudyParticipationNoteRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -35,6 +40,8 @@ public class ProjectParticipationNoteService {
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
     private final ParticipationNoteQuerydslRepository participationNoteQuerydslRepository;
+    private final StudyParticipationNoteRepository studyParticipationNoteRepository;
+    private final StudyRepository studyRepository;
 
     public Long createRequestNote(Long projectId, ProjectParticipationNoteRequest participationNoteRequest) { // 프로젝트 아이디 필요, 내용필요, 보낸는사람 필요, 받을 사람 필요,
         Member sender = SecurityContextHolderUtil.getMember();
@@ -182,5 +189,21 @@ public class ProjectParticipationNoteService {
         }
 
         participationNote.updateIsApproved(approve);
+    }
+
+    public Long createStudyRequestNote(Long studyId, StudyParticipationNoteRequest participationNoteRequest) {
+        Member sender = SecurityContextHolderUtil.getMember();
+        Study study = studyRepository.findById(studyId).orElseThrow(() -> new DataNotFoundException());
+        Member receiver = memberRepository.findById(study.getMember().getId())
+                .orElseThrow(() -> new MemberNotFoundException(403, "탈퇴한 회원입니다."));
+
+        StudyParticipationNote studyParticipationNote = StudyParticipationNote.builder()
+                .study(study)
+                .receiver(receiver)
+                .sender(sender)
+                .content(participationNoteRequest.getContent())
+                .build();
+
+        return studyParticipationNoteRepository.save(studyParticipationNote).getId();
     }
 }
