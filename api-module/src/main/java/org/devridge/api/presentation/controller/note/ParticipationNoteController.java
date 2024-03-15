@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/notes/participation")
-public class ProjectParticipationNoteController {
+public class ParticipationNoteController {
 
     private final ParticipationNoteService participationNoteService;
 
