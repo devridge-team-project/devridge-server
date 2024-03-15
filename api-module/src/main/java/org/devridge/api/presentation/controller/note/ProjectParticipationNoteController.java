@@ -113,4 +113,10 @@ public class ProjectParticipationNoteController {
             participationNoteService.getReceivedStudyParticipationNoteDetail(participationNoteId);
         return ResponseEntity.ok().body(receivedParticipationNoteDetailResponse);
     }
+
+    @DeleteMapping("/studies/receive/{participationNoteId}")
+    public ResponseEntity<Void> deleteStudyParticipationNoteByReceiver(@PathVariable Long participationNoteId) {
+        participationNoteService.deleteStudyParticipationNoteByReceiver(participationNoteId);
+        return ResponseEntity.ok().build();
+    }
 }

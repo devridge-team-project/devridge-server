@@ -227,4 +227,18 @@ public class ParticipationNoteService {
             .receiveTime(participationNote.getCreatedAt())
             .build();
     }
+
+    @Transactional
+    public void deleteStudyParticipationNoteByReceiver(Long participationNoteId) {
+        Member receiver = SecurityContextHolderUtil.getMember();
+        StudyParticipationNote studyParticipationNote =
+            studyParticipationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
+
+        if (receiver.getId().equals(studyParticipationNote.getReceiver().getId())) {
+            studyParticipationNote.deleteByReceiver();
+            if (studyParticipationNote.isDeleted()) {
+                studyParticipationNoteRepository.delete(studyParticipationNote);
+            }
+        }
+    }
 }
