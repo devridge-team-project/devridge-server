@@ -119,4 +119,10 @@ public class ProjectParticipationNoteController {
         participationNoteService.deleteStudyParticipationNoteByReceiver(participationNoteId);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/studies/send/{participationNoteId}")
+    public ResponseEntity<Void> deleteStudyParticipationNoteBySender(@PathVariable Long participationNoteId) {
+        participationNoteService.deleteStudyParticipationNoteBySender(participationNoteId);
+        return ResponseEntity.ok().build();
+    }
 }

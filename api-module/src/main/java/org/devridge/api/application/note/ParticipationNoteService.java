@@ -241,4 +241,18 @@ public class ParticipationNoteService {
             }
         }
     }
+
+    @Transactional
+    public void deleteStudyParticipationNoteBySender(Long participationNoteId) {
+        Member sender = SecurityContextHolderUtil.getMember();
+        StudyParticipationNote studyParticipationNote =
+            studyParticipationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
+
+        if (sender.getId().equals(studyParticipationNote.getSender().getId())) {
+            studyParticipationNote.deleteBySender();
+            if (studyParticipationNote.isDeleted()) {
+                studyParticipationNoteRepository.delete(studyParticipationNote);
+            }
+        }
+    }
 }
