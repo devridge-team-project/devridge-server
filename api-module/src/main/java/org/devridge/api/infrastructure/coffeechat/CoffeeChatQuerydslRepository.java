@@ -34,6 +34,15 @@ public class CoffeeChatQuerydslRepository {
             .fetch();
     }
 
+    public List<ChatMessage> findLastChatMessageByChatRoomId(ChatRoom chatRoom) {
+        return jpaQueryFactory
+            .selectFrom(qChatMessage)
+            .where(qChatMessage.chatRoom.eq(chatRoom))
+            .orderBy(qChatMessage.id.desc())
+            .limit(1)
+            .fetch();
+    }
+
     public List<ChatMessage> findAllChatMessagesByChatRoomId(Long lastIndex, ChatRoom chatRoom) {
         return jpaQueryFactory
             .selectFrom(qChatMessage)
