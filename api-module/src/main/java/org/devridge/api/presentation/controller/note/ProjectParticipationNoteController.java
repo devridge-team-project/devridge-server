@@ -104,4 +104,13 @@ public class ProjectParticipationNoteController {
         Long studyRequestNoteId =  participationNoteService.createStudyRequestNote(studyId, participationNoteRequest);
         return ResponseEntity.created(URI.create("/api/notes/participation/studies/" + studyRequestNoteId)).build();
     }
+
+    @GetMapping("/studies/{participationNoteId}")
+    public ResponseEntity<ReceivedParticipationNoteDetailResponse> getReceivedStudyParticipationNoteDetail(
+        @PathVariable Long participationNoteId
+    ) {
+        ReceivedParticipationNoteDetailResponse receivedParticipationNoteDetailResponse =
+            participationNoteService.getReceivedStudyParticipationNoteDetail(participationNoteId);
+        return ResponseEntity.ok().body(receivedParticipationNoteDetailResponse);
+    }
 }

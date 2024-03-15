@@ -206,4 +206,25 @@ public class ParticipationNoteService {
 
         return studyParticipationNoteRepository.save(studyParticipationNote).getId();
     }
+
+    @Transactional
+    public ReceivedParticipationNoteDetailResponse getReceivedStudyParticipationNoteDetail(Long participationNoteId) {
+        Member receiver = SecurityContextHolderUtil.getMember();
+        StudyParticipationNote participationNote = studyParticipationNoteRepository.findById(participationNoteId)
+                .orElseThrow(() -> new DataNotFoundException());
+
+        if (!receiver.getId().equals(participationNote.getReceiver().getId())) {
+            throw new ParticipationNoteForbiddenException(403, "회원님이 받은 요청이 아닙니다.");
+        }
+
+        Study study = studyRepository.findById(participationNote.getStudy().getId()).orElseThrow(() -> new DataNotFoundException());
+        UserInformation senderInfo = MemberUtil.toMember(participationNote.getSender());
+        participationNote.updateReadAt();
+
+        return ReceivedParticipationNoteDetailResponse.builder()
+            .sendMember(senderInfo)
+            .content(participationNote.getContent())
+            .receiveTime(participationNote.getCreatedAt())
+            .build();
+    }
 }
