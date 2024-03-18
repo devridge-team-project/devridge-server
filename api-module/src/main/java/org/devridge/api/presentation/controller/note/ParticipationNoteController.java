@@ -69,12 +69,13 @@ public class ParticipationNoteController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/project/send/{participationNoteId}")
-    public ResponseEntity<SentParticipationNoteDetailResponse> getSentParticipationNoteDetail(
+    @GetMapping("/send/project/{projectId}/participation/{participationNoteId}")
+    public ResponseEntity<SentParticipationNoteDetailResponse> getSentProjectParticipationNoteDetail(
+        @PathVariable Long projectId,
         @PathVariable Long participationNoteId
     ) {
         SentParticipationNoteDetailResponse sentParticipationNoteDetailResponse =
-            participationNoteService.getSentParticipationNoteDetail(participationNoteId);
+                participationNoteService.getSentProjectParticipationNoteDetail(projectId, participationNoteId);
         return ResponseEntity.ok().body(sentParticipationNoteDetailResponse);
     }
 
