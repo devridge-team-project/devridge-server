@@ -23,17 +23,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/notes/participation")
+@RequestMapping("/api/notes")
 public class ParticipationNoteController {
 
     private final ParticipationNoteService participationNoteService;
 
-    @PostMapping("/project/{projectId}")
-    public ResponseEntity<Void> createRequestNote(
+    @PostMapping("/project/{projectId}/participation")
+    public ResponseEntity<Void> createProjectParticipationNote(
         @PathVariable Long projectId,
         @RequestBody ProjectParticipationNoteRequest participationNoteRequest
     ) {
-        Long projectRequestNote = participationNoteService.createRequestNote(projectId, participationNoteRequest);
+        Long projectRequestNote = participationNoteService.createProjectParticipationNote(projectId, participationNoteRequest);
         return ResponseEntity.created(URI.create("/api/notes/participation/project/" + projectRequestNote)).build();
     }
 

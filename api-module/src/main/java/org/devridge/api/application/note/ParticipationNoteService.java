@@ -42,21 +42,26 @@ public class ParticipationNoteService {
     private final ParticipationNoteQuerydslRepository participationNoteQuerydslRepository;
     private final StudyParticipationNoteRepository studyParticipationNoteRepository;
     private final StudyRepository studyRepository;
+    private final ParticipationNoteRepository participationNoteRepository;
 
-    public Long createRequestNote(Long projectId, ProjectParticipationNoteRequest participationNoteRequest) { // 프로젝트 아이디 필요, 내용필요, 보낸는사람 필요, 받을 사람 필요,
+    public Long createProjectParticipationNote(Long projectId, ProjectParticipationNoteRequest participationNoteRequest) {
         Member sender = SecurityContextHolderUtil.getMember();
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new DataNotFoundException());
         Member receiver = memberRepository.findById(project.getMember().getId())
                 .orElseThrow(() -> new MemberNotFoundException(403, "탈퇴한 회원입니다."));
 
-        ProjectParticipationNote projectParticipationNote = ProjectParticipationNote.builder()
-            .project(project)
-            .receiver(receiver)
-            .sender(sender)
-            .content(participationNoteRequest.getContent())
-            .build();
+        if (receiver.getId().equals(project.getMember().getId())) {
+            throw new ParticipationNoteForbiddenException(403, "본인이 모집한 프로젝트에 신청할 수 없습니다.");
+        }
 
-        return projectParticipationNoteRepository.save(projectParticipationNote).getId();
+        ParticipationNote participationNote = ParticipationNote.builder()
+                .project(project)
+                .receiver(receiver)
+                .sender(sender)
+                .content(participationNoteRequest.getContent())
+                .build();
+
+        return participationNoteRepository.save(participationNote).getId();
     }
 
     @Transactional
