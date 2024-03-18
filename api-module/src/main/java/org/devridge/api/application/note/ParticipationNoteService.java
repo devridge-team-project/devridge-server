@@ -1,6 +1,5 @@
 package org.devridge.api.application.note;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.common.dto.UserInformation;
@@ -155,21 +154,9 @@ public class ParticipationNoteService {
 
     public Slice<SentParticipationNoteListResponse> getAllSentParticipationNote(Pageable pageable, Long lastId) {
         Member sender = SecurityContextHolderUtil.getMember();
-        List<ProjectParticipationNote> projectParticipationNotes =
-            participationNoteQuerydslRepository.findSenderSortByProjectParticipationNote(lastId, sender.getId(), pageable);
-        List<SentParticipationNoteListResponse> sentParticipationNoteListResponses = new ArrayList<>();
-
-        for (ProjectParticipationNote projectParticipationNote : projectParticipationNotes) {
-            UserInformation receiveMember = MemberUtil.toMember(projectParticipationNote.getReceiver());
-            sentParticipationNoteListResponses.add(
-                SentParticipationNoteListResponse.builder()
-                    .receiveMember(receiveMember)
-                    .sentTime(projectParticipationNote.getCreatedAt())
-                    .isApproved(projectParticipationNote.getIsApproved())
-                    .build()
-            );
-        }
-        return checkLastPage(pageable, sentParticipationNoteListResponses);
+        List<SentParticipationNoteListResponse> participationNotes =
+                participationNoteQuerydslRepository.findAllSentParticipationNoteListResponses(lastId, sender.getId(), pageable);
+        return checkLastPage(pageable, participationNotes);
     }
 
     @Transactional

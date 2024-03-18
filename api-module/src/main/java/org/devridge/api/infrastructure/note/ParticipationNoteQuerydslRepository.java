@@ -1,5 +1,6 @@
 package org.devridge.api.infrastructure.note;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -45,12 +46,28 @@ public class ParticipationNoteQuerydslRepository {
             .fetch();
     }
 
-    public List<ProjectParticipationNote> findSenderSortByProjectParticipationNote(Long lastId, Long senderId, Pageable pageable) {
+    public List<SentParticipationNoteListResponse> findAllSentParticipationNoteListResponses(Long lastId,
+            Long senderId, Pageable pageable) {
         return jpaQueryFactory
-            .selectFrom(projectParticipationNote)
-            .where(projectParticipationNote.sender.id.eq(senderId),
+            .select(Projections.fields(SentParticipationNoteListResponse.class,
+                participationNote.id.as("participationId"),
+                Projections.fields(UserInformation.class,
+                    participationNote.receiver.id,
+                    participationNote.receiver.nickname,
+                    participationNote.receiver.profileImageUrl,
+                    participationNote.receiver.introduction
+                ).as("receiveMember"),
+                participationNote.createdAt.as("sentTime"),
+                participationNote.isApproved
+            ))
+            .from(
+                participationNote
+            )
+            .where(
                 ltId(lastId),
-                projectParticipationNote.isDeleted.eq(false)
+                participationNote.sender.id.eq(senderId),
+                participationNote.isDeleted.eq(false),
+                participationNote.deletedBySender.eq(false)
             )
             .limit(pageable.getPageSize() + 1)
             .fetch();
