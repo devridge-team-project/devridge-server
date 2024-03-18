@@ -18,8 +18,6 @@ import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListRe
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteListResponse;
 import org.devridge.api.domain.note.entity.ParticipationNote;
-import org.devridge.api.domain.note.entity.ProjectParticipationNote;
-import org.devridge.api.domain.note.entity.StudyParticipationNote;
 import org.devridge.api.domain.note.exception.ParticipationNoteForbiddenException;
 import org.devridge.api.infrastructure.community.project.ProjectRepository;
 import org.devridge.api.infrastructure.community.study.StudyRepository;
@@ -89,21 +87,9 @@ public class ParticipationNoteService {
 
     public Slice<ReceivedParticipationNoteListResponse> getAllReceivedParticipationNote(Pageable pageable, Long lastId) {
         Member receiver = SecurityContextHolderUtil.getMember();
-        List<ProjectParticipationNote> projectParticipationNotes =
-                participationNoteQuerydslRepository.searchByProjectParticipationNote(lastId, receiver.getId(), pageable);
-        List<ReceivedParticipationNoteListResponse> receivedParticipationNoteListResponses = new ArrayList<>();
-
-        for (ProjectParticipationNote projectParticipationNote : projectParticipationNotes) {
-            UserInformation sendMember = MemberUtil.toMember(projectParticipationNote.getSender());
-            receivedParticipationNoteListResponses.add(
-                ReceivedParticipationNoteListResponse.builder()
-                    .sendMember(sendMember)
-                    .receivedTime(projectParticipationNote.getCreatedAt())
-                    .isApproved(projectParticipationNote.getIsApproved())
-                    .build()
-            );
-        }
-        return checkLastPage(pageable, receivedParticipationNoteListResponses);
+        List<ReceivedParticipationNoteListResponse> participationNotes =
+                participationNoteQuerydslRepository.findAllReceivedParticipationNoteListResponses(lastId, receiver.getId(), pageable);
+        return checkLastPage(pageable, participationNotes);
     }
 
     private <T> Slice<T> checkLastPage(Pageable pageable, List<T> results) {

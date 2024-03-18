@@ -8,7 +8,6 @@ import org.devridge.api.domain.note.dto.request.StudyParticipationNoteRequest;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResponse;
-import org.devridge.api.domain.note.dto.response.SentParticipationNoteListResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
@@ -47,13 +46,13 @@ public class ParticipationNoteController {
         return ResponseEntity.ok().body(receivedParticipationNoteDetailResponse);
     }
 
-    @GetMapping("/project/receive")
+    @GetMapping("/receive/participation")
     public ResponseEntity<Slice<ReceivedParticipationNoteListResponse>> getAllReceivedParticipationNote(
         @RequestParam(name = "lastId", required = false) Long lastId,
         Pageable pageable
     ) {
         Slice<ReceivedParticipationNoteListResponse> receivedParticipationNoteListResponses =
-            participationNoteService.getAllReceivedParticipationNote(pageable, lastId);
+                participationNoteService.getAllReceivedParticipationNote(pageable, lastId);
         return ResponseEntity.ok().body(receivedParticipationNoteListResponses);
     }
 

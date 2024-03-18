@@ -4,8 +4,10 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.devridge.api.domain.note.entity.ProjectParticipationNote;
-import org.devridge.api.domain.note.entity.QProjectParticipationNote;
+import org.devridge.api.common.dto.UserInformation;
+import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
+import org.devridge.api.domain.note.dto.response.SentParticipationNoteListResponse;
+import org.devridge.api.domain.note.entity.QParticipationNote;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -14,14 +16,30 @@ import org.springframework.stereotype.Repository;
 public class ParticipationNoteQuerydslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
-    private QProjectParticipationNote projectParticipationNote = QProjectParticipationNote.projectParticipationNote;
+    private QParticipationNote participationNote = QParticipationNote.participationNote;
 
-    public List<ProjectParticipationNote> searchByProjectParticipationNote(Long lastId, Long id, Pageable pageable) {
+    public List<ReceivedParticipationNoteListResponse> findAllReceivedParticipationNoteListResponses(Long lastId,
+            Long receiverId, Pageable pageable) {
         return jpaQueryFactory
-            .selectFrom(projectParticipationNote)
-            .where(projectParticipationNote.receiver.id.eq(id),
+            .select(Projections.fields(ReceivedParticipationNoteListResponse.class,
+                participationNote.id.as("participationId"),
+                Projections.fields(UserInformation.class,
+                    participationNote.sender.id,
+                    participationNote.sender.nickname,
+                    participationNote.sender.profileImageUrl,
+                    participationNote.sender.introduction
+                ).as("sendMember"),
+                participationNote.createdAt.as("receivedTime"),
+                participationNote.isApproved
+            ))
+            .from(
+                participationNote
+            )
+            .where(
                 ltId(lastId),
-                projectParticipationNote.isDeleted.eq(false)
+                participationNote.receiver.id.eq(receiverId),
+                participationNote.isDeleted.eq(false),
+                participationNote.deletedByReceiver.eq(false)
             )
             .limit(pageable.getPageSize() + 1)
             .fetch();
@@ -38,11 +56,11 @@ public class ParticipationNoteQuerydslRepository {
             .fetch();
     }
 
-    private BooleanExpression ltId(Long projectParticipationNoteId) {
-        if (projectParticipationNoteId == null) {
+    private BooleanExpression ltId(Long participationNoteId) {
+        if (participationNoteId == null) {
             return null;
         }
 
-        return projectParticipationNote.id.lt(projectParticipationNoteId);
+        return participationNote.id.lt(participationNoteId);
     }
 }
