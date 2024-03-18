@@ -123,7 +123,7 @@ public class ParticipationNoteService {
     public void deleteParticipationNoteByReceiver(Long participationNoteId) {
         Member receiver = SecurityContextHolderUtil.getMember();
         ParticipationNote participationNote =
-            participationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
+                participationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
 
         if (receiver.getId().equals(participationNote.getReceiver().getId())) {
             participationNote.deleteByReceiver();
@@ -136,13 +136,13 @@ public class ParticipationNoteService {
     @Transactional
     public void deleteParticipationNoteBySender(Long participationNoteId) {
         Member sender = SecurityContextHolderUtil.getMember();
-        ProjectParticipationNote projectParticipationNote =
-            projectParticipationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
+        ParticipationNote participationNote =
+                participationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
 
-        if (sender.getId().equals(projectParticipationNote.getSender().getId())) {
-            projectParticipationNote.deleteBySender();
-            if (projectParticipationNote.isDeleted()) {
-                projectParticipationNoteRepository.delete(projectParticipationNote);
+        if (sender.getId().equals(participationNote.getSender().getId())) {
+            participationNote.deleteBySender();
+            if (participationNote.isDeleted()) {
+                participationNoteRepository.delete(participationNote);
             }
         }
     }
