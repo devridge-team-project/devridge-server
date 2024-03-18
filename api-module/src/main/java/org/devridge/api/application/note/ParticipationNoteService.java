@@ -264,23 +264,23 @@ public class ParticipationNoteService {
         }
     }
 
-    public SentParticipationNoteDetailResponse getSentStudyParticipationNoteDetail(Long participationNoteId) {
+    public SentParticipationNoteDetailResponse getSentStudyParticipationNoteDetail(Long studyId, Long participationNoteId) {
         Member sender = SecurityContextHolderUtil.getMember();
-        StudyParticipationNote participationNote = studyParticipationNoteRepository.findById(participationNoteId)
-            .orElseThrow(() -> new DataNotFoundException());
+        Study study = studyRepository.findById(studyId).orElseThrow(() -> new DataNotFoundException());
+        ParticipationNote participationNote = participationNoteRepository.findById(participationNoteId)
+                .orElseThrow(() -> new DataNotFoundException());
 
         if (!sender.getId().equals(participationNote.getSender().getId())) {
             throw new ParticipationNoteForbiddenException(403, "회원님이 보낸 요청이 아닙니다.");
         }
 
-        Study study = studyRepository.findById(participationNote.getStudy().getId()).orElseThrow(() -> new DataNotFoundException());
         UserInformation receiverInfo = MemberUtil.toMember(participationNote.getReceiver());
 
         return SentParticipationNoteDetailResponse.builder()
-            .receiveMember(receiverInfo)
-            .content(participationNote.getContent())
-            .sendTime(participationNote.getCreatedAt())
-            .isApproved(participationNote.getIsApproved())
-            .build();
+                .receiveMember(receiverInfo)
+                .content(participationNote.getContent())
+                .sendTime(participationNote.getCreatedAt())
+                .isApproved(participationNote.getIsApproved())
+                .build();
     }
 }

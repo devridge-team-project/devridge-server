@@ -117,12 +117,13 @@ public class ParticipationNoteController {
         return ResponseEntity.ok().body(receivedParticipationNoteDetailResponse);
     }
 
-    @GetMapping("/studies/send/{participationNoteId}")
+    @GetMapping("/send/studies/{studyId}/participation/{participationNoteId}")
     public ResponseEntity<SentParticipationNoteDetailResponse> getSentStudyParticipationNoteDetail(
+        @PathVariable Long studyId,
         @PathVariable Long participationNoteId
     ) {
         SentParticipationNoteDetailResponse sentParticipationNoteDetailResponse =
-            participationNoteService.getSentStudyParticipationNoteDetail(participationNoteId);
+                participationNoteService.getSentStudyParticipationNoteDetail(studyId, participationNoteId);
         return ResponseEntity.ok().body(sentParticipationNoteDetailResponse);
     }
 
