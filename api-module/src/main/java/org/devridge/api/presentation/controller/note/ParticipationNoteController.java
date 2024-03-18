@@ -98,12 +98,12 @@ public class ParticipationNoteController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/studies/{studyId}")
-    public ResponseEntity<Void> createStudyRequestNote(
+    @PostMapping("/studies/{studyId}/participation")
+    public ResponseEntity<Void> createStudyParticipationNote(
         @PathVariable Long studyId,
         @RequestBody StudyParticipationNoteRequest participationNoteRequest
     ) {
-        Long studyRequestNoteId =  participationNoteService.createStudyRequestNote(studyId, participationNoteRequest);
+        Long studyRequestNoteId =  participationNoteService.createStudyParticipationNote(studyId, participationNoteRequest);
         return ResponseEntity.created(URI.create("/api/notes/participation/studies/" + studyRequestNoteId)).build();
     }
 

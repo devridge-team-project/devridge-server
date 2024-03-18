@@ -199,20 +199,20 @@ public class ParticipationNoteService {
         participationNote.updateIsApproved(approve);
     }
 
-    public Long createStudyRequestNote(Long studyId, StudyParticipationNoteRequest participationNoteRequest) {
+    public Long createStudyParticipationNote(Long studyId, StudyParticipationNoteRequest participationNoteRequest) {
         Member sender = SecurityContextHolderUtil.getMember();
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new DataNotFoundException());
         Member receiver = memberRepository.findById(study.getMember().getId())
                 .orElseThrow(() -> new MemberNotFoundException(403, "탈퇴한 회원입니다."));
 
-        StudyParticipationNote studyParticipationNote = StudyParticipationNote.builder()
+        ParticipationNote participationNote = ParticipationNote.builder()
                 .study(study)
                 .receiver(receiver)
                 .sender(sender)
                 .content(participationNoteRequest.getContent())
                 .build();
 
-        return studyParticipationNoteRepository.save(studyParticipationNote).getId();
+        return participationNoteRepository.save(participationNote).getId();
     }
 
     @Transactional
