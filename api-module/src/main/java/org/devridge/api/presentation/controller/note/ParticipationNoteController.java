@@ -89,7 +89,7 @@ public class ParticipationNoteController {
         return ResponseEntity.ok().body(sentParticipationNoteListResponses);
     }
 
-    @PostMapping("/projects/{participationNoteId}")
+    @PostMapping("/participation/{participationNoteId}")
     public ResponseEntity<Void> participationApproval(
         @PathVariable Long participationNoteId,
         @RequestParam Boolean approve
