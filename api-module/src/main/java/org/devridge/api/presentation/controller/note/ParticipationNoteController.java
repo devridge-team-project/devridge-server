@@ -57,7 +57,7 @@ public class ParticipationNoteController {
         return ResponseEntity.ok().body(receivedParticipationNoteListResponses);
     }
 
-    @DeleteMapping("/project/receive/{participationNoteId}")
+    @DeleteMapping("/receive/participation/{participationNoteId}")
     public ResponseEntity<Void> deleteParticipationNoteByReceiver(@PathVariable Long participationNoteId) {
         participationNoteService.deleteParticipationNoteByReceiver(participationNoteId);
         return ResponseEntity.ok().build();

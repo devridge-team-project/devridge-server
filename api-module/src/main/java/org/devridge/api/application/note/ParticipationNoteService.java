@@ -17,6 +17,7 @@ import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetail
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteListResponse;
+import org.devridge.api.domain.note.entity.ParticipationNote;
 import org.devridge.api.domain.note.entity.ProjectParticipationNote;
 import org.devridge.api.domain.note.entity.StudyParticipationNote;
 import org.devridge.api.domain.note.exception.ParticipationNoteForbiddenException;
@@ -24,6 +25,7 @@ import org.devridge.api.infrastructure.community.project.ProjectRepository;
 import org.devridge.api.infrastructure.community.study.StudyRepository;
 import org.devridge.api.infrastructure.member.MemberRepository;
 import org.devridge.api.infrastructure.note.ParticipationNoteQuerydslRepository;
+import org.devridge.api.infrastructure.note.ParticipationNoteRepository;
 import org.devridge.api.infrastructure.note.ProjectParticipationNoteRepository;
 import org.devridge.api.infrastructure.note.StudyParticipationNoteRepository;
 import org.springframework.data.domain.Pageable;
@@ -116,16 +118,17 @@ public class ParticipationNoteService {
 
         return new SliceImpl<>(results, pageable, hasNext);
     }
+
     @Transactional
     public void deleteParticipationNoteByReceiver(Long participationNoteId) {
         Member receiver = SecurityContextHolderUtil.getMember();
-        ProjectParticipationNote projectParticipationNote =
-                projectParticipationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
+        ParticipationNote participationNote =
+            participationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
 
-        if (receiver.getId().equals(projectParticipationNote.getReceiver().getId())) {
-            projectParticipationNote.deleteByReceiver();
-            if (projectParticipationNote.isDeleted()) {
-                projectParticipationNoteRepository.delete(projectParticipationNote);
+        if (receiver.getId().equals(participationNote.getReceiver().getId())) {
+            participationNote.deleteByReceiver();
+            if (participationNote.isDeleted()) {
+                participationNoteRepository.delete(participationNote);
             }
         }
     }
