@@ -65,16 +65,16 @@ public class ParticipationNoteService {
     }
 
     @Transactional
-    public ReceivedParticipationNoteDetailResponse getReceivedParticipationNoteDetail(Long participationNoteId) { // 맴버 정보, 보낸시간, 내용
+    public ReceivedParticipationNoteDetailResponse getReceivedProjectParticipationNoteDetail(Long projectId, Long participationNoteId) {
         Member receiver = SecurityContextHolderUtil.getMember();
-        ProjectParticipationNote participationNote = projectParticipationNoteRepository.findById(participationNoteId)
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new DataNotFoundException());
+        ParticipationNote participationNote = participationNoteRepository.findById(participationNoteId)
                 .orElseThrow(() -> new DataNotFoundException());
 
         if (!receiver.getId().equals(participationNote.getReceiver().getId())) {
             throw new ParticipationNoteForbiddenException(403, "회원님이 받은 요청이 아닙니다.");
         }
 
-        Project project = projectRepository.findById(participationNote.getProject().getId()).orElseThrow(() -> new DataNotFoundException());
         UserInformation senderInfo = MemberUtil.toMember(participationNote.getSender());
         participationNote.updateReadAt();
 
