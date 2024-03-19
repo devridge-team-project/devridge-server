@@ -60,5 +60,4 @@ public class MemberController {
         MemberResponse result = memberService.getMemberDetails();
         return ResponseEntity.ok().body(result);
     }
-
 }
