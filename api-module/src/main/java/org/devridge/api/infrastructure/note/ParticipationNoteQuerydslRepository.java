@@ -31,7 +31,8 @@ public class ParticipationNoteQuerydslRepository {
                     participationNote.sender.introduction
                 ).as("sendMember"),
                 participationNote.createdAt.as("receivedTime"),
-                participationNote.isApproved
+                participationNote.isApproved,
+                participationNote.content
             ))
             .from(
                 participationNote
@@ -58,7 +59,8 @@ public class ParticipationNoteQuerydslRepository {
                     participationNote.receiver.introduction
                 ).as("receiveMember"),
                 participationNote.createdAt.as("sentTime"),
-                participationNote.isApproved
+                participationNote.isApproved,
+                participationNote.content
             ))
             .from(
                 participationNote

@@ -17,4 +17,5 @@ public class ReceivedParticipationNoteListResponse {
     private UserInformation sendMember;
     private LocalDateTime receivedTime;
     private Boolean isApproved;
+    private String content;
 }
