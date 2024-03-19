@@ -23,8 +23,6 @@ import org.devridge.api.infrastructure.community.study.StudyRepository;
 import org.devridge.api.infrastructure.member.MemberRepository;
 import org.devridge.api.infrastructure.note.ParticipationNoteQuerydslRepository;
 import org.devridge.api.infrastructure.note.ParticipationNoteRepository;
-import org.devridge.api.infrastructure.note.ProjectParticipationNoteRepository;
-import org.devridge.api.infrastructure.note.StudyParticipationNoteRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -35,11 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ParticipationNoteService {
 
-    private final ProjectParticipationNoteRepository projectParticipationNoteRepository;
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
     private final ParticipationNoteQuerydslRepository participationNoteQuerydslRepository;
-    private final StudyParticipationNoteRepository studyParticipationNoteRepository;
     private final StudyRepository studyRepository;
     private final ParticipationNoteRepository participationNoteRepository;
 

@@ -115,16 +115,4 @@ public class ParticipationNoteController {
                 participationNoteService.getSentStudyParticipationNoteDetail(studyId, participationNoteId);
         return ResponseEntity.ok().body(sentParticipationNoteDetailResponse);
     }
-
-    @DeleteMapping("/studies/receive/{participationNoteId}")
-    public ResponseEntity<Void> deleteStudyParticipationNoteByReceiver(@PathVariable Long participationNoteId) {
-        participationNoteService.deleteStudyParticipationNoteByReceiver(participationNoteId);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/studies/send/{participationNoteId}")
-    public ResponseEntity<Void> deleteStudyParticipationNoteBySender(@PathVariable Long participationNoteId) {
-        participationNoteService.deleteStudyParticipationNoteBySender(participationNoteId);
-        return ResponseEntity.ok().build();
-    }
 }
