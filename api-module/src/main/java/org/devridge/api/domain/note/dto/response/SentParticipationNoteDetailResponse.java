@@ -13,4 +13,6 @@ public class SentParticipationNoteDetailResponse {
     private String content;
     private LocalDateTime sendTime;
     private Boolean isApproved;
+    private String category;
+    private Long categoryId;
 }
