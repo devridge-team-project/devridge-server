@@ -49,7 +49,7 @@ public class ParticipationNoteService {
         Member receiver = memberRepository.findById(project.getMember().getId())
                 .orElseThrow(() -> new MemberNotFoundException(403, "탈퇴한 회원입니다."));
 
-        if (receiver.getId().equals(project.getMember().getId())) {
+        if (sender.getId().equals(receiver.getId())) {
             throw new ParticipationNoteForbiddenException(403, "본인이 모집한 프로젝트에 신청할 수 없습니다.");
         }
 
@@ -196,6 +196,10 @@ public class ParticipationNoteService {
         Study study = studyRepository.findById(studyId).orElseThrow(() -> new DataNotFoundException());
         Member receiver = memberRepository.findById(study.getMember().getId())
                 .orElseThrow(() -> new MemberNotFoundException(403, "탈퇴한 회원입니다."));
+
+        if (sender.getId().equals(receiver.getId())) {
+            throw new ParticipationNoteForbiddenException(403, "본인이 모집한 프로젝트에 신청할 수 없습니다.");
+        }
 
         ParticipationNote participationNote = ParticipationNote.builder()
                 .study(study)
