@@ -37,13 +37,12 @@ public class ParticipationNoteController {
         return ResponseEntity.created(URI.create("/api/notes/participation/project/" + projectRequestNote)).build();
     }
 
-    @GetMapping("/receive/project/{projectId}/participation/{participationNoteId}")
-    public ResponseEntity<ReceivedParticipationNoteDetailResponse> getReceivedProjectParticipationNoteDetail(
-        @PathVariable Long projectId,
+    @GetMapping("/receive/participation/{participationNoteId}")
+    public ResponseEntity<ReceivedParticipationNoteDetailResponse> getReceivedParticipationNoteDetail(
         @PathVariable Long participationNoteId
     ) {
         ReceivedParticipationNoteDetailResponse receivedParticipationNoteDetailResponse =
-                participationNoteService.getReceivedProjectParticipationNoteDetail(projectId, participationNoteId);
+                participationNoteService.getReceivedParticipationNoteDetail(participationNoteId);
         return ResponseEntity.ok().body(receivedParticipationNoteDetailResponse);
     }
 
@@ -105,16 +104,6 @@ public class ParticipationNoteController {
     ) {
         Long studyRequestNoteId =  participationNoteService.createStudyParticipationNote(studyId, participationNoteRequest);
         return ResponseEntity.created(URI.create("/api/notes/participation/studies/" + studyRequestNoteId)).build();
-    }
-
-    @GetMapping("/receive/studies/{studyId}/participation/{participationNoteId}")
-    public ResponseEntity<ReceivedParticipationNoteDetailResponse> getReceivedStudyParticipationNoteDetail(
-        @PathVariable Long studyId,
-        @PathVariable Long participationNoteId
-    ) {
-        ReceivedParticipationNoteDetailResponse receivedParticipationNoteDetailResponse =
-            participationNoteService.getReceivedStudyParticipationNoteDetail(studyId, participationNoteId);
-        return ResponseEntity.ok().body(receivedParticipationNoteDetailResponse);
     }
 
     @GetMapping("/send/studies/{studyId}/participation/{participationNoteId}")

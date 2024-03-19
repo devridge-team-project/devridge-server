@@ -64,14 +64,30 @@ public class ParticipationNoteService {
     }
 
     @Transactional
-    public ReceivedParticipationNoteDetailResponse getReceivedProjectParticipationNoteDetail(Long projectId, Long participationNoteId) {
+    public ReceivedParticipationNoteDetailResponse getReceivedParticipationNoteDetail(Long participationNoteId) {
         Member receiver = SecurityContextHolderUtil.getMember();
-        Project project = projectRepository.findById(projectId).orElseThrow(() -> new DataNotFoundException());
         ParticipationNote participationNote = participationNoteRepository.findById(participationNoteId)
                 .orElseThrow(() -> new DataNotFoundException());
 
         if (!receiver.getId().equals(participationNote.getReceiver().getId())) {
             throw new ParticipationNoteForbiddenException(403, "회원님이 받은 요청이 아닙니다.");
+        }
+
+        String category = null;
+        Long categoryId = null;
+
+        if (participationNote.getStudy() == null) {
+            category = "project";
+            Project project = projectRepository.findById(participationNote.getProject().getId())
+                    .orElseThrow(() -> new DataNotFoundException());
+            categoryId = project.getId();
+        }
+
+        if (participationNote.getProject() == null) {
+            category = "study";
+            Study study = studyRepository.findById(participationNote.getStudy().getId())
+                    .orElseThrow(() -> new DataNotFoundException());
+            categoryId = study.getId();
         }
 
         UserInformation senderInfo = MemberUtil.toMember(participationNote.getSender());
@@ -81,6 +97,9 @@ public class ParticipationNoteService {
                 .sendMember(senderInfo)
                 .content(participationNote.getContent())
                 .receiveTime(participationNote.getCreatedAt())
+                .isApproved(participationNote.getIsApproved())
+                .category(category)
+                .categoryId(categoryId)
                 .build();
     }
 
@@ -186,55 +205,6 @@ public class ParticipationNoteService {
                 .build();
 
         return participationNoteRepository.save(participationNote).getId();
-    }
-
-    @Transactional
-    public ReceivedParticipationNoteDetailResponse getReceivedStudyParticipationNoteDetail(Long studyId, Long participationNoteId) {
-        Member receiver = SecurityContextHolderUtil.getMember();
-        Study study = studyRepository.findById(studyId).orElseThrow(() -> new DataNotFoundException());
-        ParticipationNote participationNote = participationNoteRepository.findById(participationNoteId)
-                .orElseThrow(() -> new DataNotFoundException());
-
-        if (!receiver.getId().equals(participationNote.getReceiver().getId())) {
-            throw new ParticipationNoteForbiddenException(403, "회원님이 받은 요청이 아닙니다.");
-        }
-
-        UserInformation senderInfo = MemberUtil.toMember(participationNote.getSender());
-        participationNote.updateReadAt();
-
-        return ReceivedParticipationNoteDetailResponse.builder()
-                .sendMember(senderInfo)
-                .content(participationNote.getContent())
-                .receiveTime(participationNote.getCreatedAt())
-                .build();
-    }
-
-    @Transactional
-    public void deleteStudyParticipationNoteByReceiver(Long participationNoteId) {
-        Member receiver = SecurityContextHolderUtil.getMember();
-        StudyParticipationNote studyParticipationNote =
-            studyParticipationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
-
-        if (receiver.getId().equals(studyParticipationNote.getReceiver().getId())) {
-            studyParticipationNote.deleteByReceiver();
-            if (studyParticipationNote.isDeleted()) {
-                studyParticipationNoteRepository.delete(studyParticipationNote);
-            }
-        }
-    }
-
-    @Transactional
-    public void deleteStudyParticipationNoteBySender(Long participationNoteId) {
-        Member sender = SecurityContextHolderUtil.getMember();
-        StudyParticipationNote studyParticipationNote =
-            studyParticipationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
-
-        if (sender.getId().equals(studyParticipationNote.getSender().getId())) {
-            studyParticipationNote.deleteBySender();
-            if (studyParticipationNote.isDeleted()) {
-                studyParticipationNoteRepository.delete(studyParticipationNote);
-            }
-        }
     }
 
     public SentParticipationNoteDetailResponse getSentStudyParticipationNoteDetail(Long studyId, Long participationNoteId) {

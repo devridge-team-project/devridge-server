@@ -12,4 +12,7 @@ public class ReceivedParticipationNoteDetailResponse {
     private UserInformation sendMember;
     private String content;
     private LocalDateTime receiveTime;
+    private Boolean isApproved;
+    private String category;
+    private Long categoryId;
 }
