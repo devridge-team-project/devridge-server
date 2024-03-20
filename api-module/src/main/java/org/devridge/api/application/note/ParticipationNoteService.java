@@ -125,11 +125,13 @@ public class ParticipationNoteService {
         ParticipationNote participationNote =
                 participationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
 
-        if (receiver.getId().equals(participationNote.getReceiver().getId())) {
-            participationNote.deleteByReceiver();
-            if (participationNote.isDeleted()) {
-                participationNoteRepository.delete(participationNote);
-            }
+        if (!receiver.getId().equals(participationNote.getReceiver().getId())) {
+            throw new ParticipationNoteForbiddenException(403, "회원님이 받은 요청이 아닙니다.");
+        }
+
+        participationNote.deleteByReceiver();
+        if (participationNote.isDeleted()) {
+            participationNoteRepository.delete(participationNote);
         }
     }
 
@@ -139,11 +141,13 @@ public class ParticipationNoteService {
         ParticipationNote participationNote =
                 participationNoteRepository.findById(participationNoteId).orElseThrow(() -> new DataNotFoundException());
 
-        if (sender.getId().equals(participationNote.getSender().getId())) {
-            participationNote.deleteBySender();
-            if (participationNote.isDeleted()) {
-                participationNoteRepository.delete(participationNote);
-            }
+        if (!sender.getId().equals(participationNote.getSender().getId())) {
+            throw new ParticipationNoteForbiddenException(403, "회원님이 보낸 요청이 아닙니다.");
+        }
+
+        participationNote.deleteBySender();
+        if (participationNote.isDeleted()) {
+            participationNoteRepository.delete(participationNote);
         }
     }
 
