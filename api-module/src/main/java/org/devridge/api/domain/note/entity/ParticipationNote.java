@@ -73,17 +73,6 @@ public class ParticipationNote extends BaseEntity {
         this.deletedByReceiver = true;
     }
 
-    public boolean isDeletedBySender() {
-        return this.deletedBySender;
-    }
-    public boolean isDeletedByReceiver() {
-        return this.deletedByReceiver;
-    }
-
-    public boolean isDeleted() {
-        return isDeletedBySender() && isDeletedByReceiver();
-    }
-
     public void updateReadAt() {
         this.readAt = LocalDateTime.now();
     }

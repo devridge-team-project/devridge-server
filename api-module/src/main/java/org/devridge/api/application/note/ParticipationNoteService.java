@@ -122,9 +122,6 @@ public class ParticipationNoteService {
         }
 
         participationNote.deleteByReceiver();
-        if (participationNote.isDeleted()) {
-            participationNoteRepository.delete(participationNote);
-        }
     }
 
     @Transactional
@@ -139,9 +136,6 @@ public class ParticipationNoteService {
         }
 
         participationNote.deleteBySender();
-        if (participationNote.isDeleted()) {
-            participationNoteRepository.delete(participationNote);
-        }
     }
 
     public SentParticipationNoteDetailResponse getSentParticipationNoteDetail(Long participationNoteId) {
