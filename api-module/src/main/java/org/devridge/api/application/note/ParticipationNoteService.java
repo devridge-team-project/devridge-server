@@ -38,6 +38,7 @@ public class ParticipationNoteService {
     private final ParticipationNoteQuerydslRepository participationNoteQuerydslRepository;
     private final StudyRepository studyRepository;
     private final ParticipationNoteRepository participationNoteRepository;
+    private final ParticipationNoteMapper participationNoteMapper;
 
     public Long createProjectParticipationNote(Long projectId, ProjectParticipationNoteRequest participationNoteRequest) {
         Member sender = SecurityContextHolderUtil.getMember();
@@ -49,12 +50,8 @@ public class ParticipationNoteService {
             throw new ParticipationNoteForbiddenException(403, "본인이 모집한 프로젝트에 신청할 수 없습니다.");
         }
 
-        ParticipationNote participationNote = ParticipationNote.builder()
-                .project(project)
-                .receiver(receiver)
-                .sender(sender)
-                .content(participationNoteRequest.getContent())
-                .build();
+        ParticipationNote participationNote =
+                participationNoteMapper.toProjectParticipationNote(project, receiver, sender, participationNoteRequest);
 
         return participationNoteRepository.save(participationNote).getId();
     }
@@ -90,14 +87,7 @@ public class ParticipationNoteService {
         UserInformation senderInfo = MemberUtil.toMember(participationNote.getSender());
         participationNote.updateReadAt();
 
-        return ReceivedParticipationNoteDetailResponse.builder()
-                .sendMember(senderInfo)
-                .content(participationNote.getContent())
-                .receiveTime(participationNote.getCreatedAt())
-                .isApproved(participationNote.getIsApproved())
-                .category(category)
-                .categoryId(categoryId)
-                .build();
+        return participationNoteMapper.toReceivedParticipationNoteDetailResponse(senderInfo, participationNote, category, categoryId);
     }
 
     public Slice<ReceivedParticipationNoteListResponse> getAllReceivedParticipationNote(Pageable pageable, Long lastId) {
@@ -183,14 +173,7 @@ public class ParticipationNoteService {
 
         UserInformation receiverInfo = MemberUtil.toMember(participationNote.getReceiver());
 
-        return SentParticipationNoteDetailResponse.builder()
-                .receiveMember(receiverInfo)
-                .content(participationNote.getContent())
-                .sendTime(participationNote.getCreatedAt())
-                .isApproved(participationNote.getIsApproved())
-                .category(category)
-                .categoryId(categoryId)
-                .build();
+        return participationNoteMapper.toSentParticipationNoteDetailResponse(receiverInfo, participationNote, category, categoryId);
     }
 
     public Slice<SentParticipationNoteListResponse> getAllSentParticipationNote(Pageable pageable, Long lastId) {
@@ -223,12 +206,8 @@ public class ParticipationNoteService {
             throw new ParticipationNoteForbiddenException(403, "본인이 모집한 프로젝트에 신청할 수 없습니다.");
         }
 
-        ParticipationNote participationNote = ParticipationNote.builder()
-                .study(study)
-                .receiver(receiver)
-                .sender(sender)
-                .content(participationNoteRequest.getContent())
-                .build();
+        ParticipationNote participationNote =
+                participationNoteMapper.toStudyParticipationNote(study, receiver, sender, participationNoteRequest);
 
         return participationNoteRepository.save(participationNote).getId();
     }
