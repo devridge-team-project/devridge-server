@@ -77,6 +77,7 @@ public class SecurityConfig {
             .antMatchers("/api/ws").permitAll()
             .antMatchers("/api/qna/**").authenticated()
             .antMatchers("/api/community/**").authenticated()
+            .antMatchers("/api/notes/**").authenticated()
             .antMatchers(securityConstant().USER_ROLE_PERMIT_PATHS).hasRole(SecurityPathType.USER_ROLE)
             .anyRequest().denyAll();
 

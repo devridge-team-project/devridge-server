@@ -8,7 +8,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
-import org.devridge.api.domain.community.dto.response.MemberInfoResponse;
+import org.devridge.api.domain.community.dto.response.UserInformation;
 import org.devridge.api.domain.community.entity.QCommunityComment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -44,7 +44,7 @@ public class CommunityCommentQuerydslReopsitory {
                     comment.dislikeCount,
 
                     Projections.constructor(
-                        MemberInfoResponse.class,
+                        UserInformation.class,
                         Expressions.cases()
                             .when(comment.member.nickname.isNull())
                             .then(0L)
