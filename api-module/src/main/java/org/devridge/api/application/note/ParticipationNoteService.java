@@ -60,9 +60,9 @@ public class ParticipationNoteService {
     @Transactional
     public ReceivedParticipationNoteDetailResponse getReceivedParticipationNoteDetail(Long participationNoteId) {
         Member receiver = SecurityContextHolderUtil.getMember();
-        ParticipationNote participationNote =
-                participationNoteRepository.findReceiverParticipationNoteById(participationNoteId)
-                    .orElseThrow(() -> new DataNotFoundException());
+        ParticipationNote participationNote = participationNoteRepository
+                .findReceiverParticipationNoteById(participationNoteId)
+                .orElseThrow(() -> new DataNotFoundException());
 
         if (!receiver.getId().equals(participationNote.getReceiver().getId())) {
             throw new ParticipationNoteForbiddenException(403, "회원님이 받은 요청이 아닙니다.");
@@ -116,9 +116,9 @@ public class ParticipationNoteService {
     @Transactional
     public void deleteParticipationNoteByReceiver(Long participationNoteId) {
         Member receiver = SecurityContextHolderUtil.getMember();
-        ParticipationNote participationNote =
-                participationNoteRepository.findReceiverParticipationNoteById(participationNoteId)
-                        .orElseThrow(() -> new DataNotFoundException());
+        ParticipationNote participationNote = participationNoteRepository
+                .findReceiverParticipationNoteById(participationNoteId)
+                .orElseThrow(() -> new DataNotFoundException());
 
         if (!receiver.getId().equals(participationNote.getReceiver().getId())) {
             throw new ParticipationNoteForbiddenException(403, "회원님이 받은 요청이 아닙니다.");
@@ -130,9 +130,9 @@ public class ParticipationNoteService {
     @Transactional
     public void deleteParticipationNoteBySender(Long participationNoteId) {
         Member sender = SecurityContextHolderUtil.getMember();
-        ParticipationNote participationNote =
-                participationNoteRepository.findSenderParticipationNoteById(participationNoteId)
-                        .orElseThrow(() -> new DataNotFoundException());
+        ParticipationNote participationNote = participationNoteRepository
+                .findSenderParticipationNoteById(participationNoteId)
+                .orElseThrow(() -> new DataNotFoundException());
 
         if (!sender.getId().equals(participationNote.getSender().getId())) {
             throw new ParticipationNoteForbiddenException(403, "회원님이 보낸 요청이 아닙니다.");
@@ -143,9 +143,9 @@ public class ParticipationNoteService {
 
     public SentParticipationNoteDetailResponse getSentParticipationNoteDetail(Long participationNoteId) {
         Member sender = SecurityContextHolderUtil.getMember();
-        ParticipationNote participationNote =
-                participationNoteRepository.findSenderParticipationNoteById(participationNoteId)
-                        .orElseThrow(() -> new DataNotFoundException());
+        ParticipationNote participationNote = participationNoteRepository
+                .findSenderParticipationNoteById(participationNoteId)
+                .orElseThrow(() -> new DataNotFoundException());
 
         if (!sender.getId().equals(participationNote.getSender().getId())) {
             throw new ParticipationNoteForbiddenException(403, "회원님이 보낸 요청이 아닙니다.");
