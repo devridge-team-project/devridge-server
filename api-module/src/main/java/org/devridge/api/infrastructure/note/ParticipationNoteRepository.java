@@ -21,4 +21,12 @@ public interface ParticipationNoteRepository extends JpaRepository<Participation
                 "WHERE p.id = :id AND p.isDeleted = false AND p.deletedByReceiver = false"
     )
     Optional<ParticipationNote> findReceiverParticipationNoteById(@Param("id") Long id);
+
+
+    @Query(
+        value = "SELECT count(*) " +
+                "FROM ParticipationNote p " +
+                "WHERE p.receiver.id =:id AND p.deletedByReceiver = false AND p.readAt = NULL"
+    )
+    int countUnreadParticipationNoteByMemberId(@Param("id") Long id);
 }

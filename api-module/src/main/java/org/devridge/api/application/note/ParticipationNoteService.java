@@ -13,6 +13,7 @@ import org.devridge.api.domain.member.exception.MemberNotFoundException;
 import org.devridge.api.domain.note.dto.request.ProjectParticipationNoteRequest;
 import org.devridge.api.domain.note.dto.request.StudyParticipationNoteRequest;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetailResponse;
+import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListAndCountUnreadNoteResponse;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteListResponse;
@@ -90,11 +91,13 @@ public class ParticipationNoteService {
         return participationNoteMapper.toReceivedParticipationNoteDetailResponse(senderInfo, participationNote, category, categoryId);
     }
 
-    public Slice<ReceivedParticipationNoteListResponse> getAllReceivedParticipationNote(Pageable pageable, Long lastId) {
+    public ReceivedParticipationNoteListAndCountUnreadNoteResponse getAllReceivedParticipationNote(Pageable pageable, Long lastId) {
         Member receiver = SecurityContextHolderUtil.getMember();
         List<ReceivedParticipationNoteListResponse> participationNotes =
                 participationNoteQuerydslRepository.findAllReceivedParticipationNoteListResponses(lastId, receiver.getId(), pageable);
-        return checkLastPage(pageable, participationNotes);
+        int countUnreadNote = participationNoteRepository.countUnreadParticipationNoteByMemberId(receiver.getId());
+
+        return new ReceivedParticipationNoteListAndCountUnreadNoteResponse(countUnreadNote, checkLastPage(pageable, participationNotes));
     }
 
     private <T> Slice<T> checkLastPage(Pageable pageable, List<T> results) {

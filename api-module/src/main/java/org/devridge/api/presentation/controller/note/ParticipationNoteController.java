@@ -6,7 +6,7 @@ import org.devridge.api.application.note.ParticipationNoteService;
 import org.devridge.api.domain.note.dto.request.ProjectParticipationNoteRequest;
 import org.devridge.api.domain.note.dto.request.StudyParticipationNoteRequest;
 import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteDetailResponse;
-import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListResponse;
+import org.devridge.api.domain.note.dto.response.ReceivedParticipationNoteListAndCountUnreadNoteResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteDetailResponse;
 import org.devridge.api.domain.note.dto.response.SentParticipationNoteListResponse;
 import org.springframework.data.domain.Pageable;
@@ -47,11 +47,11 @@ public class ParticipationNoteController {
     }
 
     @GetMapping("/receive/participation")
-    public ResponseEntity<Slice<ReceivedParticipationNoteListResponse>> getAllReceivedParticipationNote(
+    public ResponseEntity<ReceivedParticipationNoteListAndCountUnreadNoteResponse> getAllReceivedParticipationNote(
         @RequestParam(name = "lastId", required = false) Long lastId,
         Pageable pageable
     ) {
-        Slice<ReceivedParticipationNoteListResponse> receivedParticipationNoteListResponses =
+        ReceivedParticipationNoteListAndCountUnreadNoteResponse receivedParticipationNoteListResponses =
                 participationNoteService.getAllReceivedParticipationNote(pageable, lastId);
         return ResponseEntity.ok().body(receivedParticipationNoteListResponses);
     }
