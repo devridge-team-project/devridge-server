@@ -8,6 +8,7 @@ import lombok.Getter;
 public class CommunitySliceResponse {
     private Long id;
     private String title;
+    private String content;
     private Long viewCount;
     private Long likeCount;
     private Long comments;
