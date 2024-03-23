@@ -3,17 +3,21 @@ package org.devridge.api.application.community.study;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.devridge.api.application.s3.S3Service;
+import org.devridge.api.common.exception.common.DataNotFoundException;
+import org.devridge.api.common.util.SecurityContextHolderUtil;
 import org.devridge.api.domain.community.dto.request.StudyRequest;
 import org.devridge.api.domain.community.dto.response.StudyDetailResponse;
 import org.devridge.api.domain.community.dto.response.StudyListResponse;
 import org.devridge.api.domain.community.entity.Study;
 import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
-import org.devridge.api.infrastructure.community.study.StudyRepository;
 import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.infrastructure.community.study.StudyQuerydslRepository;
+import org.devridge.api.infrastructure.community.study.StudyRepository;
 import org.devridge.api.infrastructure.member.MemberRepository;
-import org.devridge.api.application.s3.S3Service;
-import org.devridge.api.common.exception.common.DataNotFoundException;
-import org.devridge.api.common.util.SecurityContextHolderUtil;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +29,7 @@ public class StudyService {
     private final MemberRepository memberRepository;
     private final StudyMapper studyMapper;
     private final S3Service s3Service;
+    private final StudyQuerydslRepository studyQuerydslRepository;
 
     public Long createStudy(StudyRequest studyRequest) {
         Long accessMemberId = SecurityContextHolderUtil.getMemberId();
@@ -41,9 +46,22 @@ public class StudyService {
         return studyMapper.toStudyDetailResponse(study);
     }
 
-    public List<StudyListResponse> getAllStudy() {
-        List<Study> studies = studyRepository.findAll();
-        return studyMapper.toStudyListResponses(studies);
+    public Slice<StudyListResponse> getAllStudy(Long lastId, Pageable pageable) {
+        List<StudyListResponse> studyListResponses = studyQuerydslRepository.searchByStudy(lastId, pageable);
+        return checkLastPage(pageable, studyListResponses);
+    }
+
+    private Slice<StudyListResponse> checkLastPage(Pageable pageable, List<StudyListResponse> results) {
+
+        boolean hasNext = false;
+
+        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
+        if (results.size() > pageable.getPageSize()) {
+            hasNext = true;
+            results.remove(pageable.getPageSize());
+        }
+
+        return new SliceImpl<>(results, pageable, hasNext);
     }
 
     @Transactional
