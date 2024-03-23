@@ -30,7 +30,7 @@ public class SocialLoginController {
 
        if (data.isRedirect()) {  // 첫 소셜 로그인 : 리다이렉트 필요
            SocialLoginRedirect result = new SocialLoginRedirect(data.getToken());
-           return ResponseEntity.status(HttpStatus.MULTIPLE_CHOICES).body(result);
+           return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
        }
 
        return ResponseEntity.status(HttpStatus.OK).body(
