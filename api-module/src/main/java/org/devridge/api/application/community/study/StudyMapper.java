@@ -63,12 +63,16 @@ public class StudyMapper {
     public StudyListResponse toStudyListResponse(Study study) {
         return StudyListResponse.builder()
             .studyId(study.getId())
-            .views(study.getViews())
-            .category(study.getCategory())
             .likes(study.getLikes())
-            .dislikes(study.getDislikes())
+            .category(study.getCategory())
             .title(study.getTitle())
             .content(study.getContent())
+            .views(study.getViews())
+            .currentPeople(study.getCurrentPeople())
+            .dislikes(study.getDislikes())
+            .totalPeople(study.getTotalPeople())
+            .location(study.getLocation())
+            .images(study.getImages())
             .build();
     }
 

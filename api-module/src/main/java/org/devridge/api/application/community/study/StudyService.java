@@ -47,7 +47,8 @@ public class StudyService {
     }
 
     public Slice<StudyListResponse> getAllStudy(Long lastId, Pageable pageable) {
-        List<StudyListResponse> studyListResponses = studyQuerydslRepository.searchByStudy(lastId, pageable);
+        List<Study> studies = studyQuerydslRepository.searchByStudy(lastId, pageable);
+        List<StudyListResponse> studyListResponses = studyMapper.toStudyListResponses(studies);
         return checkLastPage(pageable, studyListResponses);
     }
 
