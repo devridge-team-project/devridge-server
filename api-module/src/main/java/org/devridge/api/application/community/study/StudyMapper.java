@@ -1,5 +1,7 @@
 package org.devridge.api.application.community.study;
 
+import static org.devridge.api.common.util.MemberUtil.toMember;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +13,6 @@ import org.devridge.api.domain.community.entity.Study;
 import org.devridge.api.domain.member.entity.Member;
 
 import org.springframework.stereotype.Component;
-
-import static org.devridge.api.common.util.MemberUtil.toMember;
 
 @Component
 public class StudyMapper {
@@ -50,6 +50,7 @@ public class StudyMapper {
         }
 
         return Study.builder()
+                .member(member)
                 .title(studyRequest.getTitle())
                 .content(studyRequest.getContent())
                 .location(studyRequest.getLocation())
@@ -62,12 +63,16 @@ public class StudyMapper {
     public StudyListResponse toStudyListResponse(Study study) {
         return StudyListResponse.builder()
             .studyId(study.getId())
-            .views(study.getViews())
-            .category(study.getCategory())
             .likes(study.getLikes())
-            .dislikes(study.getDislikes())
+            .category(study.getCategory())
             .title(study.getTitle())
             .content(study.getContent())
+            .views(study.getViews())
+            .currentPeople(study.getCurrentPeople())
+            .dislikes(study.getDislikes())
+            .totalPeople(study.getTotalPeople())
+            .location(study.getLocation())
+            .images(study.getImages())
             .build();
     }
 
