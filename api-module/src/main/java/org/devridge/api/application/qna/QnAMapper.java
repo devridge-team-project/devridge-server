@@ -3,15 +3,42 @@ package org.devridge.api.application.qna;
 import org.devridge.api.common.dto.UserInformation;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
+import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
 import org.devridge.api.domain.qna.entity.QnA;
 
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.devridge.api.common.util.MemberUtil.toMember;
 
 @Component
 public class QnAMapper {
+
+    public List<GetAllQnAResponse> toGetAllQnAResponses(List<QnA> qna) {
+        List<GetAllQnAResponse> responses = new ArrayList<>();
+
+        for (QnA q : qna) {
+            String writerNickname = q.getMember().getNickname() + "님의 질문";
+
+            responses.add(
+                GetAllQnAResponse.builder()
+                    .id(q.getId())
+                    .title(q.getTitle())
+                    .content(q.getContent())
+                    .commentCount(q.getComments().size())
+                    .views(q.getViews())
+                    .nickname(writerNickname)
+                    .likes(q.getLikes())
+                    .createdAt(q.getCreatedAt())
+                    .build()
+            );
+        }
+
+        return responses;
+    }
 
     public GetQnADetailResponse toGetQnADetailResponse(QnA result) {
         UserInformation member = toMember(result.getMember());

@@ -12,7 +12,9 @@ import java.time.LocalDateTime;
 public class GetAllQnAResponse {
 
     private Long id;
+    private String nickname;
     private String title;
+    private String content;
     private Integer likes;
     private Integer views;
     private Integer commentCount;
