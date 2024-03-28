@@ -9,6 +9,7 @@ import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.entity.QQnA;
 
 import org.devridge.api.domain.qna.entity.QQnAComment;
+import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnAComment;
 import org.springframework.stereotype.Repository;
 
@@ -50,20 +51,9 @@ public class QnAQuerydslRepository {
     /**
      * 최신순 무한 스크롤
      */
-    public List<GetAllQnAResponse> findAllQnASortByLatest(Long lastIndex) {
+    public List<QnA> findAllQnASortByLatest(Long lastIndex) {
         return jpaQueryFactory
-            .select(
-                Projections.constructor(
-                    GetAllQnAResponse.class,
-                    qQnA.id,
-                    qQnA.title,
-                    qQnA.likes,
-                    qQnA.views,
-                    qQnA.comments.size(),
-                    qQnA.createdAt
-                )
-            )
-            .from(qQnA)
+            .selectFrom(qQnA)
             .where(qQnA.id.loe(lastIndex))
             .orderBy(qQnA.id.desc())
             .limit(PAGE_SIZE)

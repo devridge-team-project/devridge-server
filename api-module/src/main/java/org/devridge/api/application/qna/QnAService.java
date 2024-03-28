@@ -49,10 +49,12 @@ public class QnAService {
 
         if (lastIndex == null) {
             Long maxId = qnaRepository.findMaxId().orElse(0L);
-            return qnaQuerydslRepository.findAllQnASortByLatest(maxId);
+            List<QnA> qna = qnaQuerydslRepository.findAllQnASortByLatest(maxId);
+            return qnaMapper.toGetAllQnAResponses(qna);
         }
 
-        return qnaQuerydslRepository.findAllQnASortByLatest(lastIndex);
+        List<QnA> qna = qnaQuerydslRepository.findAllQnASortByLatest(lastIndex);
+        return qnaMapper.toGetAllQnAResponses(qna);
     }
 
     @Transactional
