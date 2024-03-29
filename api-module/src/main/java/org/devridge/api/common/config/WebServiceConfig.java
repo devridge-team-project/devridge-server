@@ -2,8 +2,8 @@ package org.devridge.api.common.config;
 
 import lombok.RequiredArgsConstructor;
 
-import org.devridge.api.domain.qna.interceptor.QnAAuthInterceptor;
-import org.devridge.api.domain.qna.interceptor.QnACommentAuthInterceptor;
+import org.devridge.api.presentation.controller.qna.interceptor.QnAAuthInterceptor;
+import org.devridge.api.presentation.controller.qna.interceptor.QnACommentAuthInterceptor;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

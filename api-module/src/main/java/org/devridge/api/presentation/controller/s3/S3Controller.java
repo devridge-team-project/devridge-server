@@ -7,7 +7,7 @@ import org.devridge.api.domain.s3.dto.response.UploadImageResponse;
 import org.devridge.api.application.s3.S3Service;
 
 import org.devridge.api.domain.s3.validator.ValidateImagePath;
-import org.devridge.api.domain.s3.validator.type.ImagePath;
+import org.devridge.api.domain.s3.type.ImagePath;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

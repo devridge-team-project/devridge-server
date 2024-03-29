@@ -1,4 +1,4 @@
-package org.devridge.api.domain.qna.interceptor;
+package org.devridge.api.presentation.controller.qna.interceptor;
 
 import lombok.Getter;
 
