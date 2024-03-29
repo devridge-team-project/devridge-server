@@ -16,7 +16,7 @@ public class ProjectRequest {
     @NotNull
     private String content;
 
-    @ValidateEnum(enumClass = ProjectCategory.class, message = "category에 없는 값입니다.")
+    @ValidateEnumList(enumClass = ProjectRole.class, message = "역할에 없는 값입니다.")
     private List<String> roles;
 
     private List<String> images;
