@@ -162,7 +162,12 @@ public class QnACommentService {
             LikeStatus.G,
             false
         );
-        int dislikes = qnaCommentLikeDislikeRepository.countQnACommentLikeOrDislikeByQnAId(qnaComment, LikeStatus.B, false);
+        int dislikes = qnaCommentLikeDislikeRepository.countQnACommentLikeOrDislikeByQnAId(
+            qnaComment,
+            LikeStatus.B,
+            false
+        );
+
         qnaCommentRepository.updateLikeAndDiscount(likes, dislikes, qnaComment.getId());
     }
 }
