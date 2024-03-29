@@ -31,7 +31,7 @@ public class ProjectDetailResponse {
     @JsonProperty("member")
     private UserInformation userInformation;
 
-    private String category;
+    private String roles;
 
     private List<String> skills;
 
