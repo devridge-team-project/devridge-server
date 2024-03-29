@@ -40,46 +40,23 @@ public class ProjectMapper {
     }
 
     public Project toProject(ProjectRequest request, Member member) {
-        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
-            String roles = request.getRoles().toString();
-            if (request.getImages() != null && !request.getImages().isEmpty()) {
-                String images = request.getImages().toString();
-                return Project.builder()
-                    .member(member)
-                    .title(request.getTitle())
-                    .content(request.getContent())
-                    .images(images.substring(1, images.length() -1))
-                    .roles(roles.substring(1, roles.length() -1))
-                    .meeting(request.getMeeting())
-                    .build();
-            }
-
-            return Project.builder()
+        Project.ProjectBuilder builder = Project.builder()
                 .member(member)
                 .title(request.getTitle())
                 .content(request.getContent())
-                .roles(roles.substring(1, roles.length() -1))
-                .meeting(request.getMeeting())
-                .build();
+                .meeting(request.getMeeting());
+
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            String roles = request.getRoles().toString();
+            builder.roles(roles.substring(1, roles.length() - 1));
         }
 
         if (request.getImages() != null && !request.getImages().isEmpty()) {
             String images = request.getImages().toString();
-            return Project.builder()
-                .member(member)
-                .title(request.getTitle())
-                .content(request.getContent())
-                .images(images.substring(1, images.length() -1))
-                .meeting(request.getMeeting())
-                .build();
+            builder.images(images.substring(1, images.length() -1));
         }
 
-        return Project.builder()
-            .member(member)
-            .title(request.getTitle())
-            .content(request.getContent())
-            .meeting(request.getMeeting())
-            .build();
+        return builder.build();
     }
 
     public ProjectListResponse toProjectListResponse(Project project) {
