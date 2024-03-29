@@ -4,8 +4,9 @@ import java.util.List;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import org.devridge.api.domain.community.entity.Meeting;
-import org.devridge.api.domain.community.entity.ProjectCategory;
+import org.devridge.api.domain.community.entity.ProjectRole;
 import org.devridge.api.domain.community.validator.ValidateEnum;
+import org.devridge.api.domain.community.validator.ValidateEnumList;
 
 @Getter
 public class ProjectRequest {

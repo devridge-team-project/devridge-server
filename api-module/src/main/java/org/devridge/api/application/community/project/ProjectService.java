@@ -142,14 +142,41 @@ public class ProjectService {
 
         projectSkillRepository.deleteByProjectId(projectId);
 
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            String roles = request.getRoles().toString();
+            if (request.getImages() != null && !request.getImages().isEmpty()) {
+                String images = request.getImages().toString();
 
+                project.updateProject(
+                    request.getTitle(),
+                    request.getContent(),
+                    roles.substring(1, roles.length() - 1),
+                    images.substring(1, images.length() - 1),
+                    request.getMeeting(),
+                    request.getIsRecruiting()
+                );
+
+                createProjectSkill(request.getSkillIds(), projectId);
+                return;
+            }
+            project.updateProject(
+                request.getTitle(),
+                request.getContent(),
+                roles.substring(1, roles.length() - 1),
+                null,
+                request.getMeeting(),
+                request.getIsRecruiting()
+            );
+
+            createProjectSkill(request.getSkillIds(), projectId);
+        }
         if (request.getImages() != null && !request.getImages().isEmpty()) {
             String images = request.getImages().toString();
 
             project.updateProject(
                 request.getTitle(),
                 request.getContent(),
-                request.getCategory(),
+                null,
                 images.substring(1, images.length() - 1),
                 request.getMeeting(),
                 request.getIsRecruiting()
@@ -161,7 +188,7 @@ public class ProjectService {
         project.updateProject(
             request.getTitle(),
             request.getContent(),
-            request.getCategory(),
+            null,
             null,
             request.getMeeting(),
             request.getIsRecruiting()
