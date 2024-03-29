@@ -15,7 +15,7 @@ import javax.validation.Payload;
 @Constraint(validatedBy = {EnumListValidator.class})
 public @interface ValidateEnumList {
 
-    String message() default "EnumList에 없는 값입니다.";
+    String message() default "유효하지 않은 역할입니다.";
     Class<?>[] groups() default { };
     Class<? extends Payload>[] payload() default { };
     Class<? extends Enum<?>> enumClass();

@@ -15,7 +15,7 @@ public class EnumListValidator implements ConstraintValidator<ValidateEnumList, 
 
         for (String role : roles) {
             if (!ProjectRole.isValidRole(role)) {
-                context.buildConstraintViolationWithTemplate("유효하지 않은 카테고리가 포함되어 있습니다: " + role)
+                context.buildConstraintViolationWithTemplate("유효하지 않은 역할이 포함되어 있습니다: " + role)
                         .addConstraintViolation();
                 return false;
             }
