@@ -7,13 +7,18 @@ import org.devridge.api.domain.coffeechat.dto.response.GetAllChatMessage;
 import org.devridge.api.application.coffeechat.CoffeeChatService;
 
 import org.devridge.api.domain.member.entity.Member;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.socket.messaging.SessionConnectEvent;
+
+import static org.devridge.api.common.util.SecurityContextHolderUtil.getMemberId;
 
 @RequiredArgsConstructor
 @Controller
@@ -32,9 +37,10 @@ public class ChatStompController {
     public void createChatMessage(
         @DestinationVariable Long roomId,
         @Payload CreateChatMessageRequest request,
-        @AuthenticationPrincipal Member member
+        SimpMessageHeaderAccessor accessor
     ) {
-        GetAllChatMessage message = coffeeChatService.createChatMessage(request, roomId, member.getId());
+        String email = (String) accessor.getSessionAttributes().get("senderEmail");
+        GetAllChatMessage message = coffeeChatService.createChatMessage(request, roomId, email);
         template.convertAndSend("/api/sub/" + roomId, message);
     }
 }

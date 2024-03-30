@@ -170,8 +170,8 @@ public class CoffeeChatService {
         throw new BadRequestException();
     }
 
-    public GetAllChatMessage createChatMessage(CreateChatMessageRequest request, Long roomId, Long memberId) {
-        Member member = this.getMember(memberId);
+    public GetAllChatMessage createChatMessage(CreateChatMessageRequest request, Long roomId, String email) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(DataNotFoundException::new);
         ChatRoom chatRoom = this.getChatRoom(roomId);
         ChatMessage chatMessage = coffeeChatMapper.toChatMessage(request, member, chatRoom);
 
@@ -188,10 +188,6 @@ public class CoffeeChatService {
     }
 
     private Member getMember(Long memberId) {
-        // TODO: 채팅 테스트용 임시 아이디 생성, 추후 실제 Frontend와 연결 시 수정
-        if (memberId == null) {
-            memberId = 1L;
-        }
         return memberRepository.findById(memberId).orElseThrow(DataNotFoundException::new);
     }
 
