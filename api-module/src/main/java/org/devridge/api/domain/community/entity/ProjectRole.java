@@ -2,10 +2,10 @@ package org.devridge.api.domain.community.entity;
 
 public enum ProjectRole {
 
-    프론트엔드,
-    백엔드,
-    기획,
-    디자인;
+    frontEnd,
+    backEnd,
+    PM,
+    design;
 
     public static boolean isValidRole(String roleName) {
         for (ProjectRole role : ProjectRole.values()) {
