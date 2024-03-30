@@ -1,4 +1,4 @@
-name: Deploy
+name: Prod Deploy
 
 on:
   pull_request:
@@ -64,21 +64,21 @@ jobs:
           context: ./api-module
           file: ./api-module/Dockerfile.prod
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-prod-blue
-            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-prod-green
+            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-blue
+            ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-green
           cache-from: type=gha  # gha = Guthub Actions 용 캐시
           cache-to: type=gha,mode=max
 
       - name: Run in EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.PROD_HOST }}
+          host: ${{ secrets.DEV_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.PROD_KEY }}
+          key: ${{ secrets.DEV_KEY }}
           envs: GITHUB_SHA
           script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-prod-blue
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-prod-green
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-blue
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPOSITORY }}:server-dev-green
             cd server
             ./deploy.sh
             sudo docker image prune -f
