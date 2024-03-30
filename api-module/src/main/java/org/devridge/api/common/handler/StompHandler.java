@@ -51,7 +51,7 @@ public class StompHandler implements ChannelInterceptor {
                 String email = claims.get("memberEmail", String.class);
                 return email;
             } catch (ExpiredJwtException | MalformedJwtException e) {
-                throw new AccessTokenInvalidException(401, "");
+                throw new AccessTokenInvalidException(401, "해당 토큰이 만료되었거나 올바른 형태가 아닙니다.");
             }
         }
 
@@ -85,7 +85,6 @@ public class StompHandler implements ChannelInterceptor {
         String accessToken = accessor.getFirstNativeHeader("Authorization");
         if (this.validateAccessToken(accessToken)) {
             String email = this.getEmail(accessToken);
-            // Set the memberId as a session attribute
             accessor.getSessionAttributes().put("senderEmail", email);
         }
     }
