@@ -2,3 +2,5 @@ rootProject.name = 'devridge'
 include 'api-module'
 include 'common-module'
 include 'batch-module'
+include 'admin-module'
+

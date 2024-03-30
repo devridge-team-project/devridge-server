@@ -2,16 +2,15 @@ package org.devridge.api.domain.qna.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.devridge.api.common.dto.UserInformation;
 
 import java.time.LocalDateTime;
-
-import java.util.List;
 
 @Getter
 @Builder
 public class GetQnADetailResponse {
 
-    private FindWriterInformation member;
+    private UserInformation member;
     private String title;
     private String content;
     private Integer views;
