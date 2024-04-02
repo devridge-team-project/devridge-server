@@ -8,24 +8,24 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.devridge.api.application.s3.S3Service;
+import org.devridge.api.common.exception.common.DataNotFoundException;
+import org.devridge.api.common.util.SecurityContextHolderUtil;
 import org.devridge.api.domain.community.dto.request.ProjectRequest;
 import org.devridge.api.domain.community.dto.response.ProjectDetailResponse;
 import org.devridge.api.domain.community.dto.response.ProjectListResponse;
 import org.devridge.api.domain.community.dto.response.SkillResponse;
 import org.devridge.api.domain.community.entity.Project;
 import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
+import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.domain.skill.entity.ProjectSkill;
+import org.devridge.api.domain.skill.entity.Skill;
 import org.devridge.api.infrastructure.community.project.ProjectBulkRepository;
 import org.devridge.api.infrastructure.community.project.ProjectQuerydslRepository;
 import org.devridge.api.infrastructure.community.project.ProjectRepository;
-import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.infrastructure.member.MemberRepository;
-import org.devridge.api.application.s3.S3Service;
-import org.devridge.api.domain.skill.entity.ProjectSkill;
-import org.devridge.api.domain.skill.entity.Skill;
 import org.devridge.api.infrastructure.skill.ProjectSkillRepository;
 import org.devridge.api.infrastructure.skill.SkillRepository;
-import org.devridge.api.common.exception.common.DataNotFoundException;
-import org.devridge.api.common.util.SecurityContextHolderUtil;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -121,14 +121,11 @@ public class ProjectService {
         return new SliceImpl<>(results, pageable, hasNext);
     }
 
-
     private List<Long> toProjectIds(List<ProjectListResponse> projectListResponses) {
         return projectListResponses.stream()
             .map(projectId -> projectId.getId())
             .collect(Collectors.toList());
     }
-
-
 
     @Transactional
     public void updateProject(Long projectId, ProjectRequest request) {
@@ -142,33 +139,29 @@ public class ProjectService {
 
         projectSkillRepository.deleteByProjectId(projectId);
 
+        String roles = null;
+        String images = null;
+
+        if (request.getRoles() != null && !request.getRoles().isEmpty()) {
+            roles = request.getRoles().toString();
+            roles = roles.substring(1, roles.length() - 1);
+        }
 
         if (request.getImages() != null && !request.getImages().isEmpty()) {
-            String images = request.getImages().toString();
-
-            project.updateProject(
-                request.getTitle(),
-                request.getContent(),
-                request.getCategory(),
-                images.substring(1, images.length() - 1),
-                request.getMeeting(),
-                request.getIsRecruiting()
-            );
-
-            createProjectSkill(request.getSkillIds(), projectId);
-            return;
+            images = request.getImages().toString();
+            images = images.substring(1, images.length() - 1);
         }
+
         project.updateProject(
             request.getTitle(),
             request.getContent(),
-            request.getCategory(),
-            null,
+            roles,
+            images,
             request.getMeeting(),
             request.getIsRecruiting()
         );
 
         createProjectSkill(request.getSkillIds(), projectId);
-
     }
 
     @Transactional
