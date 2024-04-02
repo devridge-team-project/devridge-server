@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
-@RequestMapping("/api/qna")
+@RequestMapping("/api/questions")
 @RequiredArgsConstructor
 @RestController
 public class QnAController {
@@ -58,7 +58,7 @@ public class QnAController {
     @PostMapping
     public ResponseEntity<Void> createQnA(@Valid @RequestBody CreateQnARequest qnaRequest) {
         Long qnaId = qnaService.createQnA(qnaRequest);
-        return ResponseEntity.created(URI.create("/api/qna/" + qnaId)).build();
+        return ResponseEntity.created(URI.create("/api/questions/" + qnaId)).build();
     }
 
     /**
