@@ -56,20 +56,16 @@ public class QnAMapper {
     }
 
     public QnA toQnA(CreateQnARequest qnaRequest, Member member) {
-        if (qnaRequest.getImageUrl() != null && !qnaRequest.getImageUrl().isEmpty()) {
-            String imageUrl = qnaRequest.getImageUrl().toString();
-            return QnA.builder()
+        QnA.QnABuilder qna = QnA.builder()
                 .member(member)
                 .title(qnaRequest.getTitle())
-                .content(qnaRequest.getContent())
-                .imageUrl(imageUrl.substring(1, imageUrl.length() - 1))
-                .build();
+                .content(qnaRequest.getContent());
+
+        if (qnaRequest.getImageUrl() != null && !qnaRequest.getImageUrl().isEmpty()) {
+            String imageUrl = qnaRequest.getImageUrl().toString();
+            qna.imageUrl(imageUrl.substring(1, imageUrl.length() - 1));
         }
 
-        return QnA.builder()
-            .member(member)
-            .title(qnaRequest.getTitle())
-            .content(qnaRequest.getContent())
-            .build();
+        return qna.build();
     }
 }

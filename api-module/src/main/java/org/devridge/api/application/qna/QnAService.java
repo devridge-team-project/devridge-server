@@ -6,7 +6,7 @@ import org.devridge.api.domain.qna.dto.request.CreateQnARequest;
 import org.devridge.api.domain.qna.dto.request.UpdateQnARequest;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
-import org.devridge.api.domain.qna.dto.type.LikeStatus;
+import org.devridge.api.domain.qna.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnALikeDislike;
 import org.devridge.api.domain.qna.entity.id.QnALikeDislikeId;

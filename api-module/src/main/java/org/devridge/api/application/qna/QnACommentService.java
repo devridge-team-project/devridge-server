@@ -7,7 +7,7 @@ import org.devridge.api.infrastructure.member.MemberRepository;
 import org.devridge.api.domain.qna.dto.request.CreateQnACommentRequest;
 import org.devridge.api.domain.qna.dto.request.UpdateQnACommentRequest;
 import org.devridge.api.domain.qna.dto.response.GetAllCommentByQnAId;
-import org.devridge.api.domain.qna.dto.type.LikeStatus;
+import org.devridge.api.domain.qna.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.QnACommentLikeDislike;
 import org.devridge.api.domain.qna.entity.QnA;
 import org.devridge.api.domain.qna.entity.QnAComment;
@@ -162,7 +162,12 @@ public class QnACommentService {
             LikeStatus.G,
             false
         );
-        int dislikes = qnaCommentLikeDislikeRepository.countQnACommentLikeOrDislikeByQnAId(qnaComment, LikeStatus.B, false);
+        int dislikes = qnaCommentLikeDislikeRepository.countQnACommentLikeOrDislikeByQnAId(
+            qnaComment,
+            LikeStatus.B,
+            false
+        );
+
         qnaCommentRepository.updateLikeAndDiscount(likes, dislikes, qnaComment.getId());
     }
 }

@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import org.devridge.api.domain.qna.dto.type.LikeStatus;
+import org.devridge.api.domain.qna.type.LikeStatus;
 import org.devridge.api.domain.qna.entity.id.QnALikeDislikeId;
 import org.devridge.api.common.entity.BaseTimeEntity;
 
