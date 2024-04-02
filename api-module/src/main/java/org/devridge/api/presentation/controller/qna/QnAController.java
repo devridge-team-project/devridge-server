@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.qna.dto.request.*;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
-import org.devridge.api.domain.qna.dto.type.SortOption;
+import org.devridge.api.domain.qna.type.SortOption;
 import org.devridge.api.application.qna.QnAService;
 import org.devridge.api.domain.qna.validator.ValidateSortOption;
 

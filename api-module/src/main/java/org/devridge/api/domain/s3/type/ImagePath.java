@@ -1,4 +1,4 @@
-package org.devridge.api.domain.s3.validator.type;
+package org.devridge.api.domain.s3.type;
 
 public enum ImagePath {
     qna,
