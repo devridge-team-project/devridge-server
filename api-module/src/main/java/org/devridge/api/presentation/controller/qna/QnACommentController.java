@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
-@RequestMapping("/api/qna/{qnaId}/comments")
+@RequestMapping("/api/questions/{qnaId}/answers")
 @RequiredArgsConstructor
 @RestController
 public class QnACommentController {
@@ -46,7 +46,7 @@ public class QnACommentController {
         @RequestBody CreateQnACommentRequest commentRequest
     ) {
         Long commentId = qnaCommentService.createQnAComment(qnaId, commentRequest);
-        return ResponseEntity.created(URI.create("/api/qna/" + qnaId + "/comments/" + commentId)).build();
+        return ResponseEntity.created(URI.create("/api/questions/" + qnaId + "/answers/" + commentId)).build();
     }
 
     /**
