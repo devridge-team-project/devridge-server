@@ -45,7 +45,7 @@ public class Project extends BaseEntity {
     @ColumnDefault("0")
     private Long dislikes;
 
-    private String category;
+    private String roles;
 
     private String images;
 
@@ -59,11 +59,11 @@ public class Project extends BaseEntity {
     private Boolean isRecruiting;
 
     @Builder
-    public Project(Member member, String title, String content, String category, String images, String meeting, Boolean isRecruiting) {
+    public Project(Member member, String title, String content, String roles, String images, String meeting, Boolean isRecruiting) {
         this.member = member;
         this.title = title;
         this.content = content;
-        this.category = category;
+        this.roles = roles;
         this.images = images;
         this.meeting = meeting;
         this.isRecruiting = isRecruiting;
@@ -71,10 +71,10 @@ public class Project extends BaseEntity {
 
 
 
-    public void updateProject(String title, String content, String category, String images, String meeting, Boolean isRecruiting) {
+    public void updateProject(String title, String content, String roles, String images, String meeting, Boolean isRecruiting) {
         this.title = title;
         this.content = content;
-        this.category = category;
+        this.roles = roles;
         this.images = images;
         this.meeting = meeting;
         this.isRecruiting = isRecruiting;

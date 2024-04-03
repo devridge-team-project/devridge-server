@@ -43,7 +43,7 @@ public class ProjectQuerydslRepository {
                 .list(Projections.fields(
                     ProjectListResponse.class,
                     project.id,
-                    project.category,
+                    project.roles,
                     project.title,
                     project.content,
                     project.likes,

@@ -51,7 +51,7 @@ public class ProjectController {
     @PutMapping("/{projectId}")
     public ResponseEntity<Void> updateProject(
         @PathVariable Long projectId,
-        @RequestBody ProjectRequest request
+        @Valid @RequestBody ProjectRequest request
     ) {
         projectService.updateProject(projectId, request);
         return ResponseEntity.ok().build();

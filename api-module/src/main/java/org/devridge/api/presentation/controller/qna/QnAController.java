@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.qna.dto.request.*;
 import org.devridge.api.domain.qna.dto.response.GetAllQnAResponse;
 import org.devridge.api.domain.qna.dto.response.GetQnADetailResponse;
-import org.devridge.api.domain.qna.dto.type.SortOption;
+import org.devridge.api.domain.qna.type.SortOption;
 import org.devridge.api.application.qna.QnAService;
 import org.devridge.api.domain.qna.validator.ValidateSortOption;
 
@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
-@RequestMapping("/api/qna")
+@RequestMapping("/api/questions")
 @RequiredArgsConstructor
 @RestController
 public class QnAController {
@@ -58,7 +58,7 @@ public class QnAController {
     @PostMapping
     public ResponseEntity<Void> createQnA(@Valid @RequestBody CreateQnARequest qnaRequest) {
         Long qnaId = qnaService.createQnA(qnaRequest);
-        return ResponseEntity.created(URI.create("/api/qna/" + qnaId)).build();
+        return ResponseEntity.created(URI.create("/api/questions/" + qnaId)).build();
     }
 
     /**
