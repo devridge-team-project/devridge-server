@@ -45,4 +45,8 @@ public class StudyComment extends BaseEntity {
         this.member = member;
         this.content = content;
     }
+
+    public void updateComment(String content) {
+        this.content = content;
+    }
 }

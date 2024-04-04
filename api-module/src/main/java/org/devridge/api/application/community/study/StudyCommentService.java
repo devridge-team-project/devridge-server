@@ -6,6 +6,7 @@ import org.devridge.api.common.util.SecurityContextHolderUtil;
 import org.devridge.api.domain.community.dto.request.StudyCommentRequest;
 import org.devridge.api.domain.community.entity.Study;
 import org.devridge.api.domain.community.entity.StudyComment;
+import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.infrastructure.community.study.StudyCommentRepository;
 import org.devridge.api.infrastructure.community.study.StudyRepository;
@@ -29,6 +30,24 @@ public class StudyCommentService {
         StudyComment studyComment =
             studyCommentMapper.toStudyComment(study, member, commentRequest);
         return studyCommentRepository.save(studyComment).getId();
+    }
+
+    public void updateComment(Long studyId, Long commentId, StudyCommentRequest commentRequest) {
+        getStudyById(studyId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
+        StudyComment comment = getStudyComment(commentId);
+
+        if (!comment.getMember().getId().equals(accessMemberId)) {
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 수정할 수 없습니다.");
+        }
+
+        comment.updateComment(commentRequest.getContent());
+        studyCommentRepository.save(comment);
+    }
+
+    private StudyComment getStudyComment(Long commentId) {
+        return studyCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
     }
 
     private Study getStudyById(Long studyId) {

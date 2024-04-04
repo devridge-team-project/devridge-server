@@ -8,6 +8,7 @@ import org.devridge.api.domain.community.dto.request.StudyCommentRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,4 +29,13 @@ public class StudyCommentController {
         return ResponseEntity.created(URI.create("/api/community/studies/" + studyId + "/comments/" + commentId)).build();
     }
 
+    @PutMapping("/{commentId}")
+    public ResponseEntity<Void> updateComment(
+        @RequestBody StudyCommentRequest commentRequest,
+        @PathVariable Long commentId,
+        @PathVariable Long studyId
+    ) {
+        studyCommentService.updateComment(studyId, commentId, commentRequest);
+        return ResponseEntity.ok().build();
+    }
 }
