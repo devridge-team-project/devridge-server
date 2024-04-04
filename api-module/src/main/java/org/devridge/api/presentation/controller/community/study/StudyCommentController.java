@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.devridge.api.application.community.study.StudyCommentService;
 import org.devridge.api.domain.community.dto.request.StudyCommentRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -36,6 +37,15 @@ public class StudyCommentController {
         @PathVariable Long studyId
     ) {
         studyCommentService.updateComment(studyId, commentId, commentRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<Void> deleteComment(
+        @PathVariable Long studyId,
+        @PathVariable Long commentId
+    ) {
+        studyCommentService.deleteComment(studyId, commentId);
         return ResponseEntity.ok().build();
     }
 }

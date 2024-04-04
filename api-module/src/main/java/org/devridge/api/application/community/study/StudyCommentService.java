@@ -46,6 +46,19 @@ public class StudyCommentService {
         studyCommentRepository.save(comment);
     }
 
+    public void deleteComment(Long studyId, Long commentId) {
+        getStudyById(studyId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
+        StudyComment comment = getStudyComment(commentId);
+
+        if (!comment.getMember().getId().equals(accessMemberId)) {
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 삭제할 수 없습니다.");
+        }
+
+        studyCommentRepository.deleteById(commentId);
+    }
+
     private StudyComment getStudyComment(Long commentId) {
         return studyCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
     }
