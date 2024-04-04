@@ -14,4 +14,16 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
             "SET p.views = p.views + 1 " +
             "WHERE p.id = :id")
     void updateView(@Param("id") Long id);
+
+    @Modifying
+    @Query(
+        value = "UPDATE Project " +
+            "SET likes = :likes, dislikes = :dislikes " +
+            "WHERE id = :id"
+    )
+    void updateLikeDislike(
+        @Param("likes") Long likes,
+        @Param("dislikes") Long dislikes,
+        @Param("id") Long id
+    );
 }
