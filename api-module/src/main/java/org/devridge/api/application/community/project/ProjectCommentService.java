@@ -46,6 +46,19 @@ public class ProjectCommentService {
         projectCommentRepository.save(comment);
     }
 
+    public void deleteComment(Long projectId, Long commentId) {
+        getProjectById(projectId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
+        ProjectComment comment = getProjectComment(commentId);
+
+        if (!comment.getMember().getId().equals(accessMemberId)) {
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 삭제할 수 없습니다.");
+        }
+
+        projectCommentRepository.deleteById(commentId);
+    }
+
     private ProjectComment getProjectComment(Long commentId) {
         return projectCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
     }
