@@ -6,6 +6,7 @@ import org.devridge.api.common.util.SecurityContextHolderUtil;
 import org.devridge.api.domain.community.dto.request.ProjectCommentRequest;
 import org.devridge.api.domain.community.entity.Project;
 import org.devridge.api.domain.community.entity.ProjectComment;
+import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.infrastructure.community.project.ProjectCommentRepository;
 import org.devridge.api.infrastructure.community.project.ProjectRepository;
@@ -29,6 +30,24 @@ public class ProjectCommentService {
         ProjectComment projectComment =
                 projectCommentMapper.toProjectComment(project, member, commentRequest);
         return projectCommentRepository.save(projectComment).getId();
+    }
+
+    public void updateComment(Long projectId, Long commentId, ProjectCommentRequest commentRequest) {
+        getProjectById(projectId);
+        Long accessMemberId = SecurityContextHolderUtil.getMemberId();
+        getMemberById(accessMemberId);
+        ProjectComment comment = getProjectComment(commentId);
+
+        if (!comment.getMember().getId().equals(accessMemberId)) {
+            throw new MyCommunityForbiddenException(403, "내가 작성하지 않은 글은 수정할 수 없습니다.");
+        }
+
+        comment.updateComment(commentRequest.getContent());
+        projectCommentRepository.save(comment);
+    }
+
+    private ProjectComment getProjectComment(Long commentId) {
+        return projectCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException());
     }
 
     private Project getProjectById(Long projectId) {
