@@ -34,9 +34,9 @@ public class ProjectCommentLikeDislikeService {
         Project project = getProjectById(projectId);
         ProjectComment comment = getCommentById(commentId);
         ProjectCommentLikeDislikeId projectCommentLikeDislikeId =
-            new ProjectCommentLikeDislikeId(member.getId(), comment.getId());
+                new ProjectCommentLikeDislikeId(member.getId(), comment.getId());
 
-        if (accessMemberId.equals(project.getMember().getId())) {
+        if (accessMemberId.equals(comment.getMember().getId())) {
             throw new MyCommunityForbiddenException(403, "내가 작성한 글은 추천할 수 없습니다.");
         }
 
@@ -72,9 +72,9 @@ public class ProjectCommentLikeDislikeService {
         Project project = getProjectById(projectId);
         ProjectComment comment = getCommentById(commentId);
         ProjectCommentLikeDislikeId projectCommentLikeDislikeId =
-            new ProjectCommentLikeDislikeId(member.getId(), comment.getId());
+                new ProjectCommentLikeDislikeId(member.getId(), comment.getId());
 
-        if (accessMemberId.equals(project.getMember().getId())) {
+        if (accessMemberId.equals(comment.getMember().getId())) {
             throw new MyCommunityForbiddenException(403, "내가 작성한 글은 비추천할 수 없습니다.");
         }
 
