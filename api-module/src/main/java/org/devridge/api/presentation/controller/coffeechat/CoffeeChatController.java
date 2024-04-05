@@ -42,7 +42,7 @@ public class CoffeeChatController {
      * @param lastIndex
      * @return 해당 채팅방 메세지 목록 무한 스크롤
      */
-    @GetMapping("/{chatRoomId}")
+    @GetMapping("/rooms/{chatRoomId}")
     public ResponseEntity<List<GetAllChatMessage>> getAllChatMessages(
         @PathVariable Long chatRoomId,
         @RequestParam(value = "lastIndex", required = false) Long lastIndex
@@ -54,7 +54,7 @@ public class CoffeeChatController {
     /**
      * 커피챗 요청 생성
      */
-    @PostMapping("/request")
+    @PostMapping("/requests")
     public ResponseEntity<Void> createCoffeeChatRequest(
         @RequestBody @Valid CreateCoffeeChatRequest coffeeChatRequest
     ) {
@@ -65,7 +65,7 @@ public class CoffeeChatController {
     /**
      * 커피챗 요청 리스트(커피챗 목록 + 알림으로 보여주기 위한 readAt이 null인 개수 반환)
      */
-    @GetMapping("/request")
+    @GetMapping("/requests")
     public ResponseEntity<GetAllCoffeeChatRequest> getCoffeeChatRequests(
         @RequestParam(value = "viewOption") String viewOption,
         @RequestParam(value = "lastIndex", required = false) Long lastIndex
@@ -79,7 +79,7 @@ public class CoffeeChatController {
      * @param requestId
      * @return 커피챗 요청 세부 내용
      */
-    @GetMapping("/request/{requestId}")
+    @GetMapping("/requests/{requestId}")
     public ResponseEntity<GetCoffeeChatRequestResponse> getCoffeeChat(@PathVariable Long requestId) {
         GetCoffeeChatRequestResponse result = coffeeChatService.getCoffeeChatRequest(requestId);
         return ResponseEntity.ok().body(result);
@@ -91,7 +91,7 @@ public class CoffeeChatController {
      * @param request
      * @return 승인 및 거절 결과
      */
-    @PatchMapping("/request/{requestId}")
+    @PatchMapping("/requests/{requestId}")
     public ResponseEntity<CoffeeChatResult> acceptOrRejectCoffeeChatRequest(
         @PathVariable Long requestId,
         @RequestBody @Valid AcceptOrRejectCoffeeChatRequest request
@@ -105,7 +105,7 @@ public class CoffeeChatController {
      * @param roomId
      * @param messageId
      */
-    @DeleteMapping("/{roomId}/{messageId}")
+    @DeleteMapping("/rooms/{roomId}/messages/{messageId}")
     public ResponseEntity<Void> deleteChatMessage(
         @PathVariable Long roomId,
         @PathVariable Long messageId
