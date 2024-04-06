@@ -36,7 +36,7 @@ public class StudyCommentLikeDislikeService {
         StudyCommentLikeDislikeId studyCommentLikeDislikeId =
             new StudyCommentLikeDislikeId(member.getId(), comment.getId());
 
-        if (accessMemberId.equals(study.getMember().getId())) {
+        if (accessMemberId.equals(comment.getMember().getId())) {
             throw new MyCommunityForbiddenException(403, "내가 작성한 글은 추천할 수 없습니다.");
         }
 
@@ -74,7 +74,7 @@ public class StudyCommentLikeDislikeService {
         StudyCommentLikeDislikeId studyCommentLikeDislikeId =
             new StudyCommentLikeDislikeId(member.getId(), comment.getId());
 
-        if (accessMemberId.equals(study.getMember().getId())) {
+        if (accessMemberId.equals(comment.getMember().getId())) {
             throw new MyCommunityForbiddenException(403, "내가 작성한 글은 비추천할 수 없습니다.");
         }
 
