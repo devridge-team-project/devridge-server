@@ -4,17 +4,14 @@ package org.devridge.api.application.community.project;
 import static org.devridge.api.common.util.MemberUtil.toMember;
 
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.devridge.api.common.dto.UserInformation;
 import org.devridge.api.domain.community.dto.request.ProjectRequest;
 import org.devridge.api.domain.community.dto.response.ProjectDetailResponse;
-import org.devridge.api.domain.community.dto.response.ProjectListResponse;
 import org.devridge.api.domain.community.entity.Project;
 import org.devridge.api.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class ProjectMapper {
 
     public ProjectDetailResponse toProjectDetailResponse(Project project, List<String> skills) {
@@ -57,17 +54,5 @@ public class ProjectMapper {
         }
 
         return builder.build();
-    }
-
-    public ProjectListResponse toProjectListResponse(Project project) {
-        return ProjectListResponse.builder()
-            .id(project.getId())
-            .views(project.getViews())
-            .roles(project.getRoles())
-            .likes(project.getLikes())
-            .dislikes(project.getDislikes())
-            .title(project.getTitle())
-            .content(project.getContent())
-            .build();
     }
 }
