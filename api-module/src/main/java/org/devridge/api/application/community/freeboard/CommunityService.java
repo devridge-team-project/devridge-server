@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
-
+import org.devridge.api.application.s3.S3Service;
+import org.devridge.api.common.exception.common.DataNotFoundException;
+import org.devridge.api.common.util.SecurityContextHolderUtil;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
 import org.devridge.api.domain.community.dto.response.CommunitySliceResponse;
@@ -19,19 +20,13 @@ import org.devridge.api.domain.community.entity.CommunityHashtag;
 import org.devridge.api.domain.community.entity.Hashtag;
 import org.devridge.api.domain.community.entity.id.CommunityHashtagId;
 import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
+import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.infrastructure.community.freeboard.CommunityHashtagRepository;
 import org.devridge.api.infrastructure.community.freeboard.CommunityQuerydslRepository;
 import org.devridge.api.infrastructure.community.freeboard.CommunityRepository;
 import org.devridge.api.infrastructure.community.hashtag.HashtagRepository;
-import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.infrastructure.member.MemberRepository;
-import org.devridge.api.application.s3.S3Service;
-import org.devridge.api.common.exception.common.DataNotFoundException;
-import org.devridge.api.common.util.SecurityContextHolderUtil;
-
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,25 +89,11 @@ public class CommunityService {
         }
     }
 
-    public Slice<CommunitySliceResponse> getAllCommunity(Long lastId, Pageable pageable) {
+    public List<CommunitySliceResponse> getAllCommunity(Long lastId, Pageable pageable) {
         List<CommunitySliceResponse> communitySliceResponses = communityQuerydslRepository.searchByCommunity(lastId, pageable);
         List<Long> communityIds = toCommunityIds(communitySliceResponses);
         List<CommunityHashtag> communityHashtags = communityQuerydslRepository.findCommunityHashtagsInCommunityIds(communityIds);
-        List<CommunitySliceResponse> groupedByCommunitySliceResponses = groupByCommunityId(communityHashtags, communitySliceResponses);
-        return checkLastPage(pageable, groupedByCommunitySliceResponses);
-    }
-
-    private Slice<CommunitySliceResponse> checkLastPage(Pageable pageable, List<CommunitySliceResponse> results) {
-
-        boolean hasNext = false;
-
-        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
-        if (results.size() > pageable.getPageSize()) {
-            hasNext = true;
-            results.remove(pageable.getPageSize());
-        }
-
-        return new SliceImpl<>(results, pageable, hasNext);
+        return groupByCommunityId(communityHashtags, communitySliceResponses);
     }
 
     private List<CommunitySliceResponse> groupByCommunityId(List<CommunityHashtag> communityHashtags, List<CommunitySliceResponse> communitySliceResponses) {
