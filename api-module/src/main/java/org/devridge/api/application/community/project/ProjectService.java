@@ -27,8 +27,6 @@ import org.devridge.api.infrastructure.member.MemberRepository;
 import org.devridge.api.infrastructure.skill.ProjectSkillRepository;
 import org.devridge.api.infrastructure.skill.SkillRepository;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,12 +69,11 @@ public class ProjectService {
         return projectMapper.toProjectDetailResponse(project, skills);
     }
 
-    public Slice<ProjectListResponse> getAllProject(Long lastId, Pageable pageable) {
+    public List<ProjectListResponse> getAllProject(Long lastId, Pageable pageable) {
         List<ProjectListResponse> projectListResponses = projectQuerydslRepository.searchByProject(lastId, pageable);
         List<Long> projectIds = toProjectIds(projectListResponses);
         List<ProjectSkill> projectSkills = projectQuerydslRepository.findProjectSkillsInProjectIds(projectIds);
-        List<ProjectListResponse> groupedByProjectListResponses = groupByProjectId(projectSkills, projectListResponses);
-        return checkLastPage(pageable, groupedByProjectListResponses);
+        return groupByProjectId(projectSkills, projectListResponses);
     }
 
     private List<ProjectListResponse> groupByProjectId(List<ProjectSkill> projectSkills, List<ProjectListResponse> projectListResponses) {
@@ -107,18 +104,6 @@ public class ProjectService {
         }
 
         return projectListResponses;
-    }
-    private Slice<ProjectListResponse> checkLastPage(Pageable pageable, List<ProjectListResponse> results) {
-
-        boolean hasNext = false;
-
-        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
-        if (results.size() > pageable.getPageSize()) {
-            hasNext = true;
-            results.remove(pageable.getPageSize());
-        }
-
-        return new SliceImpl<>(results, pageable, hasNext);
     }
 
     private List<Long> toProjectIds(List<ProjectListResponse> projectListResponses) {
