@@ -16,8 +16,6 @@ import org.devridge.api.infrastructure.community.study.StudyQuerydslRepository;
 import org.devridge.api.infrastructure.community.study.StudyRepository;
 import org.devridge.api.infrastructure.member.MemberRepository;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,23 +44,10 @@ public class StudyService {
         return studyMapper.toStudyDetailResponse(study);
     }
 
-    public Slice<StudyListResponse> getAllStudy(Long lastId, Pageable pageable) {
+    public List<StudyListResponse> getAllStudy(Long lastId, Pageable pageable) {
         List<Study> studies = studyQuerydslRepository.searchByStudy(lastId, pageable);
-        List<StudyListResponse> studyListResponses = studyMapper.toStudyListResponses(studies);
-        return checkLastPage(pageable, studyListResponses);
-    }
+        return studyMapper.toStudyListResponses(studies);
 
-    private Slice<StudyListResponse> checkLastPage(Pageable pageable, List<StudyListResponse> results) {
-
-        boolean hasNext = false;
-
-        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
-        if (results.size() > pageable.getPageSize()) {
-            hasNext = true;
-            results.remove(pageable.getPageSize());
-        }
-
-        return new SliceImpl<>(results, pageable, hasNext);
     }
 
     @Transactional
