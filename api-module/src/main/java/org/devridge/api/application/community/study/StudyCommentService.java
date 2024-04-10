@@ -15,8 +15,6 @@ import org.devridge.api.infrastructure.community.study.StudyCommentRepository;
 import org.devridge.api.infrastructure.community.study.StudyRepository;
 import org.devridge.api.infrastructure.member.MemberRepository;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -39,23 +37,8 @@ public class StudyCommentService {
         return studyCommentRepository.save(studyComment).getId();
     }
 
-    public Slice<StudyCommentResponse> getAllStudyComment(Long studyId, Long lastId, Pageable pageable) {
-        List<StudyCommentResponse> results =
-            studyCommentQuerydslRepository.searchBySlice(studyId, lastId, pageable);
-        return checkLastPage(pageable, results);
-    }
-
-    private Slice<StudyCommentResponse> checkLastPage(Pageable pageable, List<StudyCommentResponse> results) {
-
-        boolean hasNext = false;
-
-        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
-        if (results.size() > pageable.getPageSize()) {
-            hasNext = true;
-            results.remove(pageable.getPageSize());
-        }
-
-        return new SliceImpl<>(results, pageable, hasNext);
+    public List<StudyCommentResponse> getAllStudyComment(Long studyId, Long lastId, Pageable pageable) {
+        return studyCommentQuerydslRepository.searchBySlice(studyId, lastId, pageable);
     }
 
     public void updateComment(Long studyId, Long commentId, StudyCommentRequest commentRequest) {
