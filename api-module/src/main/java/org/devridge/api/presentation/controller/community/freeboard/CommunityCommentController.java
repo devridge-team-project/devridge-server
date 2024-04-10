@@ -1,13 +1,13 @@
 package org.devridge.api.presentation.controller.community.freeboard;
 
 import java.net.URI;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.devridge.api.application.community.freeboard.CommunityCommentService;
 import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
-import org.devridge.api.application.community.freeboard.CommunityCommentService;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,12 +37,12 @@ public class CommunityCommentController {
     }
 
     @GetMapping
-    public ResponseEntity<Slice<CommunityCommentResponse>> getAllComments(
+    public ResponseEntity<List<CommunityCommentResponse>> getAllComments(
         @PathVariable Long communityId,
         @RequestParam(name = "lastId", required = false) Long lastId,
-        @PageableDefault( ) Pageable pageable
+        @PageableDefault Pageable pageable
     ) {
-        Slice<CommunityCommentResponse> commentResponses = communityCommentService.getAllCommunityComment(communityId, lastId, pageable);
+        List<CommunityCommentResponse> commentResponses = communityCommentService.getAllCommunityComment(communityId, lastId, pageable);
         return ResponseEntity.ok().body(commentResponses);
     }
 
