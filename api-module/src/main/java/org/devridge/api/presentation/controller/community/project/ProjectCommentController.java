@@ -1,13 +1,13 @@
 package org.devridge.api.presentation.controller.community.project;
 
 import java.net.URI;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.application.community.project.ProjectCommentService;
 import org.devridge.api.domain.community.dto.request.ProjectCommentRequest;
 import org.devridge.api.domain.community.dto.response.ProjectCommentResponse;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,12 +36,12 @@ public class ProjectCommentController {
     }
 
     @GetMapping
-    public ResponseEntity<Slice<ProjectCommentResponse>> getAllComments(
+    public ResponseEntity<List<ProjectCommentResponse>> getAllComments(
         @PathVariable Long projectId,
         @RequestParam(name = "lastId", required = false) Long lastId,
         Pageable pageable
     ) {
-        Slice<ProjectCommentResponse> commentResponses = projectCommentService.getAllProjectComment(projectId, lastId, pageable);
+        List<ProjectCommentResponse> commentResponses = projectCommentService.getAllProjectComment(projectId, lastId, pageable);
         return ResponseEntity.ok().body(commentResponses);
     }
 

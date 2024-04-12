@@ -11,8 +11,6 @@ import org.devridge.api.common.dto.UserInformation;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
 import org.devridge.api.domain.community.entity.QCommunityComment;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -22,8 +20,8 @@ public class CommunityCommentQuerydslReopsitory {
     private final JPAQueryFactory jpaQueryFactory;
     private QCommunityComment comment = QCommunityComment.communityComment;
 
-    public Slice<CommunityCommentResponse> searchBySlice(Long communityId, Long lastId, Pageable pageable) {
-        List<CommunityCommentResponse> results = jpaQueryFactory
+    public List<CommunityCommentResponse> searchBySlice(Long communityId, Long lastId, Pageable pageable) {
+        return jpaQueryFactory
             .selectFrom(comment)
             .leftJoin(comment.member)
             .where(
@@ -64,7 +62,6 @@ public class CommunityCommentQuerydslReopsitory {
                     )
                 )
             ));
-        return checkLastPage(pageable, results);
     }
 
     // no-offset 방식 처리하는 메서드
@@ -75,18 +72,4 @@ public class CommunityCommentQuerydslReopsitory {
 
         return comment.id.lt(communityId);
     }
-
-    private Slice<CommunityCommentResponse> checkLastPage(Pageable pageable, List<CommunityCommentResponse> results) {
-
-        boolean hasNext = false;
-
-        // 조회한 결과 개수가 요청한 페이지 사이즈보다 크면 뒤에 더 있음, next = true
-        if (results.size() > pageable.getPageSize()) {
-            hasNext = true;
-            results.remove(pageable.getPageSize());
-        }
-
-        return new SliceImpl<>(results, pageable, hasNext);
-    }
-
 }
