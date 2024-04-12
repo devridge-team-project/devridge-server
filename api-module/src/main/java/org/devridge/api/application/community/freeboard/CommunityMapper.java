@@ -1,19 +1,17 @@
 package org.devridge.api.application.community.freeboard;
 
+import static org.devridge.api.common.util.MemberUtil.toMember;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.devridge.api.common.dto.UserInformation;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
 import org.devridge.api.domain.community.dto.response.CommunityListResponse;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.member.entity.Member;
-
 import org.springframework.stereotype.Component;
-
-import static org.devridge.api.common.util.MemberUtil.toMember;
 
 @Component
 public class CommunityMapper {
@@ -26,9 +24,9 @@ public class CommunityMapper {
                 .userInformation(memberInfoResponse)
                 .title(community.getTitle())
                 .content(community.getContent())
-                .likeCount(community.getLikeCount())
-                .dislikeCount(community.getDislikeCount())
-                .viewCount(community.getViewCount() + 1)
+                .likes(community.getLikes())
+                .dislikes(community.getDislikes())
+                .views(community.getViews() + 1)
                 .createdAt(community.getCreatedAt())
                 .updatedAt(community.getUpdatedAt())
                 .hashtags(toHashtags(community))
@@ -47,9 +45,9 @@ public class CommunityMapper {
         return CommunityListResponse.builder()
                 .id(community.getId())
                 .title(community.getTitle())
-                .commentCount(Long.valueOf(community.getComments().size()))
-                .viewCount(community.getViewCount())
-                .likeCount(community.getLikeCount())
+                .comments(Long.valueOf(community.getComments().size()))
+                .views(community.getViews())
+                .likes(community.getLikes())
                 .build();
     }
 

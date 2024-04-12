@@ -22,9 +22,9 @@ public class CommunityCommentResponse {
 
     private LocalDateTime updatedAt;
 
-    private Long likeCount;
+    private Long likes;
 
-    private Long dislikeCount;
+    private Long dislikes;
 
     @JsonProperty("member")
     private UserInformation userInformation;

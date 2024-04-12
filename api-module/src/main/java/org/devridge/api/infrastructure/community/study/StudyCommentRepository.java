@@ -11,8 +11,8 @@ public interface StudyCommentRepository extends JpaRepository<StudyComment, Long
     @Modifying
     @Query(
         value = "UPDATE StudyComment " +
-                "SET likeCount = :likeCount, dislikeCount = :dislikeCount " +
+                "SET likes = :likes, dislikes = :dislikes " +
                 "WHERE id = :id")
-    void updateLikeDislike(@Param("likeCount") Long likeCount, @Param("dislikeCount") Long dislikeCount, @Param("id") Long id);
+    void updateLikeDislike(@Param("likes") Long likes, @Param("dislikes") Long dislikes, @Param("id") Long id);
 
 }

@@ -16,7 +16,7 @@ public interface CommunityCommentRepository extends JpaRepository<CommunityComme
     @Modifying
     @Query(
         value = "UPDATE CommunityComment " +
-                "SET likeCount = :likes, dislikeCount = :dislikes " +
+                "SET likes = :likes, dislikes = :dislikes " +
                 "WHERE id = :id")
     void updateLikeDislike(@Param("likes") Long likes, @Param("dislikes") Long dislikes, @Param("id") Long id);
 }
