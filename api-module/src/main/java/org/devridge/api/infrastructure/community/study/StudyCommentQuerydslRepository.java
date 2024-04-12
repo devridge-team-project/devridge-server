@@ -38,8 +38,8 @@ public class StudyCommentQuerydslRepository {
                         comment.content,
                         comment.createdAt,
                         comment.updatedAt,
-                        comment.likeCount,
-                        comment.dislikeCount,
+                        comment.likes,
+                        comment.dislikes,
 
                         Projections.constructor(
                             UserInformation.class,

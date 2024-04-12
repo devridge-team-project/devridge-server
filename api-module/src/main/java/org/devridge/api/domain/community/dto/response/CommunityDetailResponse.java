@@ -18,15 +18,15 @@ public class CommunityDetailResponse {
 
     private String content;
 
-    private Long viewCount;
+    private Long views;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    private Long likeCount;
+    private Long likes;
 
-    private Long dislikeCount;
+    private Long dislikes;
 
     @JsonProperty("member")
     private UserInformation userInformation;

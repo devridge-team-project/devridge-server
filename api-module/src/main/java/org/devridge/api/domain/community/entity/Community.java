@@ -38,13 +38,13 @@ public class Community extends BaseEntity {
     private String content;
 
     @ColumnDefault("0")
-    private Long viewCount;
+    private Long views;
 
     @ColumnDefault("0")
-    private Long likeCount;
+    private Long likes;
 
     @ColumnDefault("0")
-    private Long dislikeCount;
+    private Long dislikes;
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
     private List<CommunityComment> comments = new ArrayList<>();

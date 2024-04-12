@@ -9,7 +9,7 @@ public class CommunityListResponse {
 
     private Long id;
     private String title;
-    private Long viewCount;
-    private Long likeCount;
-    private Long commentCount;
+    private Long views;
+    private Long likes;
+    private Long comments;
 }

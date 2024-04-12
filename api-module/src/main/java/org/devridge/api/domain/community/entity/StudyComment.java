@@ -34,10 +34,10 @@ public class StudyComment extends BaseEntity {
     private String content;
 
     @ColumnDefault("0")
-    private Long likeCount;
+    private Long likes;
 
     @ColumnDefault("0")
-    private Long dislikeCount;
+    private Long dislikes;
 
     @Builder
     public StudyComment(Study study, Member member, String content) {

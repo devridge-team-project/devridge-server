@@ -18,8 +18,8 @@ public class StudyCommentResponse {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long likeCount;
-    private Long dislikeCount;
+    private Long likes;
+    private Long dislikes;
 
     @JsonProperty("member")
     private UserInformation userInformation;

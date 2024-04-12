@@ -47,8 +47,8 @@ public class CommunityQuerydslRepository {
                         community.id,
                         community.title,
                         community.content,
-                        community.viewCount,
-                        community.likeCount,
+                        community.views,
+                        community.likes,
                         community.comments.size().longValue().as("comments"),
                         Projections.constructor(
                             UserInformation.class,
