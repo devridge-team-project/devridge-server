@@ -62,7 +62,7 @@ public class StudyMapper {
 
     public StudyListResponse toStudyListResponse(Study study) {
         return StudyListResponse.builder()
-            .studyId(study.getId())
+            .id(study.getId())
             .likes(study.getLikes())
             .category(study.getCategory())
             .title(study.getTitle())
