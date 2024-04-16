@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.domain.note.dto.response.GetAllNote;
 import org.devridge.api.domain.note.dto.response.GetAllRoom;
 import org.devridge.api.domain.note.entity.NoteMessage;
 import org.devridge.api.domain.note.entity.NoteRoom;
@@ -40,6 +41,27 @@ public class NoteMapper {
         return GetAllRoom.builder()
             .id(noteMessage.getNoteRoom().getId())
             .userInformation(toMember(member))
+            .content(noteMessage.getContent())
+            .createAt(noteMessage.getCreatedAt())
+            .build();
+    }
+
+    public List<GetAllNote> toGetAllNotes(List<NoteMessage> noteMessages) {
+        List<GetAllNote> getAllNotes = new ArrayList<>();
+
+        for (NoteMessage noteMessage : noteMessages) {
+            getAllNotes.add(
+                toGetAllNote(noteMessage)
+            );
+        }
+
+        return getAllNotes;
+    }
+
+    public GetAllNote toGetAllNote(NoteMessage noteMessage) {
+        return GetAllNote.builder()
+            .id(noteMessage.getId())
+            .senderId(noteMessage.getSender().getId())
             .content(noteMessage.getContent())
             .createAt(noteMessage.getCreatedAt())
             .build();

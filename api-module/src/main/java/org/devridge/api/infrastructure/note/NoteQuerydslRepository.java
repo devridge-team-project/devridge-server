@@ -43,6 +43,19 @@ public class NoteQuerydslRepository {
             .fetch();
     }
 
+    public List<NoteMessage> findNotesByRoomId(Long roomId, Long lastId) {
+        PathBuilder<NoteMessage> noteMessagePathBuilder = new PathBuilder<>(NoteMessage.class, "noteMessage");
+        return jpaQueryFactory
+            .selectFrom(noteMessage)
+            .where(
+                ltId(lastId, noteMessagePathBuilder),
+                noteMessage.noteRoom.id.eq(roomId)
+            )
+            .orderBy(noteMessage.id.desc())
+            .limit(10)
+            .fetch();
+    }
+
     private BooleanExpression ltId(Long Id, PathBuilder<?> pathBuilder) {
         if (Id == null) {
             return null;

@@ -5,9 +5,11 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.application.note.NoteService;
 import org.devridge.api.domain.note.dto.request.NoteRequest;
+import org.devridge.api.domain.note.dto.response.GetAllNote;
 import org.devridge.api.domain.note.dto.response.GetAllRoom;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,5 +30,14 @@ public class NoteController {
     public ResponseEntity<List<GetAllRoom>> getAllNoteRoom(@RequestParam(required = false) Long lastId) {
         List<GetAllRoom> notes = noteService.getAllNoteRoom(lastId);
         return ResponseEntity.ok().body(notes);
+    }
+
+    @GetMapping("/api/notes/rooms/{roomId}")
+    public ResponseEntity<List<GetAllNote>> getAllNote(
+        @PathVariable Long roomId,
+        @RequestParam(required = false) Long lastId
+    ) {
+        List<GetAllNote> getAllNotes = noteService.getAllNote(roomId, lastId);
+        return ResponseEntity.ok().body(getAllNotes);
     }
 }
