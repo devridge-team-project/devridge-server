@@ -1,15 +1,20 @@
 package org.devridge.api.application.note;
 
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.common.exception.common.DataNotFoundException;
 import org.devridge.api.common.util.SecurityContextHolderUtil;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.note.dto.request.NoteRequest;
+import org.devridge.api.domain.note.dto.response.GetAllRoom;
 import org.devridge.api.domain.note.entity.NoteMessage;
 import org.devridge.api.domain.note.entity.NoteRoom;
 import org.devridge.api.infrastructure.member.MemberRepository;
 import org.devridge.api.infrastructure.note.NoteMessageRepository;
+import org.devridge.api.infrastructure.note.NoteQuerydslRepository;
 import org.devridge.api.infrastructure.note.NoteRoomRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +27,7 @@ public class NoteService {
     private final MemberRepository memberRepository;
     private final NoteRoomRepository noteRoomRepository;
     private final NoteMapper noteMapper;
+    private final NoteQuerydslRepository noteQuerydslRepository;
 
     @Transactional
     public Long createNoteMessage(NoteRequest request) {
@@ -39,6 +45,26 @@ public class NoteService {
     private NoteRoom createNoteRoom(Member accessMember, Member receiverMember) {
         NoteRoom newNoteRoom = new NoteRoom(accessMember, receiverMember);
         return noteRoomRepository.save(newNoteRoom);
+    }
+
+    public List<GetAllRoom> getAllNoteRoom(Long lastId) {
+        Member accessMember = SecurityContextHolderUtil.getMember();
+        List<NoteRoom> noteRooms = noteQuerydslRepository.findNoteRoomsByMember(accessMember, lastId);
+        Map<Member, NoteMessage> otherMembersAndNoteMessages = new LinkedHashMap<>();
+
+        for (NoteRoom noteRoom : noteRooms) {
+            Member otherMember;
+            if (accessMember.getId().equals(noteRoom.getSender().getId())) {
+                otherMember = noteRoom.getReceiver();
+            } else {
+                otherMember = noteRoom.getSender();
+            }
+
+            NoteMessage noteMessage = noteQuerydslRepository.findLastNoteByNoteRoom(noteRoom);
+            otherMembersAndNoteMessages.put(otherMember, noteMessage);
+        }
+
+        return noteMapper.toGetAllRooms(otherMembersAndNoteMessages);
     }
 
     private Member getMember(Long memberId) {
