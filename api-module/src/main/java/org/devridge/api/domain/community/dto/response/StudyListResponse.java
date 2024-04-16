@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StudyListResponse {
 
-    private Long studyId;
+    private Long id;
     private String category;
     private String title;
     private String content;
