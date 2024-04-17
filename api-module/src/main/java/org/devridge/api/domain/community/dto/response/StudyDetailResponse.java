@@ -32,6 +32,8 @@ public class StudyDetailResponse {
 
     private String location;
 
+    private String category;
+
     @JsonProperty("member")
     private UserInformation userInformation;
 
