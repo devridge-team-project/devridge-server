@@ -3,6 +3,8 @@ package org.devridge.api.application.community.project;
 
 import static org.devridge.api.common.util.MemberUtil.toMember;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.devridge.api.common.dto.UserInformation;
 import org.devridge.api.domain.community.dto.request.ProjectRequest;
@@ -19,6 +21,9 @@ public class ProjectMapper {
 
         UserInformation userInformation = toMember(member);
 
+        String roles = project.getRoles();
+        List<String> rolesList = Arrays.asList(roles.split("\\s*,\\s*"));
+
         return ProjectDetailResponse.builder()
                 .communityId(project.getId())
                 .userInformation(userInformation)
@@ -29,7 +34,7 @@ public class ProjectMapper {
                 .views(project.getViews() + 1)
                 .createdAt(project.getCreatedAt())
                 .updatedAt(project.getUpdatedAt())
-                .roles(project.getRoles())
+                .roles(rolesList)
                 .meeting(project.getMeeting())
                 .skills(skills)
                 .isRecruiting(project.getIsRecruiting())
