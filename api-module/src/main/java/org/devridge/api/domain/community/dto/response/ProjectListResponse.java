@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class ProjectListResponse {
 
     private Long id;
-    private String roles;
+    private List<String> roles;
     private String title;
     private String content;
     private Long likes;

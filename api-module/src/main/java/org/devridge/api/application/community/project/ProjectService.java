@@ -70,7 +70,8 @@ public class ProjectService {
     }
 
     public List<ProjectListResponse> getAllProject(Long lastId, Pageable pageable) {
-        List<ProjectListResponse> projectListResponses = projectQuerydslRepository.searchByProject(lastId, pageable);
+        List<Project> projects = projectQuerydslRepository.searchByProject(lastId, pageable);
+        List<ProjectListResponse> projectListResponses = projectMapper.toProjectListResponses(projects);
         List<Long> projectIds = toProjectIds(projectListResponses);
         List<ProjectSkill> projectSkills = projectQuerydslRepository.findProjectSkillsInProjectIds(projectIds);
         return groupByProjectId(projectSkills, projectListResponses);
