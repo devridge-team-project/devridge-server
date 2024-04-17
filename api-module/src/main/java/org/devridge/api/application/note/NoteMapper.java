@@ -42,7 +42,7 @@ public class NoteMapper {
             .id(noteMessage.getNoteRoom().getId())
             .userInformation(toMember(member))
             .content(noteMessage.getContent())
-            .createAt(noteMessage.getCreatedAt())
+            .createdAt(noteMessage.getCreatedAt())
             .build();
     }
 
@@ -63,7 +63,7 @@ public class NoteMapper {
             .id(noteMessage.getId())
             .senderId(noteMessage.getSender().getId())
             .content(noteMessage.getContent())
-            .createAt(noteMessage.getCreatedAt())
+            .createdAt(noteMessage.getCreatedAt())
             .build();
     }
 }

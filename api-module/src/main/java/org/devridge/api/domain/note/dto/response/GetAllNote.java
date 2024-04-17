@@ -11,5 +11,5 @@ public class GetAllNote {
     private Long id;
     private String content;
     private Long senderId;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 }

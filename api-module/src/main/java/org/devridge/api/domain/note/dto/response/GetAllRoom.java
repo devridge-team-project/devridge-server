@@ -12,5 +12,5 @@ public class GetAllRoom {
     private Long id;
     private UserInformation userInformation;
     private String content;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
 }
