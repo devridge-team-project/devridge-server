@@ -12,6 +12,4 @@ public class StudyRequest {
     private StudyCategory category;
     private List<String> images;
     private String location;
-    private Integer totalPeople;
-    private Integer currentPeople;
 }

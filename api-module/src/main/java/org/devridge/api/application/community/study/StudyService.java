@@ -68,9 +68,7 @@ public class StudyService {
                 request.getContent(),
                 request.getCategory().getValue(),
                 images.substring(1, images.length() - 1),
-                request.getLocation(),
-                request.getTotalPeople(),
-                request.getCurrentPeople()
+                request.getLocation()
             );
             return;
         }
@@ -80,9 +78,7 @@ public class StudyService {
             request.getContent(),
             request.getCategory().getValue(),
             null,
-            request.getLocation(),
-            request.getTotalPeople(),
-            request.getCurrentPeople()
+            request.getLocation()
         );
     }
 

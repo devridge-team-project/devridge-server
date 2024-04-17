@@ -46,31 +46,22 @@ public class Study extends BaseEntity {
 
     private String location;
 
-    @ColumnDefault("0")
-    private Integer totalPeople;
-
-    @ColumnDefault("0")
-    private Integer currentPeople;
-
     @Builder
-    public Study(Member member, String title, String content, String category, String images, String location, Integer totalPeople, Integer currentPeople) {
+    public Study(Member member, String title, String content, String category, String images, String location) {
         this.member = member;
         this.title = title;
         this.content = content;
         this.category = category;
         this.images = images;
         this.location = location;
-        this.totalPeople = totalPeople;
-        this.currentPeople = currentPeople;
     }
 
-    public void updateStudy(String title, String content, String category, String images, String location, Integer totalPeople, Integer currentPeople) {
+    public void updateStudy(String title, String content, String category, String images, String location) {
         this.title = title;
         this.content = content;
         this.category = category;
         this.images = images;
         this.location = location;
-        this.totalPeople = totalPeople;
-        this.currentPeople = currentPeople;
+
     }
 }
