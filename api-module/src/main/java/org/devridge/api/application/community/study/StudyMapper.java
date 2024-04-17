@@ -31,6 +31,7 @@ public class StudyMapper {
             .views(study.getViews() + 1)
             .createdAt(study.getCreatedAt())
             .updatedAt(study.getUpdatedAt())
+            .location(study.getLocation())
             .build();
     }
 
