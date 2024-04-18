@@ -34,10 +34,10 @@ public class CommunityComment extends BaseEntity {
     private String content;
 
     @ColumnDefault("0")
-    private Long likeCount;
+    private Long likes;
 
     @ColumnDefault("0")
-    private Long dislikeCount;
+    private Long dislikes;
 
     @Builder
     public CommunityComment(Community community, Member member, String content) {

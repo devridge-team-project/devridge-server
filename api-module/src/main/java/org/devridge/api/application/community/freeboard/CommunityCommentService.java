@@ -1,22 +1,20 @@
 package org.devridge.api.application.community.freeboard;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-
+import org.devridge.api.common.exception.common.DataNotFoundException;
+import org.devridge.api.common.util.SecurityContextHolderUtil;
 import org.devridge.api.domain.community.dto.request.CommunityCommentRequest;
 import org.devridge.api.domain.community.dto.response.CommunityCommentResponse;
 import org.devridge.api.domain.community.entity.Community;
 import org.devridge.api.domain.community.entity.CommunityComment;
 import org.devridge.api.domain.community.exception.MyCommunityForbiddenException;
+import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.infrastructure.community.freeboard.CommunityCommentQuerydslReopsitory;
 import org.devridge.api.infrastructure.community.freeboard.CommunityCommentRepository;
 import org.devridge.api.infrastructure.community.freeboard.CommunityRepository;
-import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.infrastructure.member.MemberRepository;
-import org.devridge.api.common.exception.common.DataNotFoundException;
-import org.devridge.api.common.util.SecurityContextHolderUtil;
-
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -39,7 +37,7 @@ public class CommunityCommentService {
         return communityCommentRepository.save(communityComment).getId();
     }
 
-    public Slice<CommunityCommentResponse> getAllCommunityComment(Long communityId, Long lastId, Pageable pageable) {
+    public List<CommunityCommentResponse> getAllCommunityComment(Long communityId, Long lastId, Pageable pageable) {
         return communityCommentQuerydslReopsitory.searchBySlice(communityId, lastId, pageable);
     }
 

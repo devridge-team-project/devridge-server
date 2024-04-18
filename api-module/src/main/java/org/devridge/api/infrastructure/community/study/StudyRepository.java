@@ -14,4 +14,16 @@ public interface StudyRepository extends JpaRepository<Study, Long> {
                 "SET s.views = s.views + 1 " +
                 "WHERE s.id = :id")
     void updateView(@Param("id") Long id);
+
+    @Modifying
+    @Query(
+        value = "UPDATE Study " +
+                "SET likes = :likes, dislikes = :dislikes " +
+                "WHERE id = :id"
+    )
+    void updateLikeDislike(
+        @Param("likes") Long likes,
+        @Param("dislikes") Long dislikes,
+        @Param("id") Long id
+    );
 }

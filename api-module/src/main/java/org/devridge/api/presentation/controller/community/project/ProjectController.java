@@ -1,14 +1,14 @@
 package org.devridge.api.presentation.controller.community.project;
 
 import java.net.URI;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.devridge.api.application.community.project.ProjectService;
 import org.devridge.api.domain.community.dto.request.ProjectRequest;
 import org.devridge.api.domain.community.dto.response.ProjectDetailResponse;
 import org.devridge.api.domain.community.dto.response.ProjectListResponse;
-import org.devridge.api.application.community.project.ProjectService;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,11 +40,11 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<Slice<ProjectListResponse>> getAllProject(
+    public ResponseEntity<List<ProjectListResponse>> getAllProject(
         @RequestParam(name = "lastId", required = false) Long lastId,
         Pageable pageable
     ) {
-        Slice<ProjectListResponse> projectListResponses = projectService.getAllProject(lastId, pageable);
+        List<ProjectListResponse> projectListResponses = projectService.getAllProject(lastId, pageable);
         return ResponseEntity.ok().body(projectListResponses);
     }
 
