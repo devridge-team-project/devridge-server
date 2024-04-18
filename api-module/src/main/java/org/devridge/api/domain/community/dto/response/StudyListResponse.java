@@ -20,6 +20,4 @@ public class StudyListResponse {
     private Long dislikes;
     private Long views;
     private String location;
-    private Integer totalPeople;
-    private Integer currentPeople;
 }

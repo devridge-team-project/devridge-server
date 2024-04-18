@@ -3,10 +3,13 @@ package org.devridge.api.application.community.project;
 
 import static org.devridge.api.common.util.MemberUtil.toMember;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.devridge.api.common.dto.UserInformation;
 import org.devridge.api.domain.community.dto.request.ProjectRequest;
 import org.devridge.api.domain.community.dto.response.ProjectDetailResponse;
+import org.devridge.api.domain.community.dto.response.ProjectListResponse;
 import org.devridge.api.domain.community.entity.Project;
 import org.devridge.api.domain.member.entity.Member;
 import org.springframework.stereotype.Component;
@@ -19,6 +22,9 @@ public class ProjectMapper {
 
         UserInformation userInformation = toMember(member);
 
+        String roles = project.getRoles();
+        List<String> rolesList = Arrays.asList(roles.split("\\s*,\\s*"));
+
         return ProjectDetailResponse.builder()
                 .communityId(project.getId())
                 .userInformation(userInformation)
@@ -29,7 +35,7 @@ public class ProjectMapper {
                 .views(project.getViews() + 1)
                 .createdAt(project.getCreatedAt())
                 .updatedAt(project.getUpdatedAt())
-                .roles(project.getRoles())
+                .roles(rolesList)
                 .meeting(project.getMeeting())
                 .skills(skills)
                 .isRecruiting(project.getIsRecruiting())
@@ -54,5 +60,32 @@ public class ProjectMapper {
         }
 
         return builder.build();
+    }
+
+    public List<ProjectListResponse> toProjectListResponses(List<Project> projects) {
+        List<ProjectListResponse> projectListResponses = new ArrayList<>();
+
+        for (Project project : projects) {
+            projectListResponses.add(toProjectListResponse(project));
+        }
+
+        return projectListResponses;
+    }
+
+    public ProjectListResponse toProjectListResponse(Project project) {
+        String roles = project.getRoles();
+        List<String> rolesList = Arrays.asList(roles.split("\\s*,\\s*"));
+
+        return ProjectListResponse.builder()
+                .id(project.getId())
+                .title(project.getTitle())
+                .content(project.getContent())
+                .likes(project.getLikes())
+                .dislikes(project.getDislikes())
+                .views(project.getViews())
+                .isRecruiting(project.getIsRecruiting())
+                .meeting(project.getMeeting())
+                .roles(rolesList)
+                .build();
     }
 }

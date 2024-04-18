@@ -31,6 +31,8 @@ public class StudyMapper {
             .views(study.getViews() + 1)
             .createdAt(study.getCreatedAt())
             .updatedAt(study.getUpdatedAt())
+            .location(study.getLocation())
+            .category(study.getCategory())
             .build();
     }
 
@@ -44,8 +46,6 @@ public class StudyMapper {
                     .location(studyRequest.getLocation())
                     .category(studyRequest.getCategory().getValue())
                     .images(images.substring(1, images.length() - 1))
-                    .totalPeople(studyRequest.getTotalPeople())
-                    .currentPeople(studyRequest.getCurrentPeople())
                     .build();
         }
 
@@ -55,8 +55,6 @@ public class StudyMapper {
                 .content(studyRequest.getContent())
                 .location(studyRequest.getLocation())
                 .category(studyRequest.getCategory().getValue())
-                .totalPeople(studyRequest.getTotalPeople())
-                .currentPeople(studyRequest.getCurrentPeople())
                 .build();
     }
 
@@ -68,9 +66,7 @@ public class StudyMapper {
             .title(study.getTitle())
             .content(study.getContent())
             .views(study.getViews())
-            .currentPeople(study.getCurrentPeople())
             .dislikes(study.getDislikes())
-            .totalPeople(study.getTotalPeople())
             .location(study.getLocation())
             .images(study.getImages())
             .build();
