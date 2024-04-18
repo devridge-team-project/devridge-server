@@ -33,16 +33,14 @@ public class SocialLoginController {
            return ResponseEntity.status(HttpStatus.ACCEPTED).body(result);
        }
 
-       return ResponseEntity.status(HttpStatus.OK).body(
-               new TokenResponse(data.getToken())
-       );
+       return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PostMapping("/signUp")
     public ResponseEntity<TokenResponse> createMemberAndLogin(
             @RequestBody @Valid SocialLoginSignUp socialLoginRequest, HttpServletResponse response)
     {
-        TokenResponse result = socialLoginService.signUpAndLogin(socialLoginRequest, response);
-        return ResponseEntity.ok().body(result);
+        socialLoginService.signUpAndLogin(socialLoginRequest, response);
+        return ResponseEntity.ok().build();
     }
 }

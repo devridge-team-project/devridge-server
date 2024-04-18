@@ -2,15 +2,15 @@ package org.devridge.api.application.auth;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.devridge.api.common.exception.common.DataNotFoundException;
 import org.devridge.api.common.type.Role;
+import org.devridge.api.common.util.AccessTokenUtil;
+import org.devridge.api.common.util.JwtUtil;
 import org.devridge.api.domain.auth.entity.RefreshToken;
-import org.devridge.api.infrastructure.auth.RefreshTokenRepository;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.member.entity.Occupation;
 import org.devridge.api.domain.member.exception.AccessTokenInvalidException;
 import org.devridge.api.domain.member.exception.DuplNicknameException;
-import org.devridge.api.infrastructure.member.MemberRepository;
-import org.devridge.api.infrastructure.member.OccupationRepository;
 import org.devridge.api.domain.sociallogin.context.OAuth2MemberInfoContext;
 import org.devridge.api.domain.sociallogin.context.OAuth2TokenContext;
 import org.devridge.api.domain.sociallogin.dto.request.SocialLoginRequest;
@@ -18,10 +18,9 @@ import org.devridge.api.domain.sociallogin.dto.request.SocialLoginSignUp;
 import org.devridge.api.domain.sociallogin.dto.response.SocialLoginResponse;
 import org.devridge.api.domain.sociallogin.dto.response.oauth.OAuth2TokenResponse;
 import org.devridge.api.domain.sociallogin.entity.OAuth2Member;
-import org.devridge.api.common.exception.common.DataNotFoundException;
-import org.devridge.api.common.security.dto.TokenResponse;
-import org.devridge.api.common.util.AccessTokenUtil;
-import org.devridge.api.common.util.JwtUtil;
+import org.devridge.api.infrastructure.auth.RefreshTokenRepository;
+import org.devridge.api.infrastructure.member.MemberRepository;
+import org.devridge.api.infrastructure.member.OccupationRepository;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -59,8 +58,11 @@ public class SocialLoginService {
             RefreshToken refreshToken = saveRefreshToken(existingMember.get());
             String accessToken = JwtUtil.createAccessToken(existingMember.get(), refreshToken.getId());
 
-            ResponseCookie responseCookie = JwtUtil.generateRefreshTokenCookie(refreshToken.getRefreshToken());
-            response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+            ResponseCookie accessTokenCookie = JwtUtil.generateAccessTokenCookie(accessToken);
+            ResponseCookie refreshTokenCookie = JwtUtil.generateRefreshTokenCookie(refreshToken.getRefreshToken());
+
+            response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+            response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
             return new SocialLoginResponse(accessToken, false);
         }
@@ -86,7 +88,7 @@ public class SocialLoginService {
 
     // TODO : skillId, occupationId 검사 : 메모리
     @Transactional
-    public TokenResponse signUpAndLogin(SocialLoginSignUp socialLoginRequest, HttpServletResponse response) {
+    public void signUpAndLogin(SocialLoginSignUp socialLoginRequest, HttpServletResponse response) {
         checkDuplNickname(socialLoginRequest.getNickname());
 
         Claims claims = checkTemporaryTokenForSocialLogin(socialLoginRequest.getTempJwt());
@@ -95,10 +97,11 @@ public class SocialLoginService {
         RefreshToken refreshToken = saveRefreshToken(member);
         String accessToken = JwtUtil.createAccessToken(member, refreshToken.getId());
 
-        ResponseCookie responseCookie = JwtUtil.generateRefreshTokenCookie(refreshToken.getRefreshToken());
-        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+        ResponseCookie accessTokenCookie = JwtUtil.generateAccessTokenCookie(accessToken);
+        ResponseCookie refreshTokenCookie = JwtUtil.generateRefreshTokenCookie(refreshToken.getRefreshToken());
 
-        return new TokenResponse(accessToken);
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
     }
 
     private Member createMember(SocialLoginSignUp socialLoginRequest, Claims claims) {
