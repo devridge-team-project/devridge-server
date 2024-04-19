@@ -30,7 +30,7 @@ public class AuthService {
     private final MemberRepository memberRepository;
 
     public TokenResponse reIssueAccessToken(HttpServletRequest request) {
-        String accessToken = AccessTokenUtil.extractAccessTokenFromRequest(request);
+        String accessToken = AccessTokenUtil.extractAccessTokenFromCookies(request);
 
         if (accessToken == null) {
             throw new UnAuthorizedException();

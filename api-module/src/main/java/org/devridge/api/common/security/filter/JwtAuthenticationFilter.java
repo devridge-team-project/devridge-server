@@ -1,16 +1,14 @@
 package org.devridge.api.common.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.devridge.api.domain.member.dto.response.LoginResponse;
-import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.common.dto.BaseErrorResponse;
+import org.devridge.api.common.security.auth.CustomMemberDetails;
+import org.devridge.api.common.util.ResponseUtil;
 import org.devridge.api.domain.auth.entity.RefreshToken;
+import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.domain.member.exception.WrongLoginException;
 import org.devridge.api.infrastructure.auth.RefreshTokenRepository;
 import org.devridge.api.infrastructure.skill.MemberSkillRepository;
-import org.devridge.api.domain.member.exception.WrongLoginException;
-import org.devridge.api.common.security.auth.CustomMemberDetails;
-import org.devridge.api.common.util.JwtUtil;
-import org.devridge.api.common.util.ResponseUtil;
-import org.devridge.api.common.dto.BaseErrorResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -25,7 +23,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+
+import static org.devridge.api.common.util.JwtUtil.*;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private RefreshTokenRepository refreshTokenRepository;
@@ -63,23 +62,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         Member member = ((CustomMemberDetails) authResult.getPrincipal()).getMember();
 
         // 2. Refresh Token DB 저장 (해당 유저의 리프레시 토큰이 이미 존재한다면, 삭제 후 저장), 쿠키에 담아 반환
-        String refreshToken = JwtUtil.createRefreshToken(member);
+        String refreshToken = createRefreshToken(member);
 
-        ResponseCookie responseCookie = JwtUtil.generateRefreshTokenCookie(refreshToken);
-        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+        ResponseCookie refreshTokenCookie = generateRefreshTokenCookie(refreshToken);
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
         Long refreshTokenId = saveRefreshToken(member, refreshToken);
 
-        // 3. AccessToken 발급
-        String accessToken = JwtUtil.createAccessToken(member, refreshTokenId);
-        LoginResponse loginResponse = new LoginResponse(accessToken);
+        // 3. AccessToken 발급, 쿠키에 담아 보냄
+        String accessToken = createAccessToken(member, refreshTokenId);
 
-        ResponseUtil.createResponseBody(response, loginResponse, HttpStatus.OK);
-    }
+        ResponseCookie accessTokenCookie = generateAccessTokenCookie(accessToken);
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
 
-    public List<Long> getSkillIdListFromMember(Member member) {
-        List<Long> skillIdList = memberSkillRepository.findSkillIdByMemberId(member.getId());
-        return skillIdList;
+        ResponseUtil.createResponseBody(response, HttpStatus.OK);
     }
 
     @Override
