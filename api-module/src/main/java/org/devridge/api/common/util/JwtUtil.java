@@ -4,17 +4,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-
 import lombok.NoArgsConstructor;
-
+import org.devridge.api.common.security.auth.AuthProperties;
 import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.domain.sociallogin.entity.OAuth2Member;
-import org.devridge.api.common.security.auth.AuthProperties;
-
 import org.springframework.http.ResponseCookie;
 
 import java.security.Key;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +64,7 @@ public class JwtUtil {
     }
 
     public static ResponseCookie generateRefreshTokenCookie(String refreshToken) {
-        return ResponseCookie.from("devridge", refreshToken)
+        return ResponseCookie.from("dev-refresh", refreshToken)
                 .httpOnly(true)
                 .sameSite("None")
                 .secure(true)
@@ -78,12 +74,22 @@ public class JwtUtil {
     }
 
     public static ResponseCookie generateRefreshTokenCookie(String refreshToken, long time) {
-        return ResponseCookie.from("devridge", refreshToken)
+        return ResponseCookie.from("dev-refresh", refreshToken)
                 .httpOnly(true)
                 .sameSite("None")
                 .secure(true)
                 .path("/")
                 .maxAge(time)
+                .build();
+    }
+
+    public static ResponseCookie generateAccessTokenCookie(String accessToken) {
+        return ResponseCookie.from("dev-access", accessToken)
+                .httpOnly(true)
+                .sameSite("None")
+                .secure(true)
+                .path("/")
+                .maxAge(ACCESS_TOKEN_VALIDITY_TIME)
                 .build();
     }
 
@@ -102,6 +108,7 @@ public class JwtUtil {
     // 인가 필터 - access token 만료 시 refreshToken의 유효성을 쉽게 조회하기 위해 refresh token id도 함께 넣어준다
     private static Map<String, Object> createAccessTokenClaims(Member member, Long refreshTokenId) {
         Map<String, Object> map = new HashMap<>();
+        map.put("memberId", member.getId());
         map.put("memberEmail", member.getEmail());
         map.put("provider", member.getProvider());
         map.put("refreshTokenId", refreshTokenId);

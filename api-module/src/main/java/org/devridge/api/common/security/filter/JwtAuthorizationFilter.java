@@ -3,13 +3,15 @@ package org.devridge.api.common.security.filter;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
-import org.devridge.api.infrastructure.auth.RefreshTokenRepository;
-import org.devridge.api.domain.member.entity.Member;
-import org.devridge.api.infrastructure.member.MemberRepository;
+import org.devridge.api.common.exception.common.DataNotFoundException;
 import org.devridge.api.common.security.auth.CustomMemberDetails;
-import org.devridge.api.common.util.AccessTokenUtil;
 import org.devridge.api.common.util.ResponseUtil;
+import org.devridge.api.domain.member.entity.Member;
+import org.devridge.api.infrastructure.auth.RefreshTokenRepository;
+import org.devridge.api.infrastructure.member.MemberRepository;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,6 +28,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import static org.devridge.api.common.util.AccessTokenUtil.extractAccessTokenFromCookies;
+import static org.devridge.api.common.util.AccessTokenUtil.getClaimsFromAccessToken;
+import static org.devridge.api.common.util.JwtUtil.createAccessToken;
+import static org.devridge.api.common.util.JwtUtil.generateAccessTokenCookie;
+import static org.devridge.api.common.util.RefreshTokenUtil.checkIfRefreshTokenValid;
+import static org.devridge.api.common.util.RefreshTokenUtil.extractRefreshTokenFromCookies;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private MemberRepository memberRepository;
@@ -54,27 +63,35 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             filterChain.doFilter(request, response); //이 필터 스킵, 다음꺼 실행.
             return;
         }
+        String accessToken = extractAccessTokenFromCookies(request);
 
-        String accessToken = null;
-
-        try {
-            accessToken = AccessTokenUtil.extractAccessTokenFromRequest(request);
-        } catch (NullPointerException e){
+        if (accessToken == null) {
             filterChain.doFilter(request, response);
             return;
         }
-
         Claims claims = null;
 
         try {
-            claims = AccessTokenUtil.getClaimsFromAccessToken(accessToken);
+            claims = getClaimsFromAccessToken(accessToken);
         } catch (ExpiredJwtException e) {
-            handleExceptionResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "access-token expired");
-            return;
+            // 엑세스 토큰이 만료되었을 때 리프레시 토큰이 유효하다면, 엑세스 토큰을 새로 발급해줍니다.
+            String refreshToken = extractRefreshTokenFromCookies(request);
+
+            if (!checkIfRefreshTokenValid(refreshToken)) {
+                handleExceptionResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "access-token expired");
+                return;
+            }
+            claims = e.getClaims();
+            Long refreshTokenId = ((Integer) claims.get("refreshTokenId")).longValue();
+
+            Long memberId = ((Integer) claims.get("memberId")).longValue();
+            Member member = memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException());
+
+            String newAccessToken = createAccessToken(member, refreshTokenId);
+
+            ResponseCookie accessTokenCookie = generateAccessTokenCookie(newAccessToken);
+            response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         } catch (MalformedJwtException e) {
-            filterChain.doFilter(request, response);
-            return;
-        } catch (Exception e) {
             filterChain.doFilter(request, response);
             return;
         }
