@@ -9,9 +9,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.devridge.api.domain.community.dto.response.CommunitySliceResponse;
 import org.devridge.api.domain.community.dto.response.UserInformation;
-import org.devridge.api.domain.community.entity.CommunityHashtag;
 import org.devridge.api.domain.community.entity.QCommunity;
-import org.devridge.api.domain.community.entity.QCommunityHashtag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -21,15 +19,6 @@ public class CommunityQuerydslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
     private QCommunity community = QCommunity.community;
-    private QCommunityHashtag communityHashtag = QCommunityHashtag.communityHashtag;
-
-    public List<CommunityHashtag> findCommunityHashtagsInCommunityIds(List<Long> communityIds) {
-        return jpaQueryFactory
-            .selectFrom(communityHashtag)
-            .leftJoin(communityHashtag.hashtag).fetchJoin()
-            .where(communityHashtag.community.id.in(communityIds))
-            .fetch();
-    }
 
     public List<CommunitySliceResponse> searchByCommunity(Long lastId, Pageable pageable) {
         return jpaQueryFactory

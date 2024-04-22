@@ -30,7 +30,7 @@ public class CommunityController {
 
     @PostMapping
     public ResponseEntity<Void> createCommunityAndHashtag(@Valid @RequestBody CreateCommunityRequest communityRequest) {
-        Long communityId = communityService.createCommunityAndHashtag(communityRequest);
+        Long communityId = communityService.createCommunity(communityRequest);
         return ResponseEntity.created(URI.create("/api/community/" + communityId)).build();
     }
 
@@ -45,7 +45,7 @@ public class CommunityController {
         @PathVariable Long communityId,
         @Valid @RequestBody CreateCommunityRequest communityRequest
     ) {
-        communityService.updateCommunityAndHashtag(communityId, communityRequest);
+        communityService.updateCommunity(communityId, communityRequest);
         return ResponseEntity.ok().build();
     }
 
