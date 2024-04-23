@@ -22,18 +22,20 @@ public class StudyMapper {
         UserInformation userInformation = toMember(member);
 
         return StudyDetailResponse.builder()
-            .studyId(study.getId())
-            .userInformation(userInformation)
-            .title(study.getTitle())
-            .content(study.getContent())
-            .likes(study.getLikes())
-            .dislikes(study.getDislikes())
-            .views(study.getViews() + 1)
-            .createdAt(study.getCreatedAt())
-            .updatedAt(study.getUpdatedAt())
-            .location(study.getLocation())
-            .category(study.getCategory())
-            .build();
+                .studyId(study.getId())
+                .userInformation(userInformation)
+                .title(study.getTitle())
+                .content(study.getContent())
+                .likes(study.getLikes())
+                .dislikes(study.getDislikes())
+                .scraps(Long.valueOf(study.getScraps().size()))
+                .comments(Long.valueOf(study.getComments().size()))
+                .views(study.getViews() + 1)
+                .createdAt(study.getCreatedAt())
+                .updatedAt(study.getUpdatedAt())
+                .location(study.getLocation())
+                .category(study.getCategory())
+                .build();
     }
 
     public Study toStudy(Member member, StudyRequest studyRequest) {
