@@ -13,7 +13,5 @@ public class CreateCommunityRequest {
     @NotNull
     private String content;
 
-    private List<String> hashtags;
-
     private List<String> images;
 }

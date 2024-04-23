@@ -2,7 +2,6 @@ package org.devridge.api.domain.community.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import org.devridge.api.common.dto.UserInformation;
@@ -30,6 +29,4 @@ public class CommunityDetailResponse {
 
     @JsonProperty("member")
     private UserInformation userInformation;
-
-    private List<String> hashtags;
 }
