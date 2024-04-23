@@ -28,6 +28,8 @@ public class CommunityMapper {
                 .views(community.getViews() + 1)
                 .createdAt(community.getCreatedAt())
                 .updatedAt(community.getUpdatedAt())
+                .scraps(Long.valueOf(community.getScraps().size()))
+                .comments(Long.valueOf(community.getComments().size()))
                 .build();
     }
 
