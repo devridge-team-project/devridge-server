@@ -32,6 +32,8 @@ public class ProjectMapper {
                 .content(project.getContent())
                 .likes(project.getLikes())
                 .dislikes(project.getDislikes())
+                .comments(Long.valueOf(project.getComments().size()))
+                .scraps(Long.valueOf(project.getScraps().size()))
                 .views(project.getViews() + 1)
                 .createdAt(project.getCreatedAt())
                 .updatedAt(project.getUpdatedAt())

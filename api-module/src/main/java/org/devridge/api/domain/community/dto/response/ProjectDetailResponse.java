@@ -28,6 +28,10 @@ public class ProjectDetailResponse {
 
     private Long dislikes;
 
+    private Long scraps;
+
+    private Long comments;
+
     @JsonProperty("member")
     private UserInformation userInformation;
 
