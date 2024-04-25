@@ -54,8 +54,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             new AntPathRequestMatcher("/api/users", "POST"),
             new AntPathRequestMatcher("/api/login", "POST"),
             new AntPathRequestMatcher("/api/users/reset-password", "PATCH"),
-            new AntPathRequestMatcher("/api/auth/accessToken", "GET"),
-            new AntPathRequestMatcher("/api/logout", "POST")
+            new AntPathRequestMatcher("/api/auth/accessToken", "GET")
     );
 
     @Override
