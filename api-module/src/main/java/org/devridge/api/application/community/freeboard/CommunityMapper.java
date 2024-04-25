@@ -4,7 +4,6 @@ import static org.devridge.api.common.util.MemberUtil.toMember;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.devridge.api.common.dto.UserInformation;
 import org.devridge.api.domain.community.dto.request.CreateCommunityRequest;
 import org.devridge.api.domain.community.dto.response.CommunityDetailResponse;
@@ -29,16 +28,7 @@ public class CommunityMapper {
                 .views(community.getViews() + 1)
                 .createdAt(community.getCreatedAt())
                 .updatedAt(community.getUpdatedAt())
-                .hashtags(toHashtags(community))
                 .build();
-    }
-
-    public List<String> toHashtags(Community community) {
-        return community.getHashtags()
-                .stream()
-                .map(result -> result.getHashtag().getWord())
-                .distinct()
-                .collect(Collectors.toList());
     }
 
     public CommunityListResponse toCommunityListResponse(Community community) {

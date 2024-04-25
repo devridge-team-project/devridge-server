@@ -1,8 +1,6 @@
 package org.devridge.api.domain.community.dto.response;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Getter;
 
 @Getter
@@ -16,10 +14,5 @@ public class CommunitySliceResponse {
     private UserInformation member;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private List<HashtagResponse> hashtags = new ArrayList<>();
     private Long scraps;
-
-    public void setHashtags(List<HashtagResponse> hashtags) {
-        this.hashtags = hashtags;
-    }
 }
