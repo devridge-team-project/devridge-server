@@ -27,16 +27,18 @@ public class CustomLogoutHandler implements LogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String accessToken = AccessTokenUtil.extractAccessTokenFromRequest(request);
+        String accessToken = AccessTokenUtil.extractAccessTokenFromCookies(request);
 
         Claims claims = AccessTokenUtil.getClaimsFromAccessToken(accessToken);
         Long refreshTokenId = RefreshTokenUtil.getRefreshTokenIdFromClaims(claims);
 
         refreshTokenRepository.findById(refreshTokenId).ifPresent(refreshToken -> refreshTokenRepository.delete(refreshToken));
-        ResponseCookie responseCookie = JwtUtil.generateRefreshTokenCookie(null, 0);
+        ResponseCookie refreshTokenCookie = JwtUtil.generateRefreshTokenCookie(null, 0);
+        ResponseCookie accessTokenCookie = JwtUtil.generateAccessTokenCookie(null, 0);
 
-        response.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
+
         ResponseUtil.createResponseBody(response, HttpStatus.OK);
     }
-
 }

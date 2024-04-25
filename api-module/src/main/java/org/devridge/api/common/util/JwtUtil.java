@@ -83,6 +83,16 @@ public class JwtUtil {
                 .build();
     }
 
+    public static ResponseCookie generateAccessTokenCookie(String accessToken, long time) {
+        return ResponseCookie.from("dev-access", accessToken)
+                .httpOnly(true)
+                .sameSite("None")
+                .secure(true)
+                .path("/")
+                .maxAge(time)
+                .build();
+    }
+
     public static ResponseCookie generateAccessTokenCookie(String accessToken) {
         return ResponseCookie.from("dev-access", accessToken)
                 .httpOnly(true)
