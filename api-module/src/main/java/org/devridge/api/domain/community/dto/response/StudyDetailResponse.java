@@ -30,6 +30,10 @@ public class StudyDetailResponse {
 
     private Long dislikes;
 
+    private Long scraps;
+
+    private Long comments;
+
     private String location;
 
     private String category;

@@ -58,6 +58,12 @@ public class Project extends BaseEntity {
     @ColumnDefault("true")
     private Boolean isRecruiting;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private List<ProjectComment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private List<ProjectScrap> scraps = new ArrayList<>();
+
     @Builder
     public Project(Member member, String title, String content, String roles, String images, String meeting, Boolean isRecruiting) {
         this.member = member;

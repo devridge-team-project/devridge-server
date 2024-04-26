@@ -1,9 +1,13 @@
 package org.devridge.api.domain.community.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,6 +49,12 @@ public class Study extends BaseEntity {
     private String images;
 
     private String location;
+
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
+    private List<StudyComment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "study", cascade = CascadeType.ALL)
+    private List<StudyScrap> scraps = new ArrayList<>();
 
     @Builder
     public Study(Member member, String title, String content, String category, String images, String location) {
