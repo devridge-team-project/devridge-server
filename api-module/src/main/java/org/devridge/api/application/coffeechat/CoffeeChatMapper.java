@@ -106,6 +106,8 @@ public class CoffeeChatMapper {
             .id(request.getId())
             .member(fromMember)
             .message(request.getMessage())
+            .createdAt(request.getCreatedAt())
+            .updatedAt(request.getUpdatedAt())
             .build();
     }
 
@@ -127,7 +129,7 @@ public class CoffeeChatMapper {
                     .message(request.getMessage())
                     .status(status)
                     .createdAt(request.getCreatedAt())
-                    .createdAt(request.getUpdatedAt())
+                    .updatedAt(request.getUpdatedAt())
                     .build()
             );
         }
