@@ -2,11 +2,17 @@ package org.devridge.api.domain.coffeechat.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import org.devridge.api.common.dto.UserInformation;
 
+import java.time.LocalDateTime;
+
 @Getter
+@Builder
+@AllArgsConstructor
 public class GetCoffeeChatRequestResponse {
 
     private Long id;
@@ -16,16 +22,6 @@ public class GetCoffeeChatRequestResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String status;
 
-    public GetCoffeeChatRequestResponse(Long id, UserInformation member, String message) {
-        this.id = id;
-        this.member = member;
-        this.message = message;
-    }
-
-    public GetCoffeeChatRequestResponse(Long id, UserInformation member, String message, String status) {
-        this.id = id;
-        this.member = member;
-        this.message = message;
-        this.status = status;
-    }
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
