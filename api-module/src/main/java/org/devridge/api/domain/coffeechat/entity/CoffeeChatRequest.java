@@ -8,6 +8,8 @@ import org.devridge.api.domain.member.entity.Member;
 import org.devridge.api.common.entity.BaseEntity;
 
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
@@ -19,6 +21,8 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "coffee_chat_request")
+@SQLDelete(sql = "UPDATE coffee_chat_request SET is_deleted = true WHERE id = ?")
+@Where(clause = "is_deleted = false")
 @Entity
 public class CoffeeChatRequest extends BaseEntity {
 
