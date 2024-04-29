@@ -11,6 +11,7 @@ import org.devridge.api.domain.coffeechat.dto.type.YesOrNo;
 import org.devridge.api.domain.coffeechat.entity.ChatMessage;
 import org.devridge.api.domain.coffeechat.entity.ChatRoom;
 import org.devridge.api.domain.coffeechat.entity.CoffeeChatRequest;
+import org.devridge.api.domain.coffeechat.exception.NoCancelCoffeeChatRequestException;
 import org.devridge.api.infrastructure.coffeechat.ChatMessageRepository;
 import org.devridge.api.infrastructure.coffeechat.ChatRoomRepository;
 import org.devridge.api.infrastructure.coffeechat.CoffeeChatQuerydslRepository;
@@ -185,6 +186,19 @@ public class CoffeeChatService {
         ChatMessage message = chatMessageRepository.findById(messageId).orElseThrow(DataNotFoundException::new);
 
         chatMessageRepository.deleteById(messageId);
+    }
+
+    public void deleteCoffeeChatRequest(Long requestId) {
+        CoffeeChatRequest coffeeChatRequest = coffeeChatRequestRepository
+                .findById(requestId)
+                .orElseThrow(DataNotFoundException::new);
+
+        /* 대기 상태인 요청만 취소 가능 */
+        if (coffeeChatRequest.getIsSuccess() != null) {
+            throw new NoCancelCoffeeChatRequestException(409, "이미 처리된 요청은 취소할 수 없습니다.");
+        }
+
+        coffeeChatRequestRepository.delete(coffeeChatRequest);
     }
 
     private Member getMember(Long memberId) {

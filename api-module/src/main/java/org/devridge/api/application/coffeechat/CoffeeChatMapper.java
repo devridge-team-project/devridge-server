@@ -101,7 +101,14 @@ public class CoffeeChatMapper {
 
     public GetCoffeeChatRequestResponse toGetCoffeeChatRequest(CoffeeChatRequest request) {
         UserInformation fromMember = toMember(request.getFromMember());
-        return new GetCoffeeChatRequestResponse(request.getId(), fromMember, request.getMessage());
+
+        return GetCoffeeChatRequestResponse.builder()
+            .id(request.getId())
+            .member(fromMember)
+            .message(request.getMessage())
+            .createdAt(request.getCreatedAt())
+            .updatedAt(request.getUpdatedAt())
+            .build();
     }
 
     public GetAllCoffeeChatRequest toGetSendCoffeeChatRequests(List<CoffeeChatRequest> requests) {
@@ -116,12 +123,14 @@ public class CoffeeChatMapper {
             String status = this.getStatus(request.getIsSuccess());
 
             coffeeChatRequests.add(
-                new GetCoffeeChatRequestResponse(
-                    request.getId(),
-                    toMember(request.getToMember()),
-                    request.getMessage(),
-                    status
-                )
+                GetCoffeeChatRequestResponse.builder()
+                    .id(request.getId())
+                    .member(toMember(request.getToMember()))
+                    .message(request.getMessage())
+                    .status(status)
+                    .createdAt(request.getCreatedAt())
+                    .updatedAt(request.getUpdatedAt())
+                    .build()
             );
         }
 
@@ -150,11 +159,13 @@ public class CoffeeChatMapper {
             }
 
             coffeeChatRequests.add(
-                new GetCoffeeChatRequestResponse(
-                    request.getId(),
-                    toMember(request.getFromMember()),
-                    request.getMessage()
-                )
+                GetCoffeeChatRequestResponse.builder()
+                    .id(request.getId())
+                    .member(toMember(request.getFromMember()))
+                    .message(request.getMessage())
+                    .createdAt(request.getCreatedAt())
+                    .updatedAt(request.getUpdatedAt())
+                    .build()
             );
         }
 

@@ -113,4 +113,14 @@ public class CoffeeChatController {
         coffeeChatService.deleteChatMessage(roomId, messageId);
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * 내가 보낸 채팅방 요청 삭제
+     * @return
+     */
+    @DeleteMapping("/requests/{requestId}")
+    public ResponseEntity<Void> cancelCoffeeChatRequest(@PathVariable Long requestId) {
+        coffeeChatService.deleteCoffeeChatRequest(requestId);
+        return ResponseEntity.ok().build();
+    }
 }
