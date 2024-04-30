@@ -21,7 +21,8 @@ public class QnAMapper {
         List<GetAllQnAResponse> responses = new ArrayList<>();
 
         for (QnA q : qna) {
-            String writerNickname = q.getMember().getNickname() + "님의 질문";
+            UserInformation writer = toMember(q.getMember());
+            String writerNickname = writer.getNickname() + "님의 질문";
 
             responses.add(
                 GetAllQnAResponse.builder()
