@@ -9,7 +9,8 @@
 * 개발자들을 위한 정보 공유 플랫폼 웹 사이트입니다.
 * 커피챗, Q&A 지식 공유와 같은 개발자들을 위한 다양한 기능들을 제공합니다.
 ### System Architecture
-<img width="853" alt="스크린샷 2024-05-06 오후 5 58 08" src="https://github.com/devridge-team-project/.github/assets/96467030/2a1fffaa-a59b-4bb9-970a-155df2c34049">
+![image](https://github.com/devridge-team-project/devridge-server/assets/96467030/0a8c6af6-10c0-4978-ab24-11596736f4af)
+
 
 
 #### UI/UX
