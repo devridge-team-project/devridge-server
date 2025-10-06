@@ -9,7 +9,7 @@
 * 개발자들을 위한 정보 공유 플랫폼 웹 사이트입니다.
 * 커피챗, Q&A 지식 공유와 같은 개발자들을 위한 다양한 기능들을 제공합니다.
 ### System Architecture
-<img width="958" alt="스크린샷 2024-07-14 오후 6 57 55" src="https://github.com/user-attachments/assets/ca3abf13-981e-4437-bde9-acec7a930788">
+<img width="746" height="678" alt="스크린샷 2025-10-07 오전 12 25 15" src="https://github.com/user-attachments/assets/d9858fd5-3a88-492d-a174-f46842d7fa29" />
 
 #### UI/UX
 - Figma
